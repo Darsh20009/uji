@@ -1,0 +1,88 @@
+Your free instance will spin down with inactivity, which can delay requests by 50 seconds or more.
+Upgrade now
+July 20, 2026 at 11:40 PM
+failed
+2f45d50
+Refactor AuthModal component structure and styling Replit-Commit-Author: Agent
+
+Rollback
+Exited with status 1 while running your code.
+Read our docs for common ways to troubleshoot your deploy.
+
+All logs
+Search
+Search logs
+
+Jul 20, 11:39 PM - 11:49 PM
+GMT+3
+
+
+
+==> Downloading cache...
+==> Cloning from https://github.com/Darsh20009/uji
+==> Checking out commit 2f45d5089561b934a7a09f12c6c42b80ac72c9dc in branch main
+==> Downloaded 37MB in 1s. Extraction took 1s.
+==> Using Node.js version 24.14.1 (default)
+==> Docs on specifying a Node.js version: https://render.com/docs/node-version
+==> Running build command 'pnpm install --frozen-lockfile; pnpm run build'...
+ ERR_PNPM_OUTDATED_LOCKFILE  Cannot install with "frozen-lockfile" because pnpm-lock.yaml is not up to date with <ROOT>/package.json
+Note that in CI environments this setting is true by default. If you still need to run install in such cases, use "pnpm install --no-frozen-lockfile"
+  Failure reason:
+  specifiers in the lockfile don't match specifiers in package.json:
+* 2 dependencies were added: @types/nodemailer@^8.0.1, nodemailer@^9.0.3
+> uji@1.0.0 build /opt/render/project/src
+> vite build
+vite v6.4.3 building for production...
+transforming...
+✓ 1645 modules transformed.
+rendering chunks...
+computing gzip size...
+../dist/public/index.html                   5.83 kB │ gzip:  1.82 kB
+../dist/public/assets/index-BJiCTIfM.css    4.01 kB │ gzip:  1.31 kB
+../dist/public/assets/index-Cl6fMEqV.js   303.74 kB │ gzip: 86.27 kB
+✓ built in 2.54s
+==> Uploading build...
+==> Uploaded in 10.4s. Compression took 4.4s
+==> Build successful 🎉
+==> Deploying...
+==> Setting WEB_CONCURRENCY=1 by default, based on available CPUs in the instance
+==> Running 'pnpm run start'
+> uji@1.0.0 start /opt/render/project/src
+> NODE_ENV=production node dist/index.js
+node:internal/modules/cjs/loader:1459
+  throw err;
+  ^
+Error: Cannot find module '/opt/render/project/src/dist/index.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1456:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)
+    at Module._load (node:internal/modules/cjs/loader:1242:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+Node.js v24.14.1
+ ELIFECYCLE  Command failed with exit code 1.
+==> Exited with status 1
+==> Common ways to troubleshoot your deploy: https://render.com/docs/troubleshooting-deploys
+==> Running 'pnpm run start'
+> uji@1.0.0 start /opt/render/project/src
+> NODE_ENV=production node dist/index.js
+node:internal/modules/cjs/loader:1459
+  throw err;
+  ^
+Error: Cannot find module '/opt/render/project/src/dist/index.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1456:15)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1066:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1071:22)
+    at Module._load (node:internal/modules/cjs/loader:1242:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+Node.js v24.14.1
+ ELIFECYCLE  Command failed with exit code 1.

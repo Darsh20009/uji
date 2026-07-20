@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: uji-matcha
+    runtime: node
+    region: frankfurt  # أقرب منطقة للسعودية
+    plan: starter
+    buildCommand: npm install && npm run build
+    startCommand: node dist/index.js
+    healthCheckPath: /api/settings
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false   # تُدخله يدوياً في Render dashboard
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ADMIN_PHONE
+        value: "0552469643"
+      - key: CPANEL_SMTP_HOST
+        value: server222.web-hosting.com
+      - key: CPANEL_SMTP_PORT
+        value: "465"
+      - key: CPANEL_SMTP_USER
+        value: info@qirox.online
+      - key: CPANEL_USERNAME
+        value: rfpeddku
+      - key: SMTP_PASS
+        sync: false   # تُدخله يدوياً في Render dashboard

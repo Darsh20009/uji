@@ -1,0 +1,1 @@
+- [UJI design system](uji-design-system.md) — brand colors, fonts, logo assets, email (cPanel SMTP), SEO/AEO schemas, admin auth bootstrap, Render deployment config.
