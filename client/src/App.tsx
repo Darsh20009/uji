@@ -4,6 +4,8 @@ import SplashScreen from "./components/SplashScreen";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import AuthModal from "./components/AuthModal";
+import MobileBottomNav from "./components/MobileBottomNav";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { AuthModalProvider } from "./context/AuthModalContext";
 import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
@@ -11,6 +13,8 @@ import ProductDetailPage from "./pages/ProductDetailPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import AdminPage from "./pages/AdminPage";
+import PolicyPage from "./pages/PolicyPage";
+import WholesalePage from "./pages/WholesalePage";
 import { Link } from "wouter";
 
 export default function App() {
@@ -31,36 +35,56 @@ export default function App() {
   if (showSplash) return <SplashScreen onDone={() => { setShowSplash(false); sessionStorage.setItem("uji-splash","1"); }} />;
 
   return (
-    <AuthModalProvider>
-      <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "#F2EADB" }}>
-        {!isAdmin && <Navbar />}
-        <main style={{ flex: 1 }}>
-          <Switch>
-            <Route path="/" component={HomePage} />
-            <Route path="/products" component={ProductsPage} />
-            <Route path="/products/:id" component={ProductDetailPage} />
-            <Route path="/cart" component={CartPage} />
-            <Route path="/checkout" component={CheckoutPage} />
-            <Route path="/admin" component={AdminPage} />
-            <Route path="/admin/:tab" component={AdminPage} />
-            <Route>
-              <div style={{
-                minHeight: "80vh", display: "flex", alignItems: "center",
-                justifyContent: "center", flexDirection: "column", gap: "2rem",
-                background: "#F2EADB",
-              }}>
-                <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "8rem", fontWeight: 300, color: "#C8BBA4", lineHeight: 1 }}>404</p>
-                <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.9rem", color: "#9BA17B" }}>الصفحة غير موجودة</p>
-                <Link href="/" className="btn-primary">العودة للرئيسية</Link>
-              </div>
-            </Route>
-          </Switch>
-        </main>
-        {!isAdmin && <Footer />}
+    <ErrorBoundary>
+      <AuthModalProvider>
+        <div style={{
+          minHeight: "100vh", display: "flex", flexDirection: "column",
+          background: "#F2EADB",
+          // Bottom padding for mobile nav
+          paddingBottom: isAdmin ? 0 : "env(safe-area-inset-bottom, 0px)",
+        }}>
+          {!isAdmin && <Navbar />}
+          <main style={{ flex: 1 }}>
+            <Switch>
+              <Route path="/" component={HomePage} />
+              <Route path="/products" component={ProductsPage} />
+              <Route path="/products/:id" component={ProductDetailPage} />
+              <Route path="/cart" component={CartPage} />
+              <Route path="/checkout" component={CheckoutPage} />
+              <Route path="/policy" component={PolicyPage} />
+              <Route path="/wholesale" component={WholesalePage} />
+              <Route path="/shipping">
+                {() => { window.location.href = "/policy"; return null; }}
+              </Route>
+              <Route path="/returns">
+                {() => { window.location.href = "/policy"; return null; }}
+              </Route>
+              <Route path="/admin" component={AdminPage} />
+              <Route path="/admin/:tab" component={AdminPage} />
+              {/* Catch-all 404 */}
+              <Route>
+                <div style={{
+                  minHeight: "80vh", display: "flex", alignItems: "center",
+                  justifyContent: "center", flexDirection: "column", gap: "2rem",
+                  background: "#F2EADB",
+                }}>
+                  <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "8rem", fontWeight: 300, color: "#C8BBA4", lineHeight: 1 }}>404</p>
+                  <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.9rem", color: "#9BA17B" }}>الصفحة غير موجودة</p>
+                  <Link href="/" style={{
+                    background: "#1F3929", color: "#F2EADB",
+                    padding: "0.875rem 2.5rem", textDecoration: "none",
+                    fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.9rem",
+                  }}>العودة للرئيسية</Link>
+                </div>
+              </Route>
+            </Switch>
+          </main>
 
-        {/* Auth modal — rendered at root so it works on every page */}
-        {!isAdmin && <AuthModal />}
-      </div>
-    </AuthModalProvider>
+          {!isAdmin && <Footer />}
+          {!isAdmin && <MobileBottomNav />}
+          {!isAdmin && <AuthModal />}
+        </div>
+      </AuthModalProvider>
+    </ErrorBoundary>
   );
 }

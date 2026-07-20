@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { X, Eye, EyeOff, User, LogOut, ArrowRight, Mail } from "lucide-react";
+import { X, Eye, EyeOff, User, LogOut, ArrowRight, Mail, Briefcase } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { useAuthModal } from "../context/AuthModalContext";
 import { api } from "../lib/api";
@@ -91,18 +91,21 @@ export default function AuthModal() {
   const { isOpen, initialTab, closeAuth } = useAuthModal();
   const { user, login, register, logout }  = useAuth();
 
-  const [view,    setView]    = useState<View>("login");
-  const [name,    setName]    = useState("");
-  const [phone,   setPhone]   = useState("");
-  const [country, setCountry] = useState(COUNTRIES[0]);
-  const [pass,    setPass]    = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [otp,     setOtp]     = useState("");
-  const [newPass, setNewPass] = useState("");
-  const [newConf, setNewConf] = useState("");
-  const [error,   setError]   = useState("");
-  const [success, setSuccess] = useState("");
-  const [busy,    setBusy]    = useState(false);
+  const [view,       setView]       = useState<View>("login");
+  const [name,       setName]       = useState("");
+  const [phone,      setPhone]      = useState("");
+  const [email,      setEmail]      = useState("");
+  const [country,    setCountry]    = useState(COUNTRIES[0]);
+  const [pass,       setPass]       = useState("");
+  const [confirm,    setConfirm]    = useState("");
+  const [otp,        setOtp]        = useState("");
+  const [newPass,    setNewPass]    = useState("");
+  const [newConf,    setNewConf]    = useState("");
+  const [isEmployee, setIsEmployee] = useState(false);
+  const [jobTitle,   setJobTitle]   = useState("");
+  const [error,      setError]      = useState("");
+  const [success,    setSuccess]    = useState("");
+  const [busy,       setBusy]       = useState(false);
 
   /* ── open → sync view ── */
   useEffect(() => {
@@ -126,8 +129,8 @@ export default function AuthModal() {
   }, [isOpen]);
 
   const clear = useCallback(() => {
-    setName(""); setPhone(""); setPass(""); setConfirm("");
-    setOtp(""); setNewPass(""); setNewConf("");
+    setName(""); setPhone(""); setEmail(""); setPass(""); setConfirm("");
+    setOtp(""); setNewPass(""); setNewConf(""); setIsEmployee(false); setJobTitle("");
     setError(""); setSuccess("");
     setCountry(COUNTRIES[0]);
   }, []);
@@ -159,8 +162,18 @@ export default function AuthModal() {
     if (pass !== confirm) { setError("كلمتا المرور غير متطابقتين"); return; }
     setBusy(true);
     try {
-      await register.mutateAsync({ name: name.trim(), phone: phone.trim(), password: pass });
-      setSuccess("تم إنشاء حسابك بنجاح — أهلاً بك في UJI MATCHA ✦");
+      await register.mutateAsync({
+        name: name.trim(),
+        phone: phone.trim(),
+        password: pass,
+        email: email.trim() || undefined,
+        role: isEmployee ? "employee" : "customer",
+        jobTitle: isEmployee ? jobTitle.trim() : undefined,
+      } as any);
+      setSuccess(isEmployee
+        ? "تم إنشاء حساب الموظف بنجاح — بانتظار موافقة المدير ✦"
+        : "تم إنشاء حسابك بنجاح — أهلاً بك في UJI MATCHA ✦"
+      );
       setTimeout(() => { closeAuth(); clear(); }, 1200);
     } catch (err: any) {
       setError(err.message || "حدث خطأ أثناء إنشاء الحساب");
@@ -207,7 +220,7 @@ export default function AuthModal() {
 
   if (!isOpen) return null;
 
-  /* ════════ RENDER ════════ */
+  /* ════ RENDER ════ */
   return (
     <>
       {/* backdrop */}
@@ -221,15 +234,15 @@ export default function AuthModal() {
         }}
       />
 
-      {/* popup — centered */}
+      {/* popup */}
       <div
         role="dialog" aria-modal="true"
         style={{
           position: "fixed",
           top: "50%", left: "50%",
           transform: "translate(-50%, -50%)",
-          width: "min(480px, calc(100vw - 32px))",
-          maxHeight: "min(680px, calc(100vh - 40px))",
+          width: "min(500px, calc(100vw - 32px))",
+          maxHeight: "min(700px, calc(100vh - 40px))",
           zIndex: 2001,
           background: "#FDFAF5",
           boxShadow: "0 32px 80px rgba(0,0,0,0.28)",
@@ -247,7 +260,6 @@ export default function AuthModal() {
           display: "flex", flexDirection: "column", alignItems: "center",
           gap: 10, flexShrink: 0, position: "relative",
         }}>
-          {/* close */}
           <button
             onClick={closeAuth}
             style={{
@@ -262,96 +274,60 @@ export default function AuthModal() {
             <X size={14} strokeWidth={2.5} />
           </button>
 
-          {/* logo — white transparent on dark green */}
           <img
             src="/assets/brand/uji-logo-white-transparent.png"
             alt="UJI MATCHA"
             style={{ height: 48, objectFit: "contain", display: "block" }}
             onError={e => {
-              // fallback text if image broken
               (e.currentTarget as HTMLImageElement).style.display = "none";
               const next = e.currentTarget.nextElementSibling as HTMLElement;
               if (next) next.style.display = "block";
             }}
           />
-          {/* text fallback */}
-          <span style={{
-            display: "none",
-            fontFamily: "'Cormorant Garamond', serif",
-            fontSize: "1.8rem", fontWeight: 300, letterSpacing: "0.3em",
-            color: "#F2EADB",
-          }}>UJI</span>
-
+          <span style={{ display: "none", fontFamily: "'Cormorant Garamond', serif", fontSize: "1.8rem", fontWeight: 300, letterSpacing: "0.3em", color: "#F2EADB" }}>UJI</span>
           <div style={{ width: 28, height: 1, background: "#9BA17B" }} />
-          <span style={{
-            fontFamily: "'Inter', sans-serif", fontSize: "0.5rem",
-            letterSpacing: "0.42em", color: "#9BA17B",
-          }}>CEREMONIAL GRADE MATCHA</span>
+          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: "0.5rem", letterSpacing: "0.42em", color: "#9BA17B" }}>CEREMONIAL GRADE MATCHA</span>
         </div>
 
-        {/* ══════════════════ LOGGED-IN STATE ══════════════════ */}
+        {/* ══════════ LOGGED-IN STATE ══════════ */}
         {user ? (
-          <div style={{
-            flex: 1, display: "flex", flexDirection: "column",
-            alignItems: "center", justifyContent: "center",
-            gap: 20, padding: "2.5rem 2rem",
-          }}>
-            <div style={{
-              width: 68, height: 68, borderRadius: "50%",
-              background: "#EDE8DF", border: "2px solid #C8BBA4",
-              display: "flex", alignItems: "center", justifyContent: "center",
-            }}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 20, padding: "2.5rem 2rem" }}>
+            <div style={{ width: 68, height: 68, borderRadius: "50%", background: "#EDE8DF", border: "2px solid #C8BBA4", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <User size={28} strokeWidth={1} color="#9BA17B" />
             </div>
             <div style={{ textAlign: "center" }}>
-              <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.35rem",
-                          fontWeight: 400, color: "#1C201B", margin: "0 0 4px" }}>
-                {(user as any).name || "مرحباً"}
-              </p>
-              <p style={{ fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif",
-                          fontSize: "0.82rem", color: "#9BA17B", margin: 0, direction: "ltr" }}>
-                {(user as any).phone}
-              </p>
+              <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.35rem", fontWeight: 400, color: "#1C201B", margin: "0 0 4px" }}>{(user as any).name || "مرحباً"}</p>
+              <p style={{ fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif", fontSize: "0.82rem", color: "#9BA17B", margin: 0, direction: "ltr" }}>{(user as any).phone}</p>
+              {(user as any).role === "employee" && (
+                <span style={{ display: "inline-block", marginTop: 6, background: "rgba(31,57,41,0.1)", color: "#1F3929", fontSize: "0.72rem", padding: "3px 10px", fontFamily: "'IBM Plex Sans Arabic',sans-serif" }}>موظف</span>
+              )}
             </div>
+            {/* Loyalty points */}
+            {(user as any).loyaltyPoints > 0 && (
+              <div style={{ background: "#F2F7F3", border: "1px solid #A8C8B0", padding: "10px 20px", textAlign: "center" }}>
+                <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.82rem", color: "#1F3929", margin: 0 }}>
+                  نقاط الولاء: <strong>{(user as any).loyaltyPoints}</strong> ✦ مستوى {(user as any).loyaltyTier === "bronze" ? "برونزي" : (user as any).loyaltyTier === "silver" ? "فضي" : (user as any).loyaltyTier === "gold" ? "ذهبي" : "بلاتيني"}
+                </p>
+              </div>
+            )}
             <div style={{ width: "100%", background: "#EDE8DF", height: 1 }} />
-            <button
-              onClick={doLogout}
-              style={{
-                display: "flex", alignItems: "center", gap: 8,
-                background: "none", border: "1px solid #C8BBA4",
-                padding: "11px 28px", cursor: "pointer",
-                fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif",
-                fontSize: "0.88rem", color: "#1C201B", transition: "all 0.2s",
-              }}
+            <button onClick={doLogout} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "1px solid #C8BBA4", padding: "11px 28px", cursor: "pointer", fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif", fontSize: "0.88rem", color: "#1C201B", transition: "all 0.2s" }}
               onMouseEnter={e => { const b = e.currentTarget; b.style.background="#1F3929"; b.style.color="#F2EADB"; b.style.borderColor="#1F3929"; }}
-              onMouseLeave={e => { const b = e.currentTarget; b.style.background="none"; b.style.color="#1C201B"; b.style.borderColor="#C8BBA4"; }}
-            >
-              <LogOut size={14} strokeWidth={1.5} />
-              تسجيل الخروج
+              onMouseLeave={e => { const b = e.currentTarget; b.style.background="none"; b.style.color="#1C201B"; b.style.borderColor="#C8BBA4"; }}>
+              <LogOut size={14} strokeWidth={1.5} />تسجيل الخروج
             </button>
           </div>
         ) : (
 
-        /* ══════════════════ AUTH FORMS ══════════════════ */
+        /* ══════════ AUTH FORMS ══════════ */
         <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
 
-          {/* ── Tabs (login / register) — hidden on forgot/otp ── */}
+          {/* ── Tabs ── */}
           {(view === "login" || view === "register") && (
-            <div style={{
-              display: "grid", gridTemplateColumns: "1fr 1fr",
-              borderBottom: "1px solid rgba(200,187,164,0.4)",
-              flexShrink: 0,
-            }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", borderBottom: "1px solid rgba(200,187,164,0.4)", flexShrink: 0 }}>
               {(["login", "register"] as const).map(t => (
                 <button key={t} type="button" onClick={() => go(t)}
-                  style={{
-                    padding: "0.85rem", background: "none", border: "none",
-                    borderBottom: `2px solid ${view === t ? "#16281D" : "transparent"}`,
-                    fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif",
-                    fontSize: "0.82rem", color: view === t ? "#16281D" : "#9BA17B",
-                    cursor: "pointer", transition: "all 0.2s",
-                    fontWeight: view === t ? 600 : 400,
-                  }}>
+                  style={{ padding: "0.85rem", background: "none", border: "none", borderBottom: `2px solid ${view === t ? "#16281D" : "transparent"}`, fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif", fontSize: "0.82rem", color: view === t ? "#16281D" : "#9BA17B", cursor: "pointer", transition: "all 0.2s", fontWeight: view === t ? 600 : 400 }}>
                   {t === "login" ? "تسجيل الدخول" : "حساب جديد"}
                 </button>
               ))}
@@ -360,18 +336,11 @@ export default function AuthModal() {
 
           {/* ── back header for forgot / otp ── */}
           {(view === "forgot" || view === "otp") && (
-            <div style={{
-              display: "flex", alignItems: "center", gap: 10,
-              padding: "14px 20px", borderBottom: "1px solid rgba(200,187,164,0.3)",
-              flexShrink: 0,
-            }}>
-              <button type="button" onClick={() => go("login")}
-                style={{ background: "none", border: "none", cursor: "pointer",
-                         color: "#9BA17B", display: "flex", alignItems: "center", padding: 0 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "14px 20px", borderBottom: "1px solid rgba(200,187,164,0.3)", flexShrink: 0 }}>
+              <button type="button" onClick={() => go("login")} style={{ background: "none", border: "none", cursor: "pointer", color: "#9BA17B", display: "flex", alignItems: "center", padding: 0 }}>
                 <ArrowRight size={16} strokeWidth={1.5} />
               </button>
-              <span style={{ fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif",
-                             fontSize: "0.82rem", color: "#1C201B", fontWeight: 600 }}>
+              <span style={{ fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif", fontSize: "0.82rem", color: "#1C201B", fontWeight: 600 }}>
                 {view === "forgot" ? "نسيت كلمة المرور" : "إدخال رمز التحقق"}
               </span>
             </div>
@@ -387,29 +356,14 @@ export default function AuthModal() {
               <form onSubmit={doLogin} style={{ display: "flex", flexDirection: "column", gap: "1.1rem" }}>
                 <div style={F}>
                   <label style={LBL}>رقم الجوال</label>
-                  <PhoneInput theme="light" value={phone}
-                    onChange={(n,c) => { setPhone(n); setCountry(c); }}
-                    countryCode={country.code} onCountryChange={setCountry}
-                    required style={{ height: 48 }} />
+                  <PhoneInput theme="light" value={phone} onChange={(n,c) => { setPhone(n); setCountry(c); }} countryCode={country.code} onCountryChange={setCountry} required style={{ height: 48 }} />
                 </div>
                 <PwdField label="كلمة المرور" value={pass} onChange={setPass} required />
-
-                {/* forgot link */}
                 <div style={{ textAlign: "left" }}>
-                  <button type="button" onClick={() => go("forgot")}
-                    style={{ ...LINK, fontSize: "0.75rem", color: "#9BA17B", textDecoration: "none",
-                             borderBottom: "1px dashed #C8BBA4" }}>
-                    نسيت كلمة المرور؟
-                  </button>
+                  <button type="button" onClick={() => go("forgot")} style={{ ...LINK, fontSize: "0.75rem", color: "#9BA17B", textDecoration: "none", borderBottom: "1px dashed #C8BBA4" }}>نسيت كلمة المرور؟</button>
                 </div>
-
-                <button type="submit" disabled={busy} style={BTN(busy)}>
-                  {busy ? "جار الدخول..." : "دخول ✦"}
-                </button>
-                <p style={MUTED}>
-                  ليس لديك حساب؟{" "}
-                  <button type="button" onClick={() => go("register")} style={LINK}>أنشئ حساباً</button>
-                </p>
+                <button type="submit" disabled={busy} style={BTN(busy)}>{busy ? "جار الدخول..." : "دخول ✦"}</button>
+                <p style={MUTED}>ليس لديك حساب؟{" "}<button type="button" onClick={() => go("register")} style={LINK}>أنشئ حساباً</button></p>
               </form>
             )}
 
@@ -418,107 +372,93 @@ export default function AuthModal() {
               <form onSubmit={doRegister} style={{ display: "flex", flexDirection: "column", gap: "1.1rem" }}>
                 <div style={F}>
                   <label style={LBL}>الاسم الكامل</label>
-                  <input style={INP} value={name} onChange={e => setName(e.target.value)}
-                    placeholder="محمد العمري" required autoComplete="name" />
+                  <input style={INP} value={name} onChange={e => setName(e.target.value)} placeholder="محمد العمري" required autoComplete="name" />
                 </div>
                 <div style={F}>
                   <label style={LBL}>رقم الجوال</label>
-                  <PhoneInput theme="light" value={phone}
-                    onChange={(n,c) => { setPhone(n); setCountry(c); }}
-                    countryCode={country.code} onCountryChange={setCountry}
-                    required style={{ height: 48 }} />
+                  <PhoneInput theme="light" value={phone} onChange={(n,c) => { setPhone(n); setCountry(c); }} countryCode={country.code} onCountryChange={setCountry} required style={{ height: 48 }} />
                 </div>
-                <PwdField label="كلمة المرور" value={pass}
-                  onChange={setPass} placeholder="٦ أحرف على الأقل" required />
-                <PwdField label="تأكيد كلمة المرور" value={confirm}
-                  onChange={setConfirm} placeholder="أعد كتابة كلمة المرور" required />
+                <div style={F}>
+                  <label style={LBL}>البريد الإلكتروني <span style={{ color: "#C8BBA4" }}>(اختياري)</span></label>
+                  <input style={INP} value={email} onChange={e => setEmail(e.target.value)} placeholder="example@email.com" type="email" />
+                </div>
+                <PwdField label="كلمة المرور" value={pass} onChange={setPass} placeholder="٦ أحرف على الأقل" required />
+                <PwdField label="تأكيد كلمة المرور" value={confirm} onChange={setConfirm} placeholder="أعد كتابة كلمة المرور" required />
 
-                <button type="submit" disabled={busy} style={BTN(busy)}>
-                  {busy ? "جار الإنشاء..." : "إنشاء الحساب ✦"}
-                </button>
-                <p style={MUTED}>
-                  لديك حساب؟{" "}
-                  <button type="button" onClick={() => go("login")} style={LINK}>سجّل دخولك</button>
-                </p>
+                {/* Employee toggle */}
+                <div style={{ border: "1px solid rgba(200,187,164,0.4)", padding: "12px 16px" }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }}>
+                    <div
+                      onClick={() => setIsEmployee(v => !v)}
+                      style={{ width: 40, height: 22, borderRadius: 11, background: isEmployee ? "#1F3929" : "#C8BBA4", position: "relative", transition: "background 0.2s", flexShrink: 0 }}>
+                      <div style={{ position: "absolute", top: 2, width: 18, height: 18, background: "#fff", borderRadius: "50%", boxShadow: "0 1px 3px rgba(0,0,0,0.2)", transition: "transform 0.2s", transform: isEmployee ? "translateX(2px)" : "translateX(20px)" }} />
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <Briefcase size={14} strokeWidth={1.5} color="#9BA17B" />
+                      <span style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.82rem", color: "#1C201B" }}>
+                        التسجيل كموظف
+                      </span>
+                    </div>
+                  </label>
+                  {isEmployee && (
+                    <div style={{ marginTop: 12 }}>
+                      <label style={LBL}>المسمى الوظيفي</label>
+                      <input style={{ ...INP, marginTop: 6 }} value={jobTitle} onChange={e => setJobTitle(e.target.value)} placeholder="مثال: مسؤول خدمة عملاء" />
+                    </div>
+                  )}
+                </div>
+
+                <button type="submit" disabled={busy} style={BTN(busy)}>{busy ? "جار الإنشاء..." : isEmployee ? "إنشاء حساب موظف ✦" : "إنشاء الحساب ✦"}</button>
+                <p style={MUTED}>لديك حساب؟{" "}<button type="button" onClick={() => go("login")} style={LINK}>سجّل دخولك</button></p>
               </form>
             )}
 
-            {/* ════ FORGOT — enter phone ════ */}
+            {/* ════ FORGOT ════ */}
             {view === "forgot" && (
               <form onSubmit={doForgot} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                <p style={{
-                  fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif",
-                  fontSize: "0.84rem", color: "#6B7280", lineHeight: 1.8,
-                  margin: "0 0 4px", direction: "rtl",
-                }}>
+                <p style={{ fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif", fontSize: "0.84rem", color: "#6B7280", lineHeight: 1.8, margin: "0 0 4px", direction: "rtl" }}>
                   أدخل رقم جوالك المسجل وسنرسل رمز التحقق إلى بريدك الإلكتروني.
                 </p>
                 <div style={F}>
                   <label style={LBL}>رقم الجوال المسجل</label>
-                  <PhoneInput theme="light" value={phone}
-                    onChange={(n,c) => { setPhone(n); setCountry(c); }}
-                    countryCode={country.code} onCountryChange={setCountry}
-                    required style={{ height: 48 }} />
+                  <PhoneInput theme="light" value={phone} onChange={(n,c) => { setPhone(n); setCountry(c); }} countryCode={country.code} onCountryChange={setCountry} required style={{ height: 48 }} />
                 </div>
-                <button type="submit" disabled={busy} style={BTN(busy)}>
-                  {busy ? "جار الإرسال..." : "إرسال رمز التحقق ✦"}
-                </button>
-                <div style={{
-                  display: "flex", alignItems: "flex-start", gap: 8,
-                  background: "#F0EBE1", padding: "12px 14px", direction: "rtl",
-                }}>
+                <button type="submit" disabled={busy} style={BTN(busy)}>{busy ? "جار الإرسال..." : "إرسال رمز التحقق ✦"}</button>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 8, background: "#F0EBE1", padding: "12px 14px", direction: "rtl" }}>
                   <Mail size={15} strokeWidth={1.5} color="#9BA17B" style={{ flexShrink: 0, marginTop: 2 }} />
-                  <span style={{ fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif",
-                                 fontSize: "0.78rem", color: "#9BA17B", lineHeight: 1.7 }}>
-                    تأكد من وجود بريد إلكتروني مرتبط بحسابك — إن لم يكن موجوداً تواصل مع الدعم
+                  <span style={{ fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif", fontSize: "0.78rem", color: "#9BA17B", lineHeight: 1.7 }}>
+                    تأكد من وجود بريد إلكتروني مرتبط بحسابك
                   </span>
                 </div>
               </form>
             )}
 
-            {/* ════ OTP + NEW PASSWORD ════ */}
+            {/* ════ OTP ════ */}
             {view === "otp" && (
               <form onSubmit={doReset} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                <p style={{
-                  fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif",
-                  fontSize: "0.84rem", color: "#6B7280", lineHeight: 1.8, margin: 0, direction: "rtl",
-                }}>
+                <p style={{ fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif", fontSize: "0.84rem", color: "#6B7280", lineHeight: 1.8, margin: 0, direction: "rtl" }}>
                   أدخل رمز التحقق المرسل لبريدك ثم اختر كلمة مرور جديدة.
                 </p>
                 <div style={F}>
                   <label style={LBL}>رمز التحقق (٦ أرقام)</label>
-                  <input
-                    style={{ ...INP, direction: "ltr", textAlign: "center",
-                             fontSize: "1.4rem", letterSpacing: "0.35em", fontFamily: "monospace" }}
+                  <input style={{ ...INP, direction: "ltr", textAlign: "center", fontSize: "1.4rem", letterSpacing: "0.35em", fontFamily: "monospace" }}
                     value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                    placeholder="000000" required maxLength={6} inputMode="numeric"
-                  />
+                    placeholder="000000" required maxLength={6} inputMode="numeric" />
                 </div>
-                <PwdField label="كلمة المرور الجديدة" value={newPass}
-                  onChange={setNewPass} placeholder="٦ أحرف على الأقل" required />
-                <PwdField label="تأكيد كلمة المرور" value={newConf}
-                  onChange={setNewConf} placeholder="أعد كتابة كلمة المرور" required />
-                <button type="submit" disabled={busy} style={BTN(busy)}>
-                  {busy ? "جار التحقق..." : "تأكيد وتغيير كلمة المرور ✦"}
-                </button>
-                <p style={MUTED}>
-                  لم يصلك الرمز؟{" "}
-                  <button type="button" onClick={() => go("forgot")} style={LINK}>إعادة الإرسال</button>
-                </p>
+                <PwdField label="كلمة المرور الجديدة" value={newPass} onChange={setNewPass} placeholder="٦ أحرف على الأقل" required />
+                <PwdField label="تأكيد كلمة المرور" value={newConf} onChange={setNewConf} placeholder="أعد كتابة كلمة المرور" required />
+                <button type="submit" disabled={busy} style={BTN(busy)}>{busy ? "جار التحقق..." : "تأكيد وتغيير كلمة المرور ✦"}</button>
+                <p style={MUTED}>لم يصلك الرمز؟{" "}<button type="button" onClick={() => go("forgot")} style={LINK}>إعادة الإرسال</button></p>
               </form>
             )}
           </div>
 
           {/* footer note */}
           {(view === "login" || view === "register") && (
-            <div style={{
-              padding: "0.9rem 1.75rem",
-              borderTop: "1px solid rgba(200,187,164,0.3)", flexShrink: 0,
-            }}>
-              <p style={{ fontSize: "0.68rem", color: "#C8BBA4", margin: 0,
-                          textAlign: "center", fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif",
-                          lineHeight: 1.7 }}>
-                بتسجيل حسابك توافق على سياسة الخصوصية وشروط الاستخدام
+            <div style={{ padding: "0.9rem 1.75rem", borderTop: "1px solid rgba(200,187,164,0.3)", flexShrink: 0 }}>
+              <p style={{ fontSize: "0.68rem", color: "#C8BBA4", margin: 0, textAlign: "center", fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif", lineHeight: 1.7 }}>
+                بتسجيل حسابك توافق على{" "}
+                <a href="/policy" style={{ color: "#9BA17B" }}>سياسة الخصوصية وشروط الاستخدام</a>
               </p>
             </div>
           )}

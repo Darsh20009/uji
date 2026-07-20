@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { useCart } from "../hooks/useCart";
 import { useAuth } from "../hooks/useAuth";
 import { api } from "../lib/api";
-import { CheckCircle, ShoppingBag, Tag, X, Star } from "lucide-react";
+import { CheckCircle, ShoppingBag, Tag, X, Star, CreditCard } from "lucide-react";
 import PhoneInput, { COUNTRIES, type Country } from "../components/PhoneInput";
 
 const inp: React.CSSProperties = {
@@ -47,8 +48,19 @@ export default function CheckoutPage() {
   const [couponData, setCouponData] = useState<{ code: string; discount: number; type: string; value: number } | null>(null);
   const [couponError, setCouponError] = useState("");
 
+  // Fetch shipping settings from server
+  const { data: settings } = useQuery({
+    queryKey: ["settings"],
+    queryFn: () => api.get("/settings"),
+    staleTime: 5 * 60 * 1000,
+  });
+  const shippingFeeValue = Number((settings as any)?.shippingFee ?? 30);
+  const shippingThreshold = Number((settings as any)?.shippingFreeThreshold ?? 200);
+  const geideaEnabled = (settings as any)?._geideaEnabled === true;
+  const adminWhatsapp = (settings as any)?.whatsapp || "966552469643";
+
   const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
-  const shipping = subtotal >= 200 ? 0 : 30;
+  const shipping = subtotal >= shippingThreshold ? 0 : shippingFeeValue;
   const couponDiscount = couponData?.discount || 0;
   const total = Math.max(0, subtotal - couponDiscount + shipping);
   const pointsToEarn = Math.floor(total / 10);
@@ -77,8 +89,14 @@ export default function CheckoutPage() {
         paymentMethod: form.paymentMethod,
         couponCode: couponData?.code,
         notes: form.notes,
-      });
-      setOrder(result); clear();
+      }) as any;
+      // Geidea redirect
+      if (result.geideaRedirectUrl) {
+        clear();
+        window.location.href = result.geideaRedirectUrl;
+        return;
+      }
+      setOrder(result.order || result); clear();
     } catch (e: any) { setError(e.message || "حدث خطأ، حاول مرة أخرى"); }
     setLoading(false);
   };
@@ -240,6 +258,7 @@ export default function CheckoutPage() {
               <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                 {[
                   { val: "cod", label: "الدفع عند الاستلام", sub: "نقداً أو بطاقة عند وصول الطلب" },
+                  ...(geideaEnabled ? [{ val: "geidea", label: "بطاقة ائتمانية", sub: "Visa / Mastercard — عبر Geidea" }] : []),
                   { val: "stcpay", label: "STC Pay", sub: "حوّل على 0552469643" },
                   { val: "bank", label: "تحويل بنكي", sub: "سيتم إرسال تفاصيل الحساب عبر واتساب" },
                 ].map(opt => (

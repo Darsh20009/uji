@@ -33,14 +33,19 @@ const OrderSchema = new Schema({
   items: [{ product: { type: Schema.Types.ObjectId, ref: "Product" }, name: String, price: Number, qty: Number }],
   subtotal: Number, discount: { type: Number, default: 0 },
   shipping: Number, total: Number,
-  status: { type: String, enum: ["pending","confirmed","shipped","delivered","cancelled"], default: "pending" },
+  status: {
+    type: String,
+    enum: ["pending", "pending_payment", "confirmed", "shipped", "delivered", "cancelled"],
+    default: "pending"
+  },
   paymentMethod: { type: String, default: "cod" },
+  paymentStatus: { type: String, enum: ["unpaid", "paid", "refunded"], default: "unpaid" },
   couponCode: String, notes: String,
   pointsEarned: { type: Number, default: 0 },
 }, { timestamps: true });
 export const Order = mongoose.model("Order", OrderSchema);
 
-/* ─── Customer (expanded with roles & loyalty) ───────────────────── */
+/* ─── Customer ───────────────────────────────────────────────────── */
 const CustomerSchema = new Schema({
   name: String,
   phone: { type: String, unique: true },
@@ -74,9 +79,9 @@ export const Review = mongoose.model("Review", ReviewSchema);
 const CouponSchema = new Schema({
   code: { type: String, unique: true, uppercase: true },
   type: { type: String, enum: ["percent", "fixed"], default: "percent" },
-  value: Number,           // percent: 0-100, fixed: SAR amount
+  value: Number,
   minOrder: { type: Number, default: 0 },
-  maxUses: { type: Number, default: 0 },   // 0 = unlimited
+  maxUses: { type: Number, default: 0 },
   usedCount: { type: Number, default: 0 },
   expiresAt: Date,
   isActive: { type: Boolean, default: true },

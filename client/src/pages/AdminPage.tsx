@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import PhoneInput, { COUNTRIES, type Country } from "../components/PhoneInput";
 
-type Tab = "dashboard" | "products" | "orders" | "settings";
+type Tab = "dashboard" | "products" | "orders" | "customers" | "settings";
 const ADMIN_PHONE = "0552469643";
 
 /* ─── Status maps ─── */
@@ -195,6 +195,7 @@ export default function AdminPage() {
     { key: "dashboard" as Tab, label: "لوحة التحكم", icon: <LayoutDashboard size={16} /> },
     { key: "products"  as Tab, label: "المنتجات",    icon: <Package size={16} /> },
     { key: "orders"    as Tab, label: "الطلبات",     icon: <ShoppingBag size={16} /> },
+    { key: "customers" as Tab, label: "العملاء والموظفون", icon: <Users size={16} /> },
     { key: "settings"  as Tab, label: "الإعدادات",   icon: <Settings2 size={16} /> },
   ];
 
@@ -281,6 +282,7 @@ export default function AdminPage() {
           {tab === "dashboard" && <AdminDashboard onNavigate={setTab} />}
           {tab === "products"  && <AdminProducts />}
           {tab === "orders"    && <AdminOrders />}
+          {tab === "customers" && <AdminCustomers />}
           {tab === "settings"  && <AdminSettings />}
         </main>
       </div>
@@ -725,6 +727,150 @@ function AdminOrders() {
   );
 }
 
+/* ─── Customers & Employees ─── */
+function AdminCustomers() {
+  const qc = useQueryClient();
+  const [roleFilter, setRoleFilter] = useState<"all" | "customer" | "employee">("all");
+  const [selected, setSelected] = useState<any>(null);
+  const [saving, setSaving] = useState(false);
+
+  const { data: customers = [] } = useQuery({
+    queryKey: ["admin-customers", roleFilter],
+    queryFn: () => api.get(`/admin/customers${roleFilter !== "all" ? `?role=${roleFilter}` : ""}`),
+  });
+
+  const upd = useMutation({
+    mutationFn: ({ id, ...data }: any) => api.put(`/admin/customers/${id}`, data),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-customers"] }); setSelected(null); },
+  });
+  const del = useMutation({
+    mutationFn: (id: string) => api.delete(`/admin/customers/${id}`),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-customers"] }); setSelected(null); },
+  });
+
+  const counts = {
+    all: (customers as any[]).length,
+    customer: (customers as any[]).filter((c: any) => c.role === "customer").length,
+    employee: (customers as any[]).filter((c: any) => c.role === "employee").length,
+  };
+
+  const ROLE_AR: Record<string, string> = { customer: "عميل", employee: "موظف", admin: "مدير" };
+  const ROLE_COLOR: Record<string, string> = {
+    customer: "bg-blue-50 text-blue-700 border-blue-200",
+    employee: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    admin: "bg-violet-50 text-violet-700 border-violet-200",
+  };
+  const TIER_AR: Record<string, string> = { bronze: "برونزي", silver: "فضي", gold: "ذهبي", platinum: "بلاتيني" };
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div>
+          <h2 className="text-lg font-semibold text-stone-800">العملاء والموظفون</h2>
+          <p className="text-xs text-stone-400 mt-0.5">{counts.customer} عميل · {counts.employee} موظف</p>
+        </div>
+        <div className="flex gap-2">
+          {(["all", "customer", "employee"] as const).map(r => (
+            <button key={r}
+              onClick={() => setRoleFilter(r)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${roleFilter === r ? "bg-[#1F3929] text-[#F2EADB]" : "bg-white border border-stone-200 text-stone-600 hover:bg-stone-50"}`}>
+              {r === "all" ? "الكل" : r === "customer" ? "العملاء" : "الموظفون"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <div className="divide-y divide-stone-50">
+          {(customers as any[]).length === 0 && (
+            <div className="py-16 text-center text-stone-400">
+              <Users size={32} className="mx-auto mb-3 opacity-30" />
+              <p className="text-sm">لا يوجد مستخدمون</p>
+            </div>
+          )}
+          {(customers as any[]).map((c: any) => (
+            <div key={c._id}
+              onClick={() => setSelected(c)}
+              className="px-5 py-4 flex items-center justify-between gap-3 cursor-pointer hover:bg-stone-50 transition-colors">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-semibold text-stone-800 truncate">{c.name}</p>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${ROLE_COLOR[c.role] || "bg-gray-50 text-gray-600 border-gray-200"}`}>
+                    {ROLE_AR[c.role] || c.role}
+                  </span>
+                </div>
+                <p className="text-xs text-stone-400 truncate mt-0.5" dir="ltr">{c.phone}{c.email ? ` · ${c.email}` : ""}</p>
+                {c.jobTitle && <p className="text-xs text-stone-400">{c.jobTitle}</p>}
+              </div>
+              <div className="shrink-0 text-left">
+                <p className="text-xs text-[#9BA17B]">{c.loyaltyPoints || 0} نقطة</p>
+                <p className="text-xs text-stone-400">{TIER_AR[c.loyaltyTier] || ""}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {selected && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={e => e.target === e.currentTarget && setSelected(null)}>
+          <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-stone-100 sticky top-0 bg-white rounded-t-2xl">
+              <div>
+                <h3 className="text-sm font-bold text-stone-800">{selected.name}</h3>
+                <p className="text-xs text-stone-400 mt-0.5">{selected.phone}</p>
+              </div>
+              <button onClick={() => setSelected(null)} className="p-1.5 rounded-lg hover:bg-stone-100 text-stone-400"><X size={17} /></button>
+            </div>
+            <div className="p-5 space-y-4">
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                {[
+                  ["البريد", selected.email || "—"],
+                  ["نقاط الولاء", selected.loyaltyPoints || 0],
+                  ["المستوى", TIER_AR[selected.loyaltyTier] || "—"],
+                  ["إجمالي المشتريات", `${selected.totalSpent?.toFixed(0) || 0} ر.س`],
+                ].map(([k, v]) => (
+                  <div key={k as string} className="bg-stone-50 rounded-lg p-3">
+                    <p className="text-xs text-stone-400">{k}</p>
+                    <p className="text-sm font-semibold text-stone-700 mt-0.5">{v}</p>
+                  </div>
+                ))}
+              </div>
+              <div>
+                <label className="block text-xs text-stone-500 mb-1.5">الدور الوظيفي</label>
+                <select
+                  defaultValue={selected.role}
+                  id={`role-${selected._id}`}
+                  className="w-full h-10 px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none"
+                  style={{ fontFamily: "inherit" }}>
+                  <option value="customer">عميل</option>
+                  <option value="employee">موظف</option>
+                  <option value="admin">مدير</option>
+                </select>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => {
+                    const sel = document.getElementById(`role-${selected._id}`) as HTMLSelectElement;
+                    upd.mutate({ id: selected._id, role: sel?.value || selected.role });
+                  }}
+                  disabled={upd.isPending}
+                  className="flex-1 h-10 rounded-xl bg-[#1F3929] text-[#F2EADB] text-sm hover:bg-[#16281D] disabled:opacity-60">
+                  {upd.isPending ? "جاري..." : "حفظ التعديلات"}
+                </button>
+                <button
+                  onClick={() => { if (confirm(`حذف ${selected.name}؟`)) del.mutate(selected._id); }}
+                  className="h-10 px-4 rounded-xl bg-red-50 text-red-500 text-sm hover:bg-red-100">
+                  حذف
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ─── Settings ─── */
 function AdminSettings() {
   const qc = useQueryClient();
@@ -818,6 +964,57 @@ function AdminSettings() {
             <p className="text-sm text-stone-600">مشترك</p>
             <p className="text-xs text-stone-400">في النشرة البريدية</p>
           </div>
+        </div>
+      </div>
+
+      {/* Geidea */}
+      <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-stone-50 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center">💳</div>
+          <div>
+            <p className="text-sm font-semibold text-stone-700">بوابة الدفع — Geidea</p>
+            <p className="text-xs text-stone-400 mt-0.5">
+              {(settings as any)?._geideaEnabled ? "✅ مفعّلة" : "⚠️ غير مفعّلة — أضف GEIDEA_MERCHANT_KEY و GEIDEA_API_PASSWORD في متغيرات البيئة"}
+            </p>
+          </div>
+        </div>
+        <div className="p-5 grid grid-cols-2 gap-4">
+          {[
+            { label: "Merchant Key", k: "geideaMerchantKey", placeholder: "xxxxxxxx-xxxx-xxxx-xxxx" },
+            { label: "API Base URL (اختياري)", k: "geideaApiBase", placeholder: "https://api.geidea.net" },
+          ].map(({ label, k, placeholder }) => (
+            <div key={k}>
+              <label className={labelCls}>{label}</label>
+              <input className={inputCls} value={(current as any)[k] ?? ""} onChange={e => setForm({ ...current, [k]: e.target.value })} placeholder={placeholder} style={{ fontFamily: "monospace" }} />
+            </div>
+          ))}
+        </div>
+        <p className="px-5 pb-4 text-xs text-stone-400">
+          API Password يُضاف كـ Secret في Replit باسم <code>GEIDEA_API_PASSWORD</code> — لا تُدخله هنا.
+        </p>
+      </div>
+
+      {/* Seed Product */}
+      <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-stone-50 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center">🍵</div>
+          <div>
+            <p className="text-sm font-semibold text-stone-700">تهيئة المنتجات</p>
+            <p className="text-xs text-stone-400 mt-0.5">حذف جميع المنتجات وإضافة كيس الماتشا</p>
+          </div>
+        </div>
+        <div className="p-5">
+          <button
+            onClick={async () => {
+              if (!confirm("سيتم حذف جميع المنتجات الحالية وإضافة كيس الماتشا فقط. هل تريد المتابعة؟")) return;
+              try {
+                await api.post("/admin/seed-matcha-bag", {});
+                alert("✅ تم إضافة كيس الماتشا بنجاح");
+              } catch (e: any) { alert("خطأ: " + e.message); }
+            }}
+            className="h-10 px-5 rounded-xl bg-amber-600 text-white text-sm hover:bg-amber-700 transition-colors">
+            🍃 تهيئة كيس الماتشا
+          </button>
         </div>
       </div>
 

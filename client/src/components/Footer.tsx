@@ -3,7 +3,7 @@ import { Instagram } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer style={{ background: "#16281D", color: "#F2EADB", position: "relative", overflow: "hidden" }}>
+    <footer style={{ background: "#16281D", color: "#F2EADB", position: "relative", overflow: "hidden", paddingBottom: 80 }} className="lg:pb-0">
       {/* Big watermark wordmark */}
       <div style={{
         position: "absolute", bottom: -40, left: "50%", transform: "translateX(-50%)",
@@ -21,7 +21,7 @@ export default function Footer() {
           display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr",
           gap: "3rem", padding: "6rem 0 4rem",
           borderBottom: "1px solid rgba(155,161,123,0.2)",
-        }}>
+        }} className="footer-grid">
           {/* Brand */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
             <img
@@ -51,22 +51,21 @@ export default function Footer() {
           {/* Links */}
           {[
             { title: "المتجر", en: "SHOP", links: [
-              { label: "ماتشا احتفالية", href: "/products" },
-              { label: "الأدوات", href: "/products" },
-              { label: "طقم البداية", href: "/products" },
+              { label: "ماتشا الكيس", href: "/products" },
+              { label: "جميع المنتجات", href: "/products" },
               { label: "العروض", href: "/products" },
             ]},
             { title: "الشركة", en: "COMPANY", links: [
               { label: "قصتنا", href: "/about" },
               { label: "دليل الريتشوال", href: "/ritual" },
               { label: "المجلة", href: "/journal" },
-              { label: "نادي UJI", href: "/club" },
+              { label: "مبيعات الجملة", href: "/wholesale" },
             ]},
             { title: "المساعدة", en: "HELP", links: [
-              { label: "اتصل بنا", href: "/contact" },
-              { label: "الشحن والتوصيل", href: "/shipping" },
-              { label: "الإرجاع", href: "/returns" },
-              { label: "الأسئلة الشائعة", href: "/faq" },
+              { label: "تواصل معنا", href: "/wholesale" },
+              { label: "الشحن والتوصيل", href: "/policy" },
+              { label: "سياسة الإرجاع", href: "/policy" },
+              { label: "سياسة الخصوصية", href: "/policy" },
             ]},
           ].map(({ title, en, links }) => (
             <div key={title}>
@@ -86,7 +85,7 @@ export default function Footer() {
                   <Link key={l.label} href={l.href} style={{
                     fontFamily: "'IBM Plex Sans Arabic', sans-serif",
                     fontSize: "0.82rem", color: "rgba(155,161,123,0.8)",
-                    transition: "color 0.2s",
+                    transition: "color 0.2s", textDecoration: "none",
                   }}>{l.label}</Link>
                 ))}
               </div>
@@ -103,15 +102,19 @@ export default function Footer() {
             fontFamily: "'Inter', sans-serif", fontSize: "0.65rem",
             letterSpacing: "0.1em", color: "rgba(155,161,123,0.5)",
           }}>
-            © 2026 UJI MATCHA — تراك في ريتشوالك القادم
+            © 2026 UJI MATCHA — ريتشوالك اليومي
           </p>
           <div style={{ display: "flex", gap: "2rem" }}>
-            {["سياسة الخصوصية", "الشروط والأحكام"].map(t => (
-              <a key={t} href="#" style={{
+            {[
+              { label: "سياسة الخصوصية", href: "/policy" },
+              { label: "سياسة الاسترجاع", href: "/policy" },
+              { label: "مبيعات الجملة", href: "/wholesale" },
+            ].map(({ label, href }) => (
+              <Link key={label} href={href} style={{
                 fontFamily: "'IBM Plex Sans Arabic', sans-serif",
                 fontSize: "0.65rem", color: "rgba(155,161,123,0.4)",
-                transition: "color 0.2s",
-              }}>{t}</a>
+                transition: "color 0.2s", textDecoration: "none",
+              }}>{label}</Link>
             ))}
           </div>
         </div>
@@ -119,11 +122,15 @@ export default function Footer() {
 
       <style>{`
         @media (max-width: 768px) {
-          footer [style*="grid-template-columns: 1fr 1fr 1fr 1fr"] {
+          .footer-grid {
             grid-template-columns: 1fr 1fr !important;
             gap: 2rem !important;
             padding: 3rem 0 2rem !important;
           }
+          footer.lg\\:pb-0 { padding-bottom: 80px !important; }
+        }
+        @media (min-width: 1024px) {
+          footer.lg\\:pb-0 { padding-bottom: 0 !important; }
         }
       `}</style>
     </footer>

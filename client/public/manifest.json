@@ -1,0 +1,22 @@
+{
+  "name": "UJI MATCHA",
+  "short_name": "UJI",
+  "description": "ماتشا يابانية احتفالية درجة أولى",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F2EADB",
+  "theme_color": "#1F3929",
+  "lang": "ar",
+  "dir": "rtl",
+  "icons": [
+    { "src": "/assets/brand/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/assets/brand/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "screenshots": [],
+  "categories": ["shopping", "food"],
+  "shortcuts": [
+    { "name": "المنتجات", "short_name": "تسوق", "description": "تصفح ماتشا UJI", "url": "/products", "icons": [{ "src": "/assets/brand/icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "السلة", "short_name": "سلتي", "description": "عرض السلة", "url": "/cart", "icons": [{ "src": "/assets/brand/icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

@@ -6,6 +6,7 @@ import fs from "fs";
 import { Product, Order, Customer, Settings, Review, Coupon, hashPass } from "./models";
 import { requireAuth } from "./auth";
 import { sendOrderConfirmation, sendAdminOrderAlert, sendNewsletterWelcome, sendTestEmail } from "./email";
+import { createGeideaSession, verifyGeideaCallback, geideaEnabled } from "./geidea";
 
 const router = Router();
 const upload = multer({ dest: "uploads/", limits: { fileSize: 20 * 1024 * 1024 } });
@@ -22,7 +23,6 @@ const requireEmployee = (req: any, res: any, next: any) => {
   res.status(401).json({ message: "يرجى تسجيل الدخول" });
 };
 
-/* ─── Helper: update loyalty tier ─────────────────────────────── */
 function getLoyaltyTier(points: number): string {
   if (points >= 2000) return "platinum";
   if (points >= 1000) return "gold";
@@ -35,7 +35,7 @@ router.get("/sitemap.xml", async (_req, res) => {
   try {
     const products = await Product.find({ isActive: true }).select("_id updatedAt");
     const base = "https://ujimatcha.store";
-    const staticPages = ["/", "/products", "/about", "/ritual", "/journal", "/contact"];
+    const staticPages = ["/", "/products", "/wholesale", "/policy"];
     const urls = [
       ...staticPages.map(p => `
   <url>
@@ -59,7 +59,6 @@ ${urls.join("")}
   } catch { res.status(500).send(""); }
 });
 
-/* ─── SEO: robots.txt ───────────────────────────────────────────── */
 router.get("/robots.txt", (_req, res) => {
   res.set("Content-Type", "text/plain");
   res.send(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/admin\nSitemap: https://ujimatcha.store/sitemap.xml`);
@@ -85,7 +84,7 @@ router.get("/products/:id", async (req, res) => {
   } catch (e: any) { res.status(500).json({ message: e.message }); }
 });
 
-/* ─── Product Reviews (public) ─────────────────────────────────── */
+/* ─── Reviews ───────────────────────────────────────────────────── */
 router.get("/products/:id/reviews", async (req, res) => {
   try {
     const reviews = await Review.find({ productId: req.params.id, isApproved: true }).sort({ createdAt: -1 });
@@ -99,7 +98,6 @@ router.post("/products/:id/reviews", requireEmployee, async (req: any, res) => {
     if (!rating || rating < 1 || rating > 5) return res.status(400).json({ message: "تقييم غير صحيح (1-5)" });
     const existing = await Review.findOne({ productId: req.params.id, customerId: req.user._id });
     if (existing) return res.status(400).json({ message: "لقد قيّمت هذا المنتج مسبقاً" });
-
     const review = await Review.create({
       productId: req.params.id,
       customerId: req.user._id,
@@ -107,32 +105,26 @@ router.post("/products/:id/reviews", requireEmployee, async (req: any, res) => {
       rating: Number(rating),
       comment,
     });
-
-    // Update product avg rating
     const all = await Review.find({ productId: req.params.id, isApproved: true });
     const avg = all.reduce((s, r) => s + r.rating, 0) / all.length;
     await Product.findByIdAndUpdate(req.params.id, { avgRating: Math.round(avg * 10) / 10, reviewCount: all.length });
-
     res.json(review);
   } catch (e: any) { res.status(500).json({ message: e.message }); }
 });
 
-/* ─── Coupon validation (public) ───────────────────────────────── */
+/* ─── Coupon ────────────────────────────────────────────────────── */
 router.post("/coupons/apply", async (req, res) => {
   try {
     const { code, orderTotal } = req.body;
     if (!code) return res.status(400).json({ message: "أدخل رمز الكوبون" });
-
     const coupon = await Coupon.findOne({ code: code.toUpperCase(), isActive: true });
     if (!coupon) return res.status(404).json({ message: "كوبون غير صحيح أو منتهي" });
     if (coupon.expiresAt && coupon.expiresAt < new Date()) return res.status(400).json({ message: "انتهت صلاحية الكوبون" });
     if (coupon.maxUses > 0 && coupon.usedCount >= coupon.maxUses) return res.status(400).json({ message: "تجاوز الكوبون الحد الأقصى للاستخدام" });
     if (coupon.minOrder > 0 && orderTotal < coupon.minOrder) return res.status(400).json({ message: `الحد الأدنى للطلب ${coupon.minOrder} ر.س` });
-
     const discount = coupon.type === "percent"
       ? Math.round((orderTotal * coupon.value) / 100)
       : coupon.value;
-
     res.json({ ok: true, discount: Math.min(discount, orderTotal), code: coupon.code, type: coupon.type, value: coupon.value });
   } catch (e: any) { res.status(500).json({ message: e.message }); }
 });
@@ -152,7 +144,6 @@ router.post("/orders", async (req: any, res) => {
     const shippingFee = Number(shippingFeeSetting?.value ?? 30);
     const shipping = subtotal >= threshold ? 0 : shippingFee;
 
-    // Apply coupon
     let discount = 0;
     let validCoupon: any = null;
     if (couponCode) {
@@ -166,9 +157,10 @@ router.post("/orders", async (req: any, res) => {
     }
 
     const total = Math.max(0, subtotal - discount + shipping);
-
-    // Loyalty points: 1 point per 10 SAR spent
     const pointsEarned = Math.floor(total / 10);
+
+    // For Geidea: initially pending_payment; for COD/others: pending
+    const initialStatus = paymentMethod === "geidea" ? "pending_payment" : "pending";
 
     const order = await Order.create({
       orderNumber: num,
@@ -177,13 +169,12 @@ router.post("/orders", async (req: any, res) => {
       subtotal, discount, shipping, total,
       paymentMethod, couponCode: validCoupon?.code, notes,
       pointsEarned,
+      status: initialStatus,
     });
 
-    // Update coupon usage
     if (validCoupon) await Coupon.findByIdAndUpdate(validCoupon._id, { $inc: { usedCount: 1 } });
 
-    // Award loyalty points to logged-in customer
-    if (req.isAuthenticated()) {
+    if (req.isAuthenticated() && paymentMethod !== "geidea") {
       const newPoints = (req.user.loyaltyPoints || 0) + pointsEarned;
       const newSpent = (req.user.totalSpent || 0) + total;
       const newTier = getLoyaltyTier(newPoints);
@@ -193,11 +184,73 @@ router.post("/orders", async (req: any, res) => {
       });
     }
 
+    if (paymentMethod === "geidea") {
+      // Create Geidea session
+      try {
+        const baseUrl = process.env.REPLIT_DEV_DOMAIN
+          ? `https://${process.env.REPLIT_DEV_DOMAIN}`
+          : "https://ujimatcha.store";
+        const { redirectUrl } = await createGeideaSession({
+          amount: total,
+          orderId: order.orderNumber,
+          callbackUrl: `${baseUrl}/api/payment/geidea/callback`,
+          returnUrl: `${baseUrl}/checkout?geidea_return=1&order=${order._id}`,
+          customerEmail: customer?.email,
+          customerName: customer?.name,
+        });
+        return res.json({ order, geideaRedirectUrl: redirectUrl });
+      } catch (geideaErr: any) {
+        // Fallback: update status back to pending, notify admin
+        await Order.findByIdAndUpdate(order._id, { status: "pending", notes: (notes || "") + " [Geidea error: " + geideaErr.message + "]" });
+        sendAdminOrderAlert(order).catch(console.error);
+        return res.json({ order, geideaError: geideaErr.message });
+      }
+    }
+
+    // Non-Geidea orders
     if (customer?.email) sendOrderConfirmation(order).catch(console.error);
     sendAdminOrderAlert(order).catch(console.error);
 
-    res.json(order);
+    res.json({ order });
   } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+/* ─── Geidea callback (POST from Geidea servers) ────────────────── */
+router.post("/payment/geidea/callback", async (req, res) => {
+  try {
+    const params = req.body;
+    const isValid = verifyGeideaCallback(params);
+    if (!isValid) {
+      console.warn("[Geidea] invalid callback signature", params);
+      return res.status(400).json({ message: "invalid signature" });
+    }
+    const { merchantReferenceId, responseCode } = params;
+    const success = responseCode === "000";
+    const order = await Order.findOne({ orderNumber: merchantReferenceId });
+    if (!order) return res.status(404).json({ message: "order not found" });
+
+    if (success) {
+      await Order.findByIdAndUpdate(order._id, { status: "confirmed", paymentStatus: "paid" });
+      // Award loyalty points
+      if (order.customerId) {
+        const newTier = getLoyaltyTier(order.pointsEarned || 0);
+        await Customer.findByIdAndUpdate(order.customerId, {
+          $inc: { loyaltyPoints: order.pointsEarned || 0, totalSpent: order.total || 0 },
+          loyaltyTier: newTier,
+        });
+      }
+      if ((order as any).customer?.email) sendOrderConfirmation(order).catch(console.error);
+      sendAdminOrderAlert(order).catch(console.error);
+    } else {
+      await Order.findByIdAndUpdate(order._id, { status: "cancelled" });
+    }
+    res.json({ ok: true });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+/* ─── Geidea return URL (GET from browser) ──────────────────────── */
+router.get("/payment/geidea/callback", async (req, res) => {
+  res.redirect("/");
 });
 
 router.get("/orders/:id", async (req, res) => {
@@ -208,7 +261,6 @@ router.get("/orders/:id", async (req, res) => {
   } catch (e: any) { res.status(500).json({ message: e.message }); }
 });
 
-/* ─── My orders (logged-in customer) ───────────────────────────── */
 router.get("/me/orders", requireEmployee, async (req: any, res) => {
   try {
     const orders = await Order.find({ customerId: req.user._id }).sort({ createdAt: -1 });
@@ -236,10 +288,21 @@ router.post("/newsletter", async (req, res) => {
 /* ─── Auth ──────────────────────────────────────────────────────── */
 router.post("/auth/register", async (req: any, res) => {
   try {
-    const { name, phone, password, email } = req.body;
+    const { name, phone, password, email, role, jobTitle } = req.body;
+    if (!name || !phone || !password) return res.status(400).json({ message: "بيانات ناقصة" });
     if (await Customer.findOne({ phone })) return res.status(400).json({ message: "الجوال مسجل مسبقاً" });
-    const customer = await Customer.create({ name, phone, email, password: hashPass(password), role: "customer" });
-    req.login(customer, (err: any) => err ? res.status(500).json({ message: "خطأ" }) : res.json({
+
+    // Only allow customer or employee on self-registration; admin must be set via admin-setup
+    const safeRole = role === "employee" ? "employee" : "customer";
+
+    const customer = await Customer.create({
+      name, phone, email,
+      password: hashPass(password),
+      role: safeRole,
+      jobTitle: safeRole === "employee" ? jobTitle : undefined,
+    });
+
+    req.login(customer, (err: any) => err ? res.status(500).json({ message: "خطأ في تسجيل الدخول" }) : res.json({
       id: customer._id, name, phone, role: customer.role,
       loyaltyPoints: 0, loyaltyTier: "bronze",
     }));
@@ -340,6 +403,29 @@ router.delete("/admin/products/:id", requireAdmin, async (req, res) => {
   catch (e: any) { res.status(500).json({ message: e.message }); }
 });
 
+/* ─── Admin — Seed matcha bag ───────────────────────────────────── */
+router.post("/admin/seed-matcha-bag", requireAdmin, async (_req, res) => {
+  try {
+    // Delete all existing products
+    await Product.deleteMany({});
+    // Add matcha bag product
+    const product = await Product.create({
+      name: "ماتشا UJI — كيس احتفالي",
+      nameEn: "UJI Matcha — Ceremonial Bag",
+      description: "ماتشا يابانية احتفالية من الدرجة الأولى، مصدرها أوجي، كيوتو. مطحونة بالحجر، مزروعة في الظل، نقية 100% بدون إضافات. كيس 30 جرام يكفي لـ 15 كوباً.",
+      price: 149,
+      comparePrice: 199,
+      stock: 100,
+      category: "matcha",
+      isActive: true,
+      featured: true,
+      sortOrder: 1,
+      images: ["/uploads/matcha-bag-1.png", "/uploads/matcha-bag-2.png", "/uploads/matcha-bag-3.png"],
+    });
+    res.json({ ok: true, product });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
 /* ─── Admin — Orders ────────────────────────────────────────────── */
 router.get("/admin/orders", requireAdmin, async (_req, res) => {
   res.json(await Order.find().sort({ createdAt: -1 }));
@@ -361,8 +447,7 @@ router.get("/admin/customers", requireAdmin, async (req, res) => {
     const { role } = req.query;
     const filter: any = {};
     if (role) filter.role = role;
-    const customers = await Customer.find(filter).select("-password -resetOtp -resetOtpExpiry").sort({ createdAt: -1 });
-    res.json(customers);
+    res.json(await Customer.find(filter).select("-password -resetOtp -resetOtpExpiry").sort({ createdAt: -1 }));
   } catch (e: any) { res.status(500).json({ message: e.message }); }
 });
 
@@ -442,26 +527,24 @@ router.delete("/admin/coupons/:id", requireAdmin, async (req, res) => {
   catch (e: any) { res.status(500).json({ message: e.message }); }
 });
 
-/* ─── Admin — Analytics stats ───────────────────────────────────── */
+/* ─── Admin — Stats ─────────────────────────────────────────────── */
 router.get("/admin/stats", requireAdmin, async (_req, res) => {
   try {
-    const [totalOrders, totalCustomers, totalProducts, orders] = await Promise.all([
+    const [totalOrders, totalCustomers, totalEmployees, totalProducts, orders] = await Promise.all([
       Order.countDocuments(),
       Customer.countDocuments({ role: "customer" }),
+      Customer.countDocuments({ role: "employee" }),
       Product.countDocuments({ isActive: true }),
       Order.find({ status: { $ne: "cancelled" } }).select("total createdAt"),
     ]);
     const totalRevenue = orders.reduce((s, o) => s + (o.total || 0), 0);
-
-    // Last 7 days revenue
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
     const dailyRevenue: Record<string, number> = {};
     orders.filter(o => o.createdAt > sevenDaysAgo).forEach(o => {
       const day = new Date(o.createdAt as Date).toLocaleDateString("ar-SA", { weekday: "short" });
       dailyRevenue[day] = (dailyRevenue[day] || 0) + (o.total || 0);
     });
-
-    res.json({ totalOrders, totalCustomers, totalProducts, totalRevenue, dailyRevenue });
+    res.json({ totalOrders, totalCustomers, totalEmployees, totalProducts, totalRevenue, dailyRevenue });
   } catch (e: any) { res.status(500).json({ message: e.message }); }
 });
 
@@ -477,6 +560,8 @@ router.get("/admin/settings", requireAdmin, async (_req, res) => {
   const settings = await Settings.find({ key: { $ne: "newsletter_subscribers" } });
   const obj: any = {};
   settings.forEach((s) => { obj[s.key] = s.value; });
+  // Add Geidea status
+  obj._geideaEnabled = geideaEnabled();
   res.json(obj);
 });
 
@@ -502,6 +587,7 @@ router.get("/settings", async (_req, res) => {
   const settings = await Settings.find({ key: { $in: keys } });
   const obj: any = {};
   settings.forEach((s) => { obj[s.key] = s.value; });
+  obj._geideaEnabled = geideaEnabled();
   res.json(obj);
 });
 
