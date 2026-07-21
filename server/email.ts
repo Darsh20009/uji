@@ -1,6 +1,4 @@
 import nodemailer from "nodemailer";
-import fs from "fs";
-import path from "path";
 
 const transporter = nodemailer.createTransport({
   host: process.env.CPANEL_SMTP_HOST || "server222.web-hosting.com",
@@ -13,69 +11,55 @@ const transporter = nodemailer.createTransport({
   tls: { rejectUnauthorized: false },
 });
 
-const FROM = `"UJI MATCHA" <${process.env.CPANEL_SMTP_USER || "info@qirox.online"}>`;
+const FROM    = `"UJI MATCHA" <${process.env.CPANEL_SMTP_USER || "info@qirox.online"}>`;
+const ADMIN   = process.env.ADMIN_EMAIL || "qiroxsystem@gmail.com";
+const STORE   = "https://ujimatcha.store";
 
-// ── Embed logo as base64 so it always shows ──
-let LOGO_WHITE_B64 = "";
-try {
-  LOGO_WHITE_B64 = fs
-    .readFileSync(path.join(process.cwd(), "client/public/assets/brand/uji-logo-white-transparent.png"))
-    .toString("base64");
-} catch (_) {}
-
-const IMG_BASE = process.env.REPLIT_DEV_DOMAIN
-  ? `https://${process.env.REPLIT_DEV_DOMAIN}`
-  : "https://ujimatcha.store";
-
-const BOWL_URL = `${IMG_BASE}/assets/brand/uji-brand-identity-bowl-transparent.png`;
-const CUP_URL  = `${IMG_BASE}/assets/brand/uji-brand-cup-matcha-repeat.png`;
-
-// ── Logo img tag (fully inline, no class references) ──
-const logoImg = LOGO_WHITE_B64
-  ? `<img src="data:image/png;base64,${LOGO_WHITE_B64}" alt="UJI MATCHA" width="140" style="display:block;margin:0 auto;border:0;outline:none;" />`
-  : `<div style="color:#F2EADB;font-family:Georgia,'Times New Roman',serif;font-size:30px;letter-spacing:0.28em;font-weight:300;text-align:center;">UJI <span style="font-size:10px;letter-spacing:0.45em;vertical-align:super;color:#9BA17B;">MATCHA</span></div>`;
-
-const logoImgSmall = LOGO_WHITE_B64
-  ? `<img src="data:image/png;base64,${LOGO_WHITE_B64}" alt="UJI MATCHA" width="90" style="display:block;margin:0 auto;border:0;outline:none;" />`
-  : `<div style="color:#F2EADB;font-family:Georgia,serif;font-size:20px;letter-spacing:0.28em;font-weight:300;text-align:center;">UJI MATCHA</div>`;
-
-/* ── Shared layout wrapper (no classes, all inline) ── */
-function wrapEmail(content: string, footerExtra = ""): string {
+/* ─────────────────────────────────────────────────────────────────
+   SHARED LAYOUT
+   Clean white card, no external images, works in all email clients
+───────────────────────────────────────────────────────────────── */
+function layout(body: string): string {
   return `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <!--[if mso]><style type="text/css">body,table,td{font-family:Arial,sans-serif!important;}</style><![endif]-->
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 </head>
-<body style="margin:0;padding:0;background:#EDE5D4;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;">
-<table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#EDE5D4;">
-  <tr><td align="center" style="padding:32px 16px;">
-    <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#FDFAF5;border:1px solid #DDD5C3;border-radius:2px;overflow:hidden;">
+<body style="margin:0;padding:0;background:#F0EBE1;font-family:Arial,Tahoma,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td align="center" style="padding:40px 16px;">
+
+    <table width="560" cellpadding="0" cellspacing="0" border="0"
+           style="max-width:560px;background:#ffffff;border-radius:4px;overflow:hidden;
+                  box-shadow:0 2px 12px rgba(0,0,0,0.07);">
 
       <!-- HEADER -->
-      <tr><td style="background:#16281D;padding:44px 40px 36px;text-align:center;">
-        ${logoImg}
-        <div style="width:40px;height:1px;background:#9BA17B;margin:16px auto 0;"></div>
-        <div style="color:#9BA17B;font-size:10px;letter-spacing:0.35em;margin-top:10px;font-family:Georgia,'Times New Roman',serif;">CEREMONIAL GRADE MATCHA</div>
-      </td></tr>
+      <tr>
+        <td style="background:#1F3929;padding:32px 40px;text-align:center;">
+          <div style="font-family:Georgia,'Times New Roman',serif;
+                      font-size:22px;font-weight:400;letter-spacing:0.3em;
+                      color:#F2EADB;">UJI MATCHA</div>
+          <div style="width:32px;height:1px;background:#9BA17B;margin:10px auto 0;"></div>
+        </td>
+      </tr>
 
-      ${content}
+      <!-- BODY -->
+      ${body}
 
       <!-- FOOTER -->
-      <tr><td style="background:#16281D;padding:28px 40px;text-align:center;">
-        ${logoImgSmall}
-        <div style="width:30px;height:1px;background:#2F4E3A;margin:14px auto;"></div>
-        <p style="font-family:Arial,Tahoma,sans-serif;font-size:11px;color:#6E8870;line-height:1.8;margin:0;">
-          ماتشا يابانية احتفالية بكل كوب قصة<br/>
-          <a href="https://ujimatcha.store" style="color:#9BA17B;text-decoration:none;">ujimatcha.store</a>
-          &nbsp;·&nbsp;
-          <a href="mailto:info@qirox.online" style="color:#9BA17B;text-decoration:none;">info@qirox.online</a>
-        </p>
-        ${footerExtra}
-        <p style="margin-top:10px;font-size:10px;color:#3E5E48;font-family:Arial,sans-serif;">© 2026 UJI MATCHA — جميع الحقوق محفوظة</p>
-      </td></tr>
+      <tr>
+        <td style="background:#F7F4EF;padding:24px 40px;text-align:center;
+                   border-top:1px solid #E5DDD0;">
+          <p style="margin:0;font-size:11px;color:#A09680;line-height:1.8;">
+            <a href="${STORE}" style="color:#1F3929;text-decoration:none;">ujimatcha.store</a>
+            &nbsp;·&nbsp;
+            <a href="mailto:info@qirox.online" style="color:#1F3929;text-decoration:none;">info@qirox.online</a>
+          </p>
+          <p style="margin:6px 0 0;font-size:10px;color:#C0B49A;">© 2026 UJI MATCHA — جميع الحقوق محفوظة</p>
+        </td>
+      </tr>
 
     </table>
   </td></tr>
@@ -83,261 +67,340 @@ function wrapEmail(content: string, footerExtra = ""): string {
 </body></html>`;
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   ORDER CONFIRMATION  (fully inlined styles — no class references)
-═══════════════════════════════════════════════════════════════════ */
-export async function sendOrderConfirmation(order: any) {
-  const itemsRows = order.items.map((i: any) => `
-    <tr>
-      <td style="font-family:Arial,Tahoma,sans-serif;padding:11px 0;border-bottom:1px solid #EDE8DF;font-size:14px;color:#1C201B;">${i.name}</td>
-      <td style="font-family:Arial,Tahoma,sans-serif;padding:11px 0;border-bottom:1px solid #EDE8DF;font-size:14px;color:#9BA17B;text-align:center;width:50px;">×${i.qty}</td>
-      <td style="font-family:Arial,Tahoma,sans-serif;padding:11px 0;border-bottom:1px solid #EDE8DF;font-size:14px;font-weight:600;color:#1F3929;text-align:left;width:90px;">${(i.price * i.qty).toFixed(2)} ر.س</td>
-    </tr>`).join("");
-
-  const content = `
-    <!-- HERO IMAGE -->
-    <tr><td style="background:#1F3929;text-align:center;overflow:hidden;height:190px;position:relative;padding:0;">
-      <img src="${BOWL_URL}" alt="" width="600" style="width:100%;height:190px;object-fit:cover;object-position:center top;opacity:0.88;display:block;border:0;" />
-    </td></tr>
-    <tr><td style="background:#1F3929;text-align:center;padding:0 40px 30px;">
-      <div style="color:#F2EADB;font-family:Georgia,'Times New Roman',serif;font-size:19px;font-weight:300;letter-spacing:0.06em;text-align:center;line-height:1.55;">
-        شكراً لاختيارك تجربة الماتشا الأصيلة
-      </div>
-    </td></tr>
-
-    <!-- BODY -->
-    <tr><td style="padding:44px 44px 36px;direction:rtl;text-align:right;">
-      <div style="font-size:10px;letter-spacing:0.25em;color:#9BA17B;text-transform:uppercase;margin-bottom:10px;font-family:Georgia,serif;">تأكيد الطلب</div>
-      <h1 style="font-family:Arial,Tahoma,sans-serif;font-size:22px;font-weight:400;color:#1C201B;margin:0 0 6px;">أهلاً ${order.customer?.name || ""}،</h1>
-      <p style="font-family:Arial,Tahoma,sans-serif;font-size:14px;color:#7a7a6e;line-height:1.95;margin:0 0 32px;">
-        تم استلام طلبك بنجاح وسيتم التواصل معك قريباً لتأكيد موعد التوصيل.<br/>
-        رقم الطلب: <strong style="color:#1F3929;">${order.orderNumber}</strong>
-      </p>
-
-      <hr style="border:none;border-top:1px solid #DDD5C3;margin:28px 0;" />
-
-      <!-- ORDER TABLE -->
-      <div style="font-size:9px;letter-spacing:0.28em;color:#9BA17B;text-transform:uppercase;margin-bottom:12px;font-family:Georgia,serif;">تفاصيل الطلب</div>
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        ${itemsRows}
-        <tr>
-          <td style="font-family:Arial,Tahoma,sans-serif;padding:11px 0;border-bottom:1px solid #EDE8DF;font-size:13px;color:#9BA17B;">الشحن</td>
-          <td style="font-family:Arial,Tahoma,sans-serif;padding:11px 0;border-bottom:1px solid #EDE8DF;font-size:13px;color:#9BA17B;text-align:center;"></td>
-          <td style="font-family:Arial,Tahoma,sans-serif;padding:11px 0;border-bottom:1px solid #EDE8DF;font-size:13px;font-weight:600;color:#9BA17B;text-align:left;">${order.shipping === 0 ? "مجاني 🎁" : order.shipping + " ر.س"}</td>
-        </tr>
-        <tr>
-          <td style="font-family:Arial,Tahoma,sans-serif;padding:14px 0 0;border-top:2px solid #16281D;font-size:16px;font-weight:700;color:#16281D;">الإجمالي</td>
-          <td style="font-family:Arial,Tahoma,sans-serif;padding:14px 0 0;border-top:2px solid #16281D;text-align:center;"></td>
-          <td style="font-family:Arial,Tahoma,sans-serif;padding:14px 0 0;border-top:2px solid #16281D;font-size:16px;font-weight:700;color:#16281D;text-align:left;">${order.total?.toFixed(2)} ر.س</td>
-        </tr>
-      </table>
-
-      <!-- ADDRESS -->
-      <div style="font-size:9px;letter-spacing:0.28em;color:#9BA17B;text-transform:uppercase;margin:28px 0 12px;font-family:Georgia,serif;">عنوان التوصيل</div>
-      <div style="background:#F0EBE1;border-right:3px solid #9BA17B;padding:18px 20px;font-family:Arial,Tahoma,sans-serif;font-size:13px;color:#555;line-height:1.9;">
-        📍 ${order.address?.city || ""}${order.address?.district ? " — " + order.address.district : ""}<br/>
-        ${order.address?.street || ""}<br/>
-        📞 ${order.customer?.phone || ""}
-      </div>
-
-      <!-- CTA -->
-      <div style="text-align:center;margin:36px 0 8px;">
-        <a href="${IMG_BASE}" style="display:inline-block;background:#16281D;color:#F2EADB;padding:14px 40px;text-decoration:none;font-family:Georgia,serif;font-size:13px;letter-spacing:0.18em;">تصفّح المتجر</a>
-      </div>
-    </td></tr>
-
-    <!-- CUP STRIP -->
-    <tr><td style="background:#1C201B;text-align:center;overflow:hidden;padding:0;">
-      <img src="${CUP_URL}" alt="" width="600" style="width:100%;height:90px;object-fit:cover;object-position:center;opacity:0.65;display:block;border:0;" />
-    </td></tr>`;
-
-  const html = wrapEmail(content);
-
-  try {
-    await transporter.sendMail({
-      from: FROM,
-      to: order.customer?.email,
-      subject: `تأكيد طلبك ${order.orderNumber} — UJI MATCHA ✦`,
-      html,
-      text: `تأكيد الطلب ${order.orderNumber} — إجمالي: ${order.total?.toFixed(2)} ر.س`,
-    });
-    console.log("[email] order confirmation sent to", order.customer?.email);
-  } catch (e) {
-    console.error("[email] order confirmation failed:", e);
-  }
+/* ─────────────────────────────────────────────────────────────────
+   HELPER: info row for admin alert
+───────────────────────────────────────────────────────────────── */
+function row(label: string, value: string): string {
+  return `
+  <tr>
+    <td style="padding:11px 0;border-bottom:1px solid #F0EBE1;font-size:13px;
+               color:#9BA17B;width:110px;vertical-align:top;">${label}</td>
+    <td style="padding:11px 0;border-bottom:1px solid #F0EBE1;font-size:13px;
+               color:#1C201B;font-weight:500;">${value}</td>
+  </tr>`;
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   ADMIN ORDER ALERT
-═══════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   1.  ADMIN ORDER ALERT  →  qiroxsystem@gmail.com
+   Sent on every new order, cash or card
+═══════════════════════════════════════════════════════════════ */
 export async function sendAdminOrderAlert(order: any) {
-  const rows = [
-    ["العميل",   `${order.customer?.name || "—"} (${order.customer?.phone || "—"})`],
-    ["البريد",   order.customer?.email || "—"],
-    ["المدينة",  `${order.address?.city || "—"} / ${order.address?.district || "—"}`],
-    ["الشارع",   order.address?.street || "—"],
-    ["الإجمالي", `<strong style="color:#1F3929;">${order.total?.toFixed(2)} ر.س</strong>`],
-    ["الدفع",    order.paymentMethod === "cod" ? "عند الاستلام 💵" : order.paymentMethod === "geidea" ? "Geidea 💳" : order.paymentMethod],
-  ].map(([k, v]) => `
+  const items = (order.items || [])
+    .map((i: any) => `${i.name} × ${i.qty}`)
+    .join(" ، ");
+
+  const payLabel =
+    order.paymentMethod === "cod"    ? "عند الاستلام" :
+    order.paymentMethod === "geidea" ? "بطاقة – Geidea" :
+    order.paymentMethod || "—";
+
+  const body = `
     <tr>
-      <td style="font-family:Arial,Tahoma,sans-serif;padding:10px 0;border-bottom:1px solid #EDE8DF;font-size:14px;color:#9BA17B;width:100px;">${k}</td>
-      <td style="font-family:Arial,Tahoma,sans-serif;padding:10px 0;border-bottom:1px solid #EDE8DF;font-size:14px;color:#1C201B;">${v}</td>
-    </tr>`).join("");
+      <td style="padding:32px 40px;">
 
-  const content = `
-    <tr><td style="padding:44px 44px 36px;direction:rtl;text-align:right;">
-      <div style="font-size:10px;letter-spacing:0.25em;color:#9BA17B;text-transform:uppercase;margin-bottom:10px;font-family:Georgia,serif;">طلب جديد وارد</div>
-      <h1 style="font-family:Arial,Tahoma,sans-serif;font-size:22px;font-weight:400;color:#1C201B;margin:0 0 6px;">${order.orderNumber}</h1>
-      <p style="font-family:Arial,Tahoma,sans-serif;font-size:14px;color:#7a7a6e;line-height:1.95;margin:0 0 20px;">تم استلام طلب جديد — يرجى المراجعة والتأكيد.</p>
-      <hr style="border:none;border-top:1px solid #DDD5C3;margin:28px 0;" />
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">${rows}</table>
-      <div style="text-align:center;margin:36px 0 8px;">
-        <a href="${IMG_BASE}/admin" style="display:inline-block;background:#16281D;color:#F2EADB;padding:14px 40px;text-decoration:none;font-family:Georgia,serif;font-size:13px;letter-spacing:0.18em;">لوحة الإدارة</a>
-      </div>
-    </td></tr>`;
+        <!-- badge -->
+        <div style="display:inline-block;background:#F0EBE1;border-radius:20px;
+                    padding:4px 14px;font-size:11px;letter-spacing:0.12em;
+                    color:#9BA17B;margin-bottom:20px;">طلب جديد</div>
 
-  const html = wrapEmail(content, `<p style="margin-top:10px;font-size:10px;color:#3E5E48;font-family:Arial,sans-serif;">هذا إشعار تلقائي — لا تحتاج للرد عليه</p>`);
+        <!-- order number -->
+        <h1 style="margin:0 0 6px;font-size:26px;font-weight:700;
+                   color:#1F3929;letter-spacing:0.04em;">
+          ${order.orderNumber}
+        </h1>
+        <p style="margin:0 0 28px;font-size:13px;color:#A09680;">
+          وصل للتو — يرجى المراجعة والتأكيد
+        </p>
+
+        <!-- divider -->
+        <div style="height:1px;background:#F0EBE1;margin-bottom:20px;"></div>
+
+        <!-- details table -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          ${row("العميل",    `${order.customer?.name || "—"}`)}
+          ${row("الجوال",    order.customer?.phone  || "—")}
+          ${row("البريد",    order.customer?.email  || "—")}
+          ${row("المدينة",   `${order.address?.city || "—"}${order.address?.district ? " / " + order.address.district : ""}`)}
+          ${row("الشارع",    order.address?.street  || "—")}
+          ${row("المنتجات",  items || "—")}
+          ${row("الدفع",     payLabel)}
+        </table>
+
+        <!-- total -->
+        <div style="margin-top:24px;background:#1F3929;border-radius:3px;
+                    padding:18px 24px;display:flex;justify-content:space-between;
+                    align-items:center;">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+              <td style="font-size:13px;color:#9BA17B;">الإجمالي</td>
+              <td style="text-align:left;font-size:22px;font-weight:700;
+                         color:#F2EADB;">${(order.total || 0).toFixed(2)} <span style="font-size:12px;font-weight:400;">ر.س</span></td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- CTA -->
+        <div style="text-align:center;margin-top:28px;">
+          <a href="${STORE}/admin"
+             style="display:inline-block;background:#1F3929;color:#F2EADB;
+                    padding:13px 36px;text-decoration:none;border-radius:3px;
+                    font-size:13px;letter-spacing:0.08em;">
+            فتح لوحة الإدارة ←
+          </a>
+        </div>
+
+      </td>
+    </tr>`;
 
   try {
     await transporter.sendMail({
       from: FROM,
-      to: process.env.CPANEL_SMTP_USER,
-      subject: `🛒 طلب جديد ${order.orderNumber} — ${order.total?.toFixed(2)} ر.س`,
-      html,
-      text: `طلب جديد: ${order.orderNumber}\nالعميل: ${order.customer?.name} ${order.customer?.phone}\nالإجمالي: ${order.total?.toFixed(2)} ر.س`,
+      to: ADMIN,
+      subject: `🛒 طلب جديد ${order.orderNumber} — ${(order.total || 0).toFixed(2)} ر.س`,
+      html: layout(body),
+      text: `طلب جديد: ${order.orderNumber}\nالعميل: ${order.customer?.name} ${order.customer?.phone}\nالإجمالي: ${(order.total || 0).toFixed(2)} ر.س`,
     });
-    console.log("[email] admin alert sent for", order.orderNumber);
+    console.log("[email] admin alert →", ADMIN, "for", order.orderNumber);
   } catch (e) {
     console.error("[email] admin alert failed:", e);
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   NEWSLETTER WELCOME
-═══════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   2.  ORDER CONFIRMATION  →  customer email
+═══════════════════════════════════════════════════════════════ */
+export async function sendOrderConfirmation(order: any) {
+  const itemsRows = (order.items || []).map((i: any) => `
+    <tr>
+      <td style="padding:10px 0;border-bottom:1px solid #F0EBE1;font-size:13px;color:#1C201B;">
+        ${i.name}
+      </td>
+      <td style="padding:10px 0;border-bottom:1px solid #F0EBE1;font-size:13px;
+                 color:#9BA17B;text-align:center;width:40px;">×${i.qty}</td>
+      <td style="padding:10px 0;border-bottom:1px solid #F0EBE1;font-size:13px;
+                 font-weight:600;color:#1F3929;text-align:left;white-space:nowrap;width:80px;">
+        ${(i.price * i.qty).toFixed(2)} ر.س
+      </td>
+    </tr>`).join("");
+
+  const body = `
+    <tr>
+      <td style="padding:32px 40px;">
+
+        <div style="display:inline-block;background:#F0EBE1;border-radius:20px;
+                    padding:4px 14px;font-size:11px;letter-spacing:0.12em;
+                    color:#9BA17B;margin-bottom:20px;">تأكيد الطلب</div>
+
+        <h1 style="margin:0 0 6px;font-size:22px;font-weight:400;color:#1C201B;">
+          أهلاً ${order.customer?.name || ""}،
+        </h1>
+        <p style="margin:0 0 6px;font-size:13px;color:#A09680;line-height:1.8;">
+          تم استلام طلبك بنجاح.
+        </p>
+        <p style="margin:0 0 28px;font-size:13px;color:#A09680;">
+          رقم الطلب: <strong style="color:#1F3929;">${order.orderNumber}</strong>
+        </p>
+
+        <div style="height:1px;background:#F0EBE1;margin-bottom:20px;"></div>
+
+        <!-- items -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          ${itemsRows}
+          <tr>
+            <td style="padding:10px 0;border-bottom:1px solid #F0EBE1;font-size:12px;color:#9BA17B;">الشحن</td>
+            <td></td>
+            <td style="padding:10px 0;border-bottom:1px solid #F0EBE1;font-size:12px;
+                       color:#9BA17B;text-align:left;">
+              ${order.shipping === 0 ? "مجاني" : (order.shipping || 0) + " ر.س"}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:14px 0 0;font-size:15px;font-weight:700;color:#1F3929;">الإجمالي</td>
+            <td></td>
+            <td style="padding:14px 0 0;font-size:15px;font-weight:700;
+                       color:#1F3929;text-align:left;">${(order.total || 0).toFixed(2)} ر.س</td>
+          </tr>
+        </table>
+
+        <!-- address -->
+        <div style="margin-top:24px;background:#F7F4EF;border-right:3px solid #9BA17B;
+                    padding:16px 18px;border-radius:2px;">
+          <div style="font-size:11px;letter-spacing:0.15em;color:#9BA17B;margin-bottom:8px;">
+            عنوان التوصيل
+          </div>
+          <div style="font-size:13px;color:#555;line-height:1.9;">
+            ${order.address?.city || ""}${order.address?.district ? " — " + order.address.district : ""}<br/>
+            ${order.address?.street || ""}<br/>
+            ${order.customer?.phone || ""}
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div style="text-align:center;margin-top:28px;">
+          <a href="${STORE}"
+             style="display:inline-block;background:#1F3929;color:#F2EADB;
+                    padding:13px 36px;text-decoration:none;border-radius:3px;
+                    font-size:13px;letter-spacing:0.08em;">
+            تصفّح المتجر
+          </a>
+        </div>
+
+      </td>
+    </tr>`;
+
+  if (!order.customer?.email) return;
+  try {
+    await transporter.sendMail({
+      from: FROM,
+      to: order.customer.email,
+      subject: `تأكيد طلبك ${order.orderNumber} — UJI MATCHA`,
+      html: layout(body),
+      text: `تأكيد الطلب ${order.orderNumber} — الإجمالي: ${(order.total || 0).toFixed(2)} ر.س`,
+    });
+    console.log("[email] order confirmation →", order.customer.email);
+  } catch (e) {
+    console.error("[email] order confirmation failed:", e);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   3.  NEWSLETTER WELCOME
+═══════════════════════════════════════════════════════════════ */
 export async function sendNewsletterWelcome(email: string) {
-  const pillars = [
-    ["🍵", "ريتشوال الماتشا", "دليلك لإعداد كوب مثالي"],
-    ["📖", "من المجلة",       "مقالات عن أصول الماتشا"],
-    ["✦",  "عروض حصرية",    "لمشتركي النشرة فقط"],
-  ];
+  const body = `
+    <tr>
+      <td style="padding:32px 40px;text-align:center;">
 
-  const pillarsHtml = pillars.map(([icon, title, sub]) => `
-    <td style="padding:16px 8px;vertical-align:top;text-align:center;font-family:Arial,Tahoma,sans-serif;width:33%;">
-      <div style="font-size:26px;margin-bottom:8px;">${icon}</div>
-      <div style="font-size:13px;font-weight:600;color:#1C201B;margin-bottom:4px;">${title}</div>
-      <div style="font-size:12px;color:#9BA17B;">${sub}</div>
-    </td>`).join("");
+        <div style="font-size:32px;margin-bottom:16px;">🍵</div>
 
-  const content = `
-    <!-- HERO -->
-    <tr><td style="background:#1F3929;text-align:center;overflow:hidden;padding:0;">
-      <img src="${BOWL_URL}" alt="" width="600" style="width:100%;height:220px;object-fit:cover;object-position:center top;opacity:0.88;display:block;border:0;" />
-    </td></tr>
-    <tr><td style="background:#1F3929;text-align:center;padding:0 40px 40px;">
-      <div style="color:#F2EADB;font-family:Georgia,serif;font-size:19px;font-weight:300;letter-spacing:0.06em;line-height:1.55;">
-        في كل كوب ماتشا<br/>
-        <span style="font-size:14px;opacity:0.75;font-family:Georgia,serif;">قصة من قلب أوجي اليابانية</span>
-      </div>
-    </td></tr>
+        <h1 style="margin:0 0 12px;font-size:22px;font-weight:400;color:#1C201B;">
+          أهلاً بك في UJI MATCHA
+        </h1>
+        <p style="margin:0 auto 28px;font-size:13px;color:#A09680;line-height:1.9;max-width:360px;">
+          انضممت إلى مجتمع عشّاق الماتشا اليابانية الأصيلة. ستصل إليك قريباً أسرار الريتشوال ومستجدات المجلة والإصدارات الحصرية.
+        </p>
 
-    <!-- BODY -->
-    <tr><td style="padding:44px 40px 36px;direction:rtl;text-align:center;">
-      <div style="font-size:10px;letter-spacing:0.25em;color:#9BA17B;text-transform:uppercase;margin-bottom:10px;font-family:Georgia,serif;text-align:center;">النشرة البريدية</div>
-      <h1 style="font-family:Arial,Tahoma,sans-serif;font-size:24px;font-weight:400;color:#1C201B;margin:0 0 12px;text-align:center;">أهلاً بك في UJI MATCHA</h1>
-      <p style="font-family:Arial,Tahoma,sans-serif;font-size:14px;color:#7a7a6e;line-height:1.95;margin:0 auto 32px;max-width:380px;text-align:center;">
-        انضممت إلى مجتمع عشّاق الماتشا اليابانية الأصيلة. ستصل إليك قريباً أسرار الريتشوال ومستجدات المجلة والإصدارات الحصرية.
-      </p>
-      <hr style="border:none;border-top:1px solid #DDD5C3;margin:28px 0;" />
-      <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>${pillarsHtml}</tr></table>
-      <div style="text-align:center;margin:28px 0 8px;">
-        <a href="${IMG_BASE}" style="display:inline-block;background:#16281D;color:#F2EADB;padding:14px 40px;text-decoration:none;font-family:Georgia,serif;font-size:13px;letter-spacing:0.18em;">اكتشف المتجر</a>
-      </div>
-    </td></tr>
+        <div style="height:1px;background:#F0EBE1;margin:0 0 28px;"></div>
 
-    <!-- CUP STRIP -->
-    <tr><td style="background:#1C201B;text-align:center;padding:0;">
-      <img src="${CUP_URL}" alt="" width="600" style="width:100%;height:90px;object-fit:cover;opacity:0.65;display:block;border:0;" />
-    </td></tr>`;
+        <!-- 3 pillars -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td style="padding:0 8px;text-align:center;vertical-align:top;width:33%;">
+              <div style="font-size:20px;margin-bottom:8px;">🍃</div>
+              <div style="font-size:12px;font-weight:600;color:#1C201B;margin-bottom:4px;">ريتشوال الماتشا</div>
+              <div style="font-size:11px;color:#A09680;">دليلك لكوب مثالي</div>
+            </td>
+            <td style="padding:0 8px;text-align:center;vertical-align:top;width:33%;">
+              <div style="font-size:20px;margin-bottom:8px;">📖</div>
+              <div style="font-size:12px;font-weight:600;color:#1C201B;margin-bottom:4px;">من المجلة</div>
+              <div style="font-size:11px;color:#A09680;">قصص من قلب أوجي</div>
+            </td>
+            <td style="padding:0 8px;text-align:center;vertical-align:top;width:33%;">
+              <div style="font-size:20px;margin-bottom:8px;">✦</div>
+              <div style="font-size:12px;font-weight:600;color:#1C201B;margin-bottom:4px;">عروض حصرية</div>
+              <div style="font-size:11px;color:#A09680;">للمشتركين فقط</div>
+            </td>
+          </tr>
+        </table>
 
-  const html = wrapEmail(content, `<p style="margin-top:10px;font-size:10px;color:#3E5E48;font-family:Arial,sans-serif;">إذا لم تشترك بنفسك تجاهل هذه الرسالة</p>`);
+        <div style="margin-top:28px;">
+          <a href="${STORE}"
+             style="display:inline-block;background:#1F3929;color:#F2EADB;
+                    padding:13px 36px;text-decoration:none;border-radius:3px;
+                    font-size:13px;letter-spacing:0.08em;">
+            اكتشف المتجر
+          </a>
+        </div>
+
+      </td>
+    </tr>`;
 
   try {
     await transporter.sendMail({
       from: FROM,
       to: email,
-      subject: "مرحباً في UJI MATCHA ✦ — ريتشوال الماتشا ينتظرك",
-      html,
+      subject: "أهلاً بك في UJI MATCHA ✦",
+      html: layout(body),
       text: "مرحباً بك في UJI MATCHA — شكراً لاشتراكك في نشرتنا البريدية.",
     });
-    console.log("[email] newsletter welcome sent to", email);
+    console.log("[email] newsletter welcome →", email);
   } catch (e) {
     console.error("[email] newsletter welcome failed:", e);
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   PASSWORD RESET OTP
-═══════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   4.  PASSWORD RESET OTP
+═══════════════════════════════════════════════════════════════ */
 export async function sendPasswordResetOtp(email: string, name: string, otp: string) {
-  const content = `
-    <tr><td style="padding:40px 40px 32px;direction:rtl;text-align:center;">
-      <div style="font-size:10px;letter-spacing:0.25em;color:#9BA17B;text-transform:uppercase;margin-bottom:10px;font-family:Georgia,serif;text-align:center;">رمز التحقق</div>
-      <h1 style="font-family:Arial,Tahoma,sans-serif;font-size:20px;font-weight:400;color:#1C201B;margin:0 0 8px;text-align:center;">مرحباً ${name || ""}،</h1>
-      <p style="font-family:Arial,Tahoma,sans-serif;font-size:14px;color:#7a7a6e;line-height:1.95;margin:0 auto 32px;max-width:360px;text-align:center;">
-        طلبت إعادة تعيين كلمة المرور. استخدم الرمز أدناه خلال <strong style="color:#1F3929;">١٥ دقيقة</strong>.
-      </p>
+  const body = `
+    <tr>
+      <td style="padding:32px 40px;text-align:center;">
 
-      <!-- OTP Box -->
-      <div style="background:#1F3929;padding:24px 40px;margin:0 auto 32px;display:inline-block;min-width:200px;text-align:center;">
-        <div style="font-family:monospace,Courier New,monospace;font-size:36px;font-weight:700;letter-spacing:0.35em;color:#F2EADB;direction:ltr;text-align:center;">
-          ${otp}
+        <h1 style="margin:0 0 8px;font-size:20px;font-weight:400;color:#1C201B;">
+          مرحباً ${name || ""}،
+        </h1>
+        <p style="margin:0 auto 28px;font-size:13px;color:#A09680;line-height:1.9;max-width:340px;">
+          طلبت إعادة تعيين كلمة المرور. استخدم الرمز أدناه خلال
+          <strong style="color:#1F3929;">١٥ دقيقة</strong>.
+        </p>
+
+        <!-- OTP box -->
+        <div style="background:#1F3929;border-radius:4px;padding:22px 40px;
+                    display:inline-block;margin-bottom:24px;">
+          <div style="font-family:'Courier New',monospace;font-size:34px;
+                      font-weight:700;letter-spacing:0.4em;color:#F2EADB;
+                      direction:ltr;">
+            ${otp}
+          </div>
         </div>
-      </div>
 
-      <p style="font-family:Arial,Tahoma,sans-serif;font-size:13px;color:#9BA17B;line-height:1.8;text-align:center;max-width:320px;margin:0 auto 24px;">
-        إذا لم تطلب إعادة كلمة المرور، تجاهل هذه الرسالة — حسابك بأمان.
-      </p>
-      <hr style="border:none;border-top:1px solid #DDD5C3;margin:0 0 24px;" />
-      <div style="font-family:Arial,Tahoma,sans-serif;font-size:12px;color:#C8BBA4;text-align:center;">
-        ينتهي هذا الرمز بعد ١٥ دقيقة من وقت الإرسال
-      </div>
-    </td></tr>`;
+        <p style="margin:0 auto 0;font-size:11px;color:#C0B49A;max-width:300px;line-height:1.8;">
+          إذا لم تطلب إعادة كلمة المرور، تجاهل هذه الرسالة — حسابك بأمان.
+        </p>
 
-  const html = wrapEmail(content);
+      </td>
+    </tr>`;
 
   try {
     await transporter.sendMail({
       from: FROM,
       to: email,
-      subject: `${otp} — رمز إعادة تعيين كلمة المرور في UJI MATCHA`,
-      html,
-      text: `رمز التحقق لإعادة تعيين كلمة المرور: ${otp}\nصالح لمدة ١٥ دقيقة.`,
+      subject: `${otp} — رمز التحقق في UJI MATCHA`,
+      html: layout(body),
+      text: `رمز التحقق: ${otp}\nصالح لمدة ١٥ دقيقة.`,
     });
-    console.log("[email] password reset OTP sent to", email);
+    console.log("[email] OTP →", email);
   } catch (e) {
-    console.error("[email] password reset failed:", e);
+    console.error("[email] OTP failed:", e);
   }
 }
 
-/* ═══════════════════════════════════════════════════════════════════
-   TEST EMAIL
-═══════════════════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   5.  TEST — sends admin alert + order confirmation to one address
+═══════════════════════════════════════════════════════════════ */
 export async function sendTestEmail(to: string) {
-  await sendNewsletterWelcome(to);
   const mockOrder = {
-    orderNumber: "UJI-TEST-001",
-    customer: { name: "عبدالله الاختباري", phone: "0512345678", email: to },
+    orderNumber:   "UJI-TEST-001",
+    customer:      { name: "محمد الاختباري", phone: "0512345678", email: to },
     items: [
-      { name: "ماتشا UJI — كيس احتفالي", qty: 2, price: 149 },
+      { name: "ماتشا UJI — كيس احتفالي 30g", qty: 2, price: 149 },
+      { name: "ماتشا UJI — علبة كلاسيك",      qty: 1, price: 89  },
     ],
-    address: { city: "الرياض", district: "النخيل", street: "شارع التخصصي 12" },
-    shipping: 0,
-    total: 298,
+    address:       { city: "الرياض", district: "النخيل", street: "شارع التخصصي 12" },
+    shipping:      0,
+    total:         387,
     paymentMethod: "cod",
   };
-  await sendOrderConfirmation(mockOrder);
+
+  // Override ADMIN for test so it goes to the requested address
+  const originalAdmin = process.env.ADMIN_EMAIL;
+  process.env.ADMIN_EMAIL = to;
+
   await sendAdminOrderAlert(mockOrder);
+  await sendOrderConfirmation(mockOrder);
+
+  process.env.ADMIN_EMAIL = originalAdmin;
   console.log("[email] test suite sent to", to);
 }
 
