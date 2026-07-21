@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { X, Eye, EyeOff, User, LogOut, ArrowRight, Mail, Briefcase } from "lucide-react";
+import { X, Eye, EyeOff, User, LogOut, ArrowRight, Mail } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { useAuthModal } from "../context/AuthModalContext";
 import { api } from "../lib/api";
@@ -101,8 +101,6 @@ export default function AuthModal() {
   const [otp,        setOtp]        = useState("");
   const [newPass,    setNewPass]    = useState("");
   const [newConf,    setNewConf]    = useState("");
-  const [isEmployee, setIsEmployee] = useState(false);
-  const [jobTitle,   setJobTitle]   = useState("");
   const [error,      setError]      = useState("");
   const [success,    setSuccess]    = useState("");
   const [busy,       setBusy]       = useState(false);
@@ -130,7 +128,7 @@ export default function AuthModal() {
 
   const clear = useCallback(() => {
     setName(""); setPhone(""); setEmail(""); setPass(""); setConfirm("");
-    setOtp(""); setNewPass(""); setNewConf(""); setIsEmployee(false); setJobTitle("");
+    setOtp(""); setNewPass(""); setNewConf("");
     setError(""); setSuccess("");
     setCountry(COUNTRIES[0]);
   }, []);
@@ -167,13 +165,9 @@ export default function AuthModal() {
         phone: phone.trim(),
         password: pass,
         email: email.trim() || undefined,
-        role: isEmployee ? "employee" : "customer",
-        jobTitle: isEmployee ? jobTitle.trim() : undefined,
+        role: "customer",
       } as any);
-      setSuccess(isEmployee
-        ? "تم إنشاء حساب الموظف بنجاح — بانتظار موافقة المدير ✦"
-        : "تم إنشاء حسابك بنجاح — أهلاً بك في UJI MATCHA ✦"
-      );
+      setSuccess("تم إنشاء حسابك بنجاح — أهلاً بك في UJI MATCHA ✦");
       setTimeout(() => { closeAuth(); clear(); }, 1200);
     } catch (err: any) {
       setError(err.message || "حدث خطأ أثناء إنشاء الحساب");
@@ -385,30 +379,7 @@ export default function AuthModal() {
                 <PwdField label="كلمة المرور" value={pass} onChange={setPass} placeholder="٦ أحرف على الأقل" required />
                 <PwdField label="تأكيد كلمة المرور" value={confirm} onChange={setConfirm} placeholder="أعد كتابة كلمة المرور" required />
 
-                {/* Employee toggle */}
-                <div style={{ border: "1px solid rgba(200,187,164,0.4)", padding: "12px 16px" }}>
-                  <label style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }}>
-                    <div
-                      onClick={() => setIsEmployee(v => !v)}
-                      style={{ width: 40, height: 22, borderRadius: 11, background: isEmployee ? "#1F3929" : "#C8BBA4", position: "relative", transition: "background 0.2s", flexShrink: 0 }}>
-                      <div style={{ position: "absolute", top: 2, width: 18, height: 18, background: "#fff", borderRadius: "50%", boxShadow: "0 1px 3px rgba(0,0,0,0.2)", transition: "transform 0.2s", transform: isEmployee ? "translateX(2px)" : "translateX(20px)" }} />
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <Briefcase size={14} strokeWidth={1.5} color="#9BA17B" />
-                      <span style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.82rem", color: "#1C201B" }}>
-                        التسجيل كموظف
-                      </span>
-                    </div>
-                  </label>
-                  {isEmployee && (
-                    <div style={{ marginTop: 12 }}>
-                      <label style={LBL}>المسمى الوظيفي</label>
-                      <input style={{ ...INP, marginTop: 6 }} value={jobTitle} onChange={e => setJobTitle(e.target.value)} placeholder="مثال: مسؤول خدمة عملاء" />
-                    </div>
-                  )}
-                </div>
-
-                <button type="submit" disabled={busy} style={BTN(busy)}>{busy ? "جار الإنشاء..." : isEmployee ? "إنشاء حساب موظف ✦" : "إنشاء الحساب ✦"}</button>
+                <button type="submit" disabled={busy} style={BTN(busy)}>{busy ? "جار الإنشاء..." : "إنشاء الحساب ✦"}</button>
                 <p style={MUTED}>لديك حساب؟{" "}<button type="button" onClick={() => go("login")} style={LINK}>سجّل دخولك</button></p>
               </form>
             )}

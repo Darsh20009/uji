@@ -15,6 +15,9 @@ import CheckoutPage from "./pages/CheckoutPage";
 import AdminPage from "./pages/AdminPage";
 import PolicyPage from "./pages/PolicyPage";
 import WholesalePage from "./pages/WholesalePage";
+import RitualPage from "./pages/RitualPage";
+import MagazinePage from "./pages/MagazinePage";
+import OurStoryPage from "./pages/OurStoryPage";
 import { Link } from "wouter";
 
 export default function App() {
@@ -53,6 +56,10 @@ export default function App() {
               <Route path="/checkout" component={CheckoutPage} />
               <Route path="/policy" component={PolicyPage} />
               <Route path="/wholesale" component={WholesalePage} />
+              <Route path="/ritual" component={RitualPage} />
+              <Route path="/magazine" component={MagazinePage} />
+              <Route path="/about" component={OurStoryPage} />
+              <Route path="/story" component={OurStoryPage} />
               <Route path="/shipping">
                 {() => { window.location.href = "/policy"; return null; }}
               </Route>
