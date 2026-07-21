@@ -30,7 +30,7 @@ function FeatureTile({ icon, title, body }: { icon: React.ReactNode; title: stri
     }}>
       <div style={{ color: "#9BA17B" }}>{icon}</div>
       <h3 style={{
-        fontFamily: "'Cormorant Garamond', serif",
+        fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
         fontSize: "1.4rem", fontWeight: 300, color: "#F2EADB", lineHeight: 1.3,
       }}>{title}</h3>
       <p style={{
@@ -69,7 +69,7 @@ function Newsletter() {
       <div className="container" style={{ maxWidth: 640 }}>
         <p className="label-eyebrow" style={{ marginBottom: "1.5rem" }}>JOURNAL — نشرة بريدية</p>
         <h2 style={{
-          fontFamily: "'Cormorant Garamond', serif",
+          fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
           fontSize: "clamp(2rem, 3.5vw, 3rem)",
           fontWeight: 300, color: "#1C201B",
           marginBottom: "1rem", lineHeight: 1.2,
@@ -85,7 +85,7 @@ function Newsletter() {
         </p>
 
         {status === "done" ? (
-          <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "1.3rem", fontWeight: 300, color: "#1F3929" }}>
+          <p style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.3rem", fontWeight: 300, color: "#1F3929" }}>
             ✦ أهلاً بك في عائلة UJI
           </p>
         ) : (
@@ -228,7 +228,7 @@ export default function HomePage() {
             </p>
 
             <h1 style={{
-              fontFamily: "'Cormorant Garamond', serif",
+              fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
               fontSize: "clamp(3rem, 6vw, 5.5rem)",
               fontWeight: 300, lineHeight: 1.1,
               color: "#F2EADB",
@@ -297,7 +297,7 @@ export default function HomePage() {
       }}>
         <div className="container">
           <p style={{
-            fontFamily: "'Cormorant Garamond', serif",
+            fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
             fontSize: "clamp(1.8rem, 3.5vw, 3rem)",
             fontWeight: 300, fontStyle: "italic",
             color: "#1C201B", lineHeight: 1.4,
@@ -350,7 +350,7 @@ export default function HomePage() {
             {/* Right: annotations */}
             <div>
               <h2 style={{
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
                 fontSize: "clamp(2rem, 3.5vw, 3rem)",
                 fontWeight: 300, color: "#1C201B",
                 marginBottom: "0.75rem", lineHeight: 1.2,
@@ -404,7 +404,7 @@ export default function HomePage() {
             gap: "4rem", alignItems: "end", marginBottom: "5rem",
           }}>
             <h2 style={{
-              fontFamily: "'Cormorant Garamond', serif",
+              fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
               fontSize: "clamp(2.2rem, 4vw, 3.5rem)",
               fontWeight: 300, color: "#F2EADB", lineHeight: 1.15,
             }}>
@@ -480,7 +480,7 @@ export default function HomePage() {
           }}>
             <div>
               <h2 style={{
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
                 fontSize: "clamp(2rem, 3.5vw, 3rem)",
                 fontWeight: 300, color: "#1C201B", lineHeight: 1.2,
                 marginBottom: "0.75rem",
@@ -519,7 +519,7 @@ export default function HomePage() {
                     <h3 style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.95rem", fontWeight: 400, color: "#1C201B", marginBottom: "0.25rem" }}>{name}</h3>
                     <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "0.65rem", color: "#C8BBA4", letterSpacing: "0.08em", marginBottom: "1rem" }}>{sub}</p>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1rem", borderTop: "1px solid rgba(200,187,164,0.25)" }}>
-                      <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "1.1rem", color: "#1F3929" }}>{price} <span style={{ fontSize: "0.7rem", fontFamily: "'Inter',sans-serif" }}>ر.س</span></span>
+                      <span style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.1rem", color: "#1F3929" }}>{price} <span style={{ fontSize: "0.7rem", fontFamily: "'Inter',sans-serif" }}>ر.س</span></span>
                       <Link href="/products" className="btn-outline" style={{ height: 36, padding: "0 1rem", fontSize: "0.6rem" }}>أضف</Link>
                     </div>
                   </div>
@@ -540,7 +540,7 @@ export default function HomePage() {
           <div className="grid-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5rem", alignItems: "center" }}>
             <div>
               <p style={{
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
                 fontSize: "clamp(2rem, 3vw, 2.8rem)",
                 fontWeight: 300, fontStyle: "italic",
                 color: "#4C5734", lineHeight: 1.3, marginBottom: "2rem",
@@ -562,7 +562,7 @@ export default function HomePage() {
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 <img src="/assets/lifestyle/uji-lifestyle-car-window-01.png" alt="كوب UJI" style={{ width: "100%", height: "60%", objectFit: "cover" }} />
                 <div style={{ flex: 1, background: "#16281D", display: "flex", alignItems: "center", justifyContent: "center", padding: "1.5rem" }}>
-                  <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.3rem", fontWeight: 300, fontStyle: "italic", color: "#9BA17B", textAlign: "center", lineHeight: 1.4 }}>
+                  <p style={{ fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif", fontSize: "1.3rem", fontWeight: 300, fontStyle: "italic", color: "#9BA17B", textAlign: "center", lineHeight: 1.4 }}>
                     صُنعت<br />لريتشوالك.
                   </p>
                 </div>

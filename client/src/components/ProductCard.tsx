@@ -92,7 +92,7 @@ export default function ProductCard({ product }: { product: any }) {
         }}>
           <div>
             <span style={{
-              fontFamily: "'Cormorant Garamond', serif",
+              fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
               fontSize: "1.1rem", fontWeight: 400,
               color: "#1F3929",
             }}>
@@ -100,7 +100,7 @@ export default function ProductCard({ product }: { product: any }) {
             </span>
             {product.comparePrice > 0 && product.comparePrice > product.price && (
               <span style={{
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
                 fontSize: "0.85rem", color: "#C8BBA4",
                 textDecoration: "line-through", marginRight: "0.4rem",
               }}>

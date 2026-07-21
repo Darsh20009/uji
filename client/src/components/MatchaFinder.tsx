@@ -118,7 +118,7 @@ export default function MatchaFinder() {
               MATCHA FINDER
             </p>
             <h2 style={{
-              fontFamily: "'Cormorant Garamond', serif",
+              fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
               fontSize: "clamp(1.8rem,3.5vw,2.8rem)",
               fontWeight: 300, color: "#F2EADB", lineHeight: 1.2,
               marginBottom: "1rem",
@@ -176,7 +176,7 @@ export default function MatchaFinder() {
             </div>
 
             <h3 style={{
-              fontFamily: "'Cormorant Garamond', serif",
+              fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
               fontSize: "clamp(1.4rem,3vw,2rem)",
               fontWeight: 300, color: "#F2EADB", lineHeight: 1.3,
               marginBottom: "2rem", textAlign: "center",
@@ -248,7 +248,7 @@ export default function MatchaFinder() {
               marginBottom: "2rem",
             }}>
               <div style={{
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
                 fontSize: "clamp(2rem,4vw,3rem)",
                 fontWeight: 300, color: res.color,
                 marginBottom: "0.4rem",

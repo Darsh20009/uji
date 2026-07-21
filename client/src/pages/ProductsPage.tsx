@@ -26,7 +26,7 @@ export default function ProductsPage() {
           }}>THE COLLECTION</p>
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: "1.5rem" }}>
             <h1 style={{
-              fontFamily: "'Cormorant Garamond',serif",
+              fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
               fontSize: "clamp(2.5rem,5vw,4rem)",
               fontWeight: 300, color: "#1C201B", lineHeight: 1,
             }}>المجموعة</h1>
@@ -63,7 +63,7 @@ export default function ProductsPage() {
         )}
         {!isLoading && products?.length === 0 && (
           <div style={{ textAlign: "center", padding: "5rem", color: "#9BA17B" }}>
-            <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "1.5rem", fontWeight: 300 }}>لا توجد منتجات</p>
+            <p style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.5rem", fontWeight: 300 }}>لا توجد منتجات</p>
           </div>
         )}
         {products?.length > 0 && (

@@ -3,7 +3,7 @@ export default function PolicyPage() {
     marginBottom: "3rem",
   };
   const h2Style: React.CSSProperties = {
-    fontFamily: "'Cormorant Garamond', serif",
+    fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
     fontSize: "1.6rem", fontWeight: 300, color: "#1F3929",
     marginBottom: "1.25rem", paddingBottom: "0.75rem",
     borderBottom: "1px solid rgba(200,187,164,0.3)",
@@ -34,7 +34,7 @@ export default function PolicyPage() {
             letterSpacing: "0.3em", textTransform: "uppercase", color: "#9BA17B", marginBottom: "1rem",
           }}>POLICIES — السياسات</p>
           <h1 style={{
-            fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(2rem, 4vw, 3rem)",
+            fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif", fontSize: "clamp(2rem, 4vw, 3rem)",
             fontWeight: 300, color: "#1C201B", lineHeight: 1.2,
           }}>
             سياسات المتجر
@@ -158,7 +158,7 @@ export default function PolicyPage() {
           textAlign: "center", padding: "3rem",
           background: "#1F3929", marginTop: "3rem",
         }}>
-          <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "1.4rem", fontWeight: 300, color: "#F2EADB", marginBottom: "0.75rem" }}>
+          <p style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.4rem", fontWeight: 300, color: "#F2EADB", marginBottom: "0.75rem" }}>
             هل لديك استفسار؟
           </p>
           <p style={{ ...pStyle, color: "rgba(155,161,123,0.85)", marginBottom: "1.5rem" }}>

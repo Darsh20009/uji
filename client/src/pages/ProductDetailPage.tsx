@@ -98,7 +98,7 @@ export default function ProductDetailPage() {
             )}
 
             <h1 style={{
-              fontFamily: "'Cormorant Garamond',serif",
+              fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
               fontSize: "clamp(2rem,3.5vw,3rem)",
               fontWeight: 300, color: "#1C201B", lineHeight: 1.15,
               marginBottom: "0.75rem",
@@ -110,12 +110,12 @@ export default function ProductDetailPage() {
 
             {/* Price */}
             <div style={{ display: "flex", alignItems: "baseline", gap: "1rem", marginBottom: "2rem" }}>
-              <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "2rem", color: "#1F3929", fontWeight: 400 }}>
+              <span style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "2rem", color: "#1F3929", fontWeight: 400 }}>
                 {p.price?.toFixed(2)} <span style={{ fontSize: "0.9rem", fontFamily: "'IBM Plex Sans Arabic',sans-serif" }}>ر.س</span>
               </span>
               {discount > 0 && (
                 <>
-                  <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "1.2rem", color: "#C8BBA4", textDecoration: "line-through" }}>
+                  <span style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.2rem", color: "#C8BBA4", textDecoration: "line-through" }}>
                     {p.comparePrice?.toFixed(2)} ر.س
                   </span>
                   <span style={{ background: "#1F3929", color: "#9BA17B", fontSize: "0.65rem", padding: "2px 8px", letterSpacing: "0.1em", fontFamily: "'Inter',sans-serif" }}>
@@ -141,7 +141,7 @@ export default function ProductDetailPage() {
             <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem", alignItems: "center" }}>
               <div style={{ display: "flex", border: "1px solid rgba(200,187,164,0.4)", background: "#F7F2E8" }}>
                 <button onClick={() => setQty(q => Math.max(1, q - 1))} style={{ width: 44, height: 52, background: "none", border: "none", cursor: "pointer", fontSize: "1.2rem", color: "#1C201B" }}>−</button>
-                <span style={{ width: 44, height: 52, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Cormorant Garamond',serif", fontSize: "1.1rem", color: "#1C201B" }}>{qty}</span>
+                <span style={{ width: 44, height: 52, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.1rem", color: "#1C201B" }}>{qty}</span>
                 <button onClick={() => setQty(q => q + 1)} style={{ width: 44, height: 52, background: "none", border: "none", cursor: "pointer", fontSize: "1.2rem", color: "#1C201B" }}>+</button>
               </div>
               <button

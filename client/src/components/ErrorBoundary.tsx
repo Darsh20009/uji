@@ -29,7 +29,7 @@ export default class ErrorBoundary extends Component<Props, State> {
         fontFamily: "'IBM Plex Sans Arabic', sans-serif",
       }}>
         <img src="/assets/brand/uji-logo-forest-green-transparent.png" alt="UJI" style={{ height: 60, marginBottom: "2rem", objectFit: "contain" }} />
-        <h2 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "2rem", fontWeight: 300, color: "#1C201B", marginBottom: "1rem" }}>
+        <h2 style={{ fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif", fontSize: "2rem", fontWeight: 300, color: "#1C201B", marginBottom: "1rem" }}>
           حدث خطأ غير متوقع
         </h2>
         <p style={{ fontSize: "0.9rem", color: "#9BA17B", marginBottom: "2rem", lineHeight: 1.8 }}>

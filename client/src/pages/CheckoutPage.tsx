@@ -21,7 +21,7 @@ const label: React.CSSProperties = {
   marginBottom: 6, display: "block",
 };
 const sectionTitle: React.CSSProperties = {
-  fontFamily: "'Cormorant Garamond',serif", fontSize: "1.1rem",
+  fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.1rem",
   fontWeight: 300, color: "#1C201B", letterSpacing: "0.06em",
   borderBottom: "1px solid rgba(200,187,164,0.3)", paddingBottom: "0.75rem",
   marginBottom: "1.25rem",
@@ -113,7 +113,7 @@ export default function CheckoutPage() {
     <div style={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#F2EADB", padding: "2rem" }}>
       <div style={{ textAlign: "center", maxWidth: 480 }}>
         <CheckCircle size={56} color="#1F3929" strokeWidth={1} style={{ marginBottom: "1.5rem" }} />
-        <h2 style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "2.2rem", fontWeight: 300, color: "#1C201B", marginBottom: "0.75rem" }}>
+        <h2 style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "2.2rem", fontWeight: 300, color: "#1C201B", marginBottom: "0.75rem" }}>
           تم تأكيد طلبك
         </h2>
         <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", color: "#9BA17B", marginBottom: "0.5rem" }}>
@@ -334,8 +334,8 @@ export default function CheckoutPage() {
                   </span>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px solid rgba(200,187,164,0.4)", paddingTop: "0.75rem", marginTop: "0.25rem" }}>
-                  <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "1.1rem", color: "#1C201B", fontWeight: 400 }}>الإجمالي</span>
-                  <span style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "1.2rem", color: "#1C201B", fontWeight: 500 }}>{total.toFixed(2)} ر.س</span>
+                  <span style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.1rem", color: "#1C201B", fontWeight: 400 }}>الإجمالي</span>
+                  <span style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.2rem", color: "#1C201B", fontWeight: 500 }}>{total.toFixed(2)} ر.س</span>
                 </div>
               </div>
 

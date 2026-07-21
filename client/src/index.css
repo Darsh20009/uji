@@ -23,16 +23,16 @@
   --radius:       0px;
 
   /* ── Typography System ──────────────────────────────── */
-  /* Display headings (Arabic)  → Tajawal   — wide, distinctive */
-  --font-display: 'Tajawal', 'IBM Plex Sans Arabic', system-ui, sans-serif;
-  /* Editorial / en headlines   → Playfair Display — ornate serif */
-  --font-serif:   'Playfair Display', 'Times New Roman', serif;
+  /* Display headings (Arabic)  → Aref Ruqaa — calligraphic Ruqaa, connected, unique */
+  --font-display: 'Aref Ruqaa', 'IBM Plex Sans Arabic', system-ui, sans-serif;
+  /* Editorial / en headlines   → Cormorant Garamond — luxury italic serif */
+  --font-serif:   'Cormorant Garamond', 'Times New Roman', serif;
   /* Body copy                  → IBM Plex Sans Arabic */
-  --font-arabic:  'IBM Plex Sans Arabic', 'Tajawal', system-ui, sans-serif;
+  --font-arabic:  'IBM Plex Sans Arabic', system-ui, sans-serif;
   /* Accent labels / mono       → DM Mono — unique techy contrast */
   --font-mono:    'DM Mono', 'Courier New', monospace;
   /* Legacy alias */
-  --font-sans:    'Tajawal', 'IBM Plex Sans Arabic', system-ui, sans-serif;
+  --font-sans:    'IBM Plex Sans Arabic', system-ui, sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

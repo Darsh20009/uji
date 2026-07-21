@@ -7,7 +7,7 @@ export default function Footer() {
       {/* Big watermark wordmark */}
       <div style={{
         position: "absolute", bottom: -40, left: "50%", transform: "translateX(-50%)",
-        fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(8rem,18vw,16rem)",
+        fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif", fontSize: "clamp(8rem,18vw,16rem)",
         fontWeight: 300, letterSpacing: "0.15em", color: "rgba(31,57,41,0.8)",
         whiteSpace: "nowrap", pointerEvents: "none", userSelect: "none",
         lineHeight: 1,

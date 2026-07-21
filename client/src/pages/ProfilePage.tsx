@@ -68,7 +68,7 @@ export default function ProfilePage() {
               }}>
                 <User size={28} strokeWidth={1} color={tier.color} />
               </div>
-              <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "1.3rem", fontWeight: 400, color: "#1C201B", margin: "0 0 4px" }}>
+              <p style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.3rem", fontWeight: 400, color: "#1C201B", margin: "0 0 4px" }}>
                 {u.name}
               </p>
               <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.78rem", color: "#9BA17B", margin: "0 0 8px", direction: "ltr" }}>
@@ -92,7 +92,7 @@ export default function ProfilePage() {
                   LOYALTY — {tier.label.toUpperCase()}
                 </span>
               </div>
-              <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "2.2rem", fontWeight: 300, color: "#1C201B", margin: "0 0 4px", lineHeight: 1 }}>
+              <p style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "2.2rem", fontWeight: 300, color: "#1C201B", margin: "0 0 4px", lineHeight: 1 }}>
                 {points.toLocaleString("ar-SA")}
               </p>
               <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.78rem", color: "#9BA17B", margin: "0 0 1rem" }}>نقطة مكافأة</p>

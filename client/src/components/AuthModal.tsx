@@ -284,7 +284,7 @@ export default function AuthModal() {
               if (next) next.style.display = "block";
             }}
           />
-          <span style={{ display: "none", fontFamily: "'Cormorant Garamond', serif", fontSize: "1.8rem", fontWeight: 300, letterSpacing: "0.3em", color: "#F2EADB" }}>UJI</span>
+          <span style={{ display: "none", fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif", fontSize: "1.8rem", fontWeight: 300, letterSpacing: "0.3em", color: "#F2EADB" }}>UJI</span>
           <div style={{ width: 28, height: 1, background: "#9BA17B" }} />
           <span style={{ fontFamily: "'Inter', sans-serif", fontSize: "0.5rem", letterSpacing: "0.42em", color: "#9BA17B" }}>CEREMONIAL GRADE MATCHA</span>
         </div>
@@ -296,7 +296,7 @@ export default function AuthModal() {
               <User size={28} strokeWidth={1} color="#9BA17B" />
             </div>
             <div style={{ textAlign: "center" }}>
-              <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.35rem", fontWeight: 400, color: "#1C201B", margin: "0 0 4px" }}>{(user as any).name || "مرحباً"}</p>
+              <p style={{ fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif", fontSize: "1.35rem", fontWeight: 400, color: "#1C201B", margin: "0 0 4px" }}>{(user as any).name || "مرحباً"}</p>
               <p style={{ fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif", fontSize: "0.82rem", color: "#9BA17B", margin: 0, direction: "ltr" }}>{(user as any).phone}</p>
               {(user as any).role === "employee" && (
                 <span style={{ display: "inline-block", marginTop: 6, background: "rgba(31,57,41,0.1)", color: "#1F3929", fontSize: "0.72rem", padding: "3px 10px", fontFamily: "'IBM Plex Sans Arabic',sans-serif" }}>موظف</span>

@@ -304,7 +304,7 @@ function AdminDashboard({ onNavigate }: { onNavigate: (t: Tab) => void }) {
       {/* Welcome */}
       <div className="bg-gradient-to-l from-[#1F3929] to-[#16281D] rounded-2xl p-6 text-white">
         <p className="text-[#9BA17B] text-xs tracking-widest uppercase mb-1">UJI MATCHA — ADMIN</p>
-        <h1 className="text-2xl font-light" style={{ fontFamily: "'Cormorant Garamond',serif" }}>مرحباً بك في لوحة التحكم</h1>
+        <h1 className="text-2xl font-light" style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif" }}>مرحباً بك في لوحة التحكم</h1>
         <p className="text-[#9BA17B] text-sm mt-1">إدارة متجرك من مكان واحد.</p>
       </div>
 
