@@ -121,11 +121,73 @@ function Newsletter() {
   );
 }
 
+/* ─── Trust bar ─── */
+const DEFAULT_BADGES = [
+  { icon: "🚚", title: "يوصلك خلال", value: "١–٣ أيام", enabled: true },
+  { icon: "🔒", title: "الدفع",       value: "آمن ومشفّر", enabled: true },
+  { icon: "↩️",  title: "الاسترجاع",  value: "يوم واحد",  enabled: true },
+];
+function TrustBar({ badges }: { badges?: typeof DEFAULT_BADGES }) {
+  const list = (badges && badges.length ? badges : DEFAULT_BADGES).filter(b => b.enabled !== false);
+  if (!list.length) return null;
+  return (
+    <section style={{
+      background: "#F7F2E8",
+      borderTop: "1px solid rgba(200,187,164,0.3)",
+      borderBottom: "1px solid rgba(200,187,164,0.3)",
+      padding: "0",
+    }}>
+      <div className="container" style={{ padding: "0 1.5rem" }}>
+        <div style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "stretch",
+          gap: "0",
+          flexWrap: "wrap",
+        }}>
+          {list.map((b, i) => (
+            <div key={i} style={{
+              flex: "1 1 140px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "0.7rem",
+              padding: "1.1rem 1.5rem",
+              borderLeft: i < list.length - 1 ? "1px solid rgba(200,187,164,0.35)" : "none",
+            }}>
+              <span style={{ fontSize: "1.35rem", lineHeight: 1, flexShrink: 0 }}>{b.icon}</span>
+              <div style={{ textAlign: "right" }}>
+                <p style={{
+                  fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                  fontSize: "0.75rem", color: "#9BA17B",
+                  margin: 0, lineHeight: 1.2,
+                }}>{b.title}</p>
+                <p style={{
+                  fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                  fontSize: "0.85rem", fontWeight: 600, color: "#1C201B",
+                  margin: 0, lineHeight: 1.3, marginTop: 2,
+                }}>{b.value}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function HomePage() {
   const { data: products } = useQuery({
     queryKey: ["products-featured"],
     queryFn: () => api.get("/products?featured=1"),
   });
+  const { data: settings } = useQuery({
+    queryKey: ["settings"],
+    queryFn: () => api.get("/settings"),
+    staleTime: 5 * 60 * 1000,
+  });
+  const trustBadges = (settings as any)?.trustBadges ?? DEFAULT_BADGES;
+  const badgesPosition: "above" | "below" | "both" = (settings as any)?.trustBadgesPosition ?? "above";
 
   return (
     <div style={{ background: "#F2EADB" }}>
@@ -219,12 +281,15 @@ export default function HomePage() {
         `}</style>
       </section>
 
+      {/* ══ TRUST BAR — above position ══ */}
+      {(badgesPosition === "above" || badgesPosition === "both") && <TrustBar badges={trustBadges} />}
+
       {/* ══════════════════════════════════════════════
           TAGLINE BREAK
       ══════════════════════════════════════════════ */}
       <section style={{
         background: "#F7F2E8",
-        padding: "8rem 0",
+        padding: "6rem 0",
         textAlign: "center",
         borderTop: "1px solid rgba(200,187,164,0.3)",
         borderBottom: "1px solid rgba(200,187,164,0.3)",
@@ -237,14 +302,14 @@ export default function HomePage() {
             color: "#1C201B", lineHeight: 1.4,
             marginBottom: "1.5rem",
           }}>
-            "ريتشوال تم تحسينه عبر قرون."
+            "ماتشا مختارة بعناية —<br />من اليابان إلى كوبك."
           </p>
           <p style={{
             fontFamily: "'IBM Plex Sans Arabic', sans-serif",
-            fontSize: "0.82rem", color: "#9BA17B",
-            letterSpacing: "0.04em",
+            fontSize: "0.85rem", color: "#9BA17B",
+            letterSpacing: "0.04em", lineHeight: 1.8,
           }}>
-            من حقول شاي أوجي إلى كوبك اليومي.
+            من مزارع شيزوكا وأوجي إلى يديك — لكل تحضير صنف، ولكل لحظة نكهة.
           </p>
         </div>
       </section>
@@ -331,7 +396,7 @@ export default function HomePage() {
       ══════════════════════════════════════════════ */}
       <section className="section" style={{ background: "#16281D" }}>
         <div className="container">
-          <SectionLabel num="03" en="WHY UJI" />
+          <SectionLabel num="03" en="WHY UJI MATCHA" />
 
           <div className="grid-2col" style={{
             display: "grid", gridTemplateColumns: "1fr 1fr",
@@ -342,14 +407,14 @@ export default function HomePage() {
               fontSize: "clamp(2.2rem, 4vw, 3.5rem)",
               fontWeight: 300, color: "#F2EADB", lineHeight: 1.15,
             }}>
-              ليست كل الماتشا<br />
-              <em>متساوية.</em>
+              ماتشا مختارة بعناية<br />
+              <em>لكل طريقة تحضير.</em>
             </h2>
             <p style={{
               fontFamily: "'IBM Plex Sans Arabic', sans-serif",
               fontSize: "0.88rem", color: "rgba(155,161,123,0.85)", lineHeight: 1.9,
             }}>
-              نحن نختار فقط أعلى درجة من ورق الشاي المزروع في الظل من أوجي، اليابان — ثم نطحنها ببطء بالحجر للحفاظ على لونها الحي، أريجها، وفوائدها.
+              سواء كنت تعدّها لنفسك أو تشاركها في تجمع — كل صنف من ماتشا UJI مختار بدقة من مزارع اليابان، ومنها مزارع شيزوكا الشهيرة، ليناسب كل ذوق وكل أسلوب تحضير.
             </p>
           </div>
 
@@ -361,29 +426,29 @@ export default function HomePage() {
               {
                 icon: (
                   <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.2">
-                    <circle cx="14" cy="14" r="12"/><path d="M14 8v6l4 2"/>
+                    <path d="M14 3C8 3 4 8 4 14s4 11 10 11 10-5 10-11"/><path d="M14 3v6M20 5l-4 5"/>
                   </svg>
                 ),
-                title: "درجة احتفالية",
-                body: "أعلى درجة من الماتشا — ذات طعم سلس وطبيعي لا مرارة فيه.",
+                title: "من مزارع شيزوكا وأوجي",
+                body: "نختار من أبرز مزارع اليابان — شيزوكا وأوجي — حيث يُزرع أجود الشاي منذ قرون.",
               },
               {
                 icon: (
                   <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.2">
-                    <path d="M14 4C9 4 5 8 5 13s4 9 9 9 9-4 9-9"/><path d="M14 4v5M19 6l-3 4"/>
+                    <circle cx="14" cy="14" r="5"/><path d="M14 2v4M14 22v4M2 14h4M22 14h4M6 6l3 3M19 19l3 3M6 22l3-3M19 9l3-3"/>
                   </svg>
                 ),
-                title: "مصدرها أوجي",
-                body: "من أشهر مناطق الشاي في اليابان — حيث تُزرع أجود الأنواع منذ ألف عام.",
+                title: "لكل أسلوب تحضير",
+                body: "من الماتشا اللاتيه إلى الريتشوال الياباني الكلاسيكي — عندنا الصنف المناسب لك.",
               },
               {
                 icon: (
                   <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.2">
-                    <circle cx="14" cy="14" r="5"/><path d="M14 2v4M14 22v4M2 14h4M22 14h4"/>
+                    <path d="M5 14h18M12 7l7 7-7 7"/>
                   </svg>
                 ),
-                title: "طحن بالحجر",
-                body: "تُطحن ببطء بالحجر للحفاظ على المذاق الكامل واللون الأخضر الداكن.",
+                title: "للأفراد والتجمعات",
+                body: "سواء كنت تبدأ يومك بهدوء أو تشارك لحظة مميزة مع أشخاص تحبهم — الماتشا لكل المناسبات.",
               },
               {
                 icon: (
@@ -391,8 +456,8 @@ export default function HomePage() {
                     <path d="M7 20l5-14 5 14"/><path d="M9 15h10"/>
                   </svg>
                 ),
-                title: "ماتشا نقية 100%",
-                body: "بدون سكر، إضافات، ألوان صناعية أو مواد حافظة — نقية تماماً.",
+                title: "نقية 100% بلا إضافات",
+                body: "بدون سكر، نكهات اصطناعية أو مواد حافظة — ماتشا خالصة من قلب اليابان إلى كوبك.",
               },
             ].map(({ icon, title, body }) => (
               <FeatureTile key={title} icon={icon} title={title} body={body} />
@@ -463,6 +528,9 @@ export default function HomePage() {
           )}
         </div>
       </section>
+
+      {/* ══ TRUST BAR — below position ══ */}
+      {(badgesPosition === "below" || badgesPosition === "both") && <TrustBar badges={trustBadges} />}
 
       {/* ══════════════════════════════════════════════
           05 — THE RITUAL

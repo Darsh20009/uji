@@ -879,6 +879,12 @@ function AdminSettings() {
   const [form, setForm] = useState<any>(null);
   const [saved, setSaved] = useState(false);
 
+  const DEFAULT_BADGES = [
+    { icon: "🚚", title: "يوصلك خلال", value: "١–٣ أيام",   enabled: true },
+    { icon: "🔒", title: "الدفع",       value: "آمن ومشفّر", enabled: true },
+    { icon: "↩️",  title: "الاسترجاع",  value: "يوم واحد",   enabled: true },
+  ];
+
   const defaults = {
     storeName: "UJI MATCHA",
     storePhone: "0552469643",
@@ -887,6 +893,8 @@ function AdminSettings() {
     shippingFee: 30,
     shippingFreeThreshold: 200,
     maintenanceMode: false,
+    trustBadges: DEFAULT_BADGES,
+    trustBadgesPosition: "above" as "above" | "below" | "both",
   };
 
   const current = form || (settings ? { ...defaults, ...settings } : defaults);
@@ -950,6 +958,77 @@ function AdminSettings() {
           </div>
         </div>
         <p className="px-5 pb-4 text-xs text-stone-400">الطلبات التي تتجاوز {current.shippingFreeThreshold} ر.س تحصل على شحن مجاني</p>
+      </div>
+
+      {/* Trust Badges */}
+      <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-stone-50 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center text-base">✦</div>
+          <div>
+            <p className="text-sm font-semibold text-stone-700">شريط الثقة</p>
+            <p className="text-xs text-stone-400 mt-0.5">الأيقونات التي تظهر للعملاء (التوصيل · الدفع · الاسترجاع)</p>
+          </div>
+        </div>
+        <div className="p-5 space-y-4">
+          {/* Position */}
+          <div>
+            <label className={labelCls}>موضع الشريط في الصفحة الرئيسية</label>
+            <select
+              className={inputCls}
+              value={current.trustBadgesPosition ?? "above"}
+              onChange={e => setForm({ ...current, trustBadgesPosition: e.target.value })}
+              style={{ fontFamily: "inherit" }}>
+              <option value="above">فوق المنتجات</option>
+              <option value="below">تحت المنتجات</option>
+              <option value="both">فوق وتحت المنتجات</option>
+            </select>
+          </div>
+          {/* Badges */}
+          <div className="space-y-3">
+            {(current.trustBadges ?? DEFAULT_BADGES).map((b: any, i: number) => {
+              const badges: any[] = current.trustBadges ?? DEFAULT_BADGES;
+              const upd = (field: string, val: any) => {
+                const next = badges.map((x, j) => j === i ? { ...x, [field]: val } : x);
+                setForm({ ...current, trustBadges: next });
+              };
+              return (
+                <div key={i} className="border border-stone-100 rounded-xl p-4 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-stone-700">بطاقة {i + 1}</span>
+                    <button
+                      onClick={() => upd("enabled", !b.enabled)}
+                      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${b.enabled ? "bg-[#1F3929]" : "bg-stone-200"}`}>
+                      <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${b.enabled ? "translate-x-4" : "translate-x-1"}`} />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <label className={labelCls}>الأيقونة (إيموجي)</label>
+                      <input className={inputCls + " text-center text-xl"} value={b.icon} onChange={e => upd("icon", e.target.value)} maxLength={4} />
+                    </div>
+                    <div>
+                      <label className={labelCls}>العنوان</label>
+                      <input className={inputCls} value={b.title} onChange={e => upd("title", e.target.value)} style={{ fontFamily: "inherit" }} />
+                    </div>
+                    <div>
+                      <label className={labelCls}>القيمة</label>
+                      <input className={inputCls} value={b.value} onChange={e => upd("value", e.target.value)} style={{ fontFamily: "inherit" }} />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {/* Add badge */}
+          <button
+            onClick={() => {
+              const badges: any[] = current.trustBadges ?? DEFAULT_BADGES;
+              setForm({ ...current, trustBadges: [...badges, { icon: "⭐", title: "عنوان", value: "قيمة", enabled: true }] });
+            }}
+            className="w-full h-10 rounded-xl border border-dashed border-stone-200 text-stone-400 text-sm hover:border-[#9BA17B] hover:text-[#9BA17B] transition-colors">
+            + إضافة بطاقة
+          </button>
+        </div>
       </div>
 
       {/* Newsletter */}

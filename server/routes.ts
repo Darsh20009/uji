@@ -583,7 +583,7 @@ router.get("/admin/newsletter", requireAdmin, async (_req, res) => {
 
 /* ─── Public Settings ───────────────────────────────────────────── */
 router.get("/settings", async (_req, res) => {
-  const keys = ["storeName","storePhone","storeEmail","shippingFee","shippingFreeThreshold","maintenanceMode","whatsapp"];
+  const keys = ["storeName","storePhone","storeEmail","shippingFee","shippingFreeThreshold","maintenanceMode","whatsapp","trustBadges","trustBadgesPosition"];
   const settings = await Settings.find({ key: { $in: keys } });
   const obj: any = {};
   settings.forEach((s) => { obj[s.key] = s.value; });
