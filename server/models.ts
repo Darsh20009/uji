@@ -15,6 +15,7 @@ export function checkPass(supplied: string, stored: string) {
 const ProductSchema = new Schema({
   name: String, nameEn: String, description: String, price: Number,
   comparePrice: Number, images: [String], category: String,
+  matchaType: { type: String, enum: ["ceremonial","everyday","culinary"], default: null },
   stock: { type: Number, default: 0 },
   isActive: { type: Boolean, default: true },
   featured: { type: Boolean, default: false },

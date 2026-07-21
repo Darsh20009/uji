@@ -454,6 +454,7 @@ function ProductModal({ mode, product, onClose, onSaved }: { mode: "add" | "edit
     comparePrice: product?.comparePrice || "",
     stock: product?.stock ?? 0,
     category: product?.category || "matcha",
+    matchaType: product?.matchaType || "",
     isActive: product?.isActive ?? true,
     featured: product?.featured ?? false,
     sortOrder: product?.sortOrder ?? 0,
@@ -538,6 +539,28 @@ function ProductModal({ mode, product, onClose, onSaved }: { mode: "add" | "edit
             <div>
               <label className={labelCls}>الترتيب</label>
               <input type="number" className={inputCls} value={form.sortOrder} onChange={e => setForm({ ...form, sortOrder: Number(e.target.value) })} min={0} style={{ fontFamily: "inherit" }} />
+            </div>
+          </div>
+
+          {/* Matcha type */}
+          <div>
+            <label className={labelCls}>نوع الماتشا — يظهر كشارة على بطاقة المنتج</label>
+            <div className="grid grid-cols-3 gap-2">
+              {[
+                { v: "",           label: "— بدون —",               sub: "" },
+                { v: "ceremonial", label: "✦ فاخر جداً",           sub: "احتفالي — للريتشوال الأصيل" },
+                { v: "everyday",   label: "☕ استخدام يومي",        sub: "متوازن — للاستخدام اليومي" },
+                { v: "culinary",   label: "🧃 تجاري",               sub: "للمشروبات والوصفات" },
+              ].map(opt => (
+                <button
+                  key={opt.v}
+                  type="button"
+                  onClick={() => setForm({ ...form, matchaType: opt.v })}
+                  className={`p-3 rounded-xl border text-right transition-colors ${form.matchaType === opt.v ? "border-[#1F3929] bg-[#F0EBE1]" : "border-stone-200 hover:border-stone-300"}`}>
+                  <p className="text-xs font-semibold text-stone-700">{opt.label}</p>
+                  {opt.sub && <p className="text-[10px] text-stone-400 mt-0.5">{opt.sub}</p>}
+                </button>
+              ))}
             </div>
           </div>
 

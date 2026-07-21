@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { api } from "../lib/api";
 import ProductCard from "../components/ProductCard";
+import MatchaFinder from "../components/MatchaFinder";
 import { ArrowLeft } from "lucide-react";
 
 /* ─── Section label component ─── */
@@ -529,9 +530,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ══ TRUST BAR — below position ══ */}
-      {(badgesPosition === "below" || badgesPosition === "both") && <TrustBar badges={trustBadges} />}
-
       {/* ══════════════════════════════════════════════
           05 — THE RITUAL
       ══════════════════════════════════════════════ */}
@@ -574,7 +572,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 06 — NEWSLETTER */}
+      {/* ══ TRUST BAR — below position ══ */}
+      {(badgesPosition === "below" || badgesPosition === "both") && <TrustBar badges={trustBadges} />}
+
+      {/* ══════════════════════════════════════════════
+          06 — MATCHA FINDER
+      ══════════════════════════════════════════════ */}
+      <MatchaFinder />
+
+      {/* 07 — NEWSLETTER */}
       <Newsletter />
 
     </div>

@@ -3,13 +3,19 @@ import { Link } from "wouter";
 import { useCart } from "../hooks/useCart";
 import { ShoppingBag } from "lucide-react";
 
+const MATCHA_TYPE_LABEL: Record<string, { ar: string; color: string; bg: string }> = {
+  ceremonial: { ar: "فاخر جداً ✦",  color: "#7a5c1e", bg: "rgba(212,175,55,0.15)"  },
+  everyday:   { ar: "استخدام يومي", color: "#3a5c3a", bg: "rgba(155,161,123,0.18)" },
+  culinary:   { ar: "تجاري",        color: "#5a4a3a", bg: "rgba(180,160,130,0.18)" },
+};
+
 export default function ProductCard({ product }: { product: any }) {
   const { add } = useCart();
   const [hovered, setHovered] = useState(false);
 
-  // Prefer transparent version if available (by naming convention)
   const rawImg = product.images?.[0] || "";
   const img = rawImg || "/assets/packaging/uji-tin-front-transparent.png";
+  const typeInfo = product.matchaType ? MATCHA_TYPE_LABEL[product.matchaType] : null;
 
   return (
     <div
@@ -43,18 +49,31 @@ export default function ProductCard({ product }: { product: any }) {
         </div>
       </Link>
 
+      {/* Matcha type badge — top right */}
+      {typeInfo && (
+        <div style={{
+          position: "absolute", top: "0.75rem", right: "0.75rem",
+          background: typeInfo.bg,
+          color: typeInfo.color,
+          fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+          fontSize: "0.65rem", fontWeight: 600,
+          padding: "0.2rem 0.55rem",
+          borderRadius: 2,
+          letterSpacing: "0.02em",
+        }}>
+          {typeInfo.ar}
+        </div>
+      )}
+
       {/* Info */}
       <div style={{ padding: "1.25rem 1.25rem 1.5rem" }}>
-        {/* Category tag */}
-        {product.category && (
-          <p style={{
-            fontFamily: "'Inter', sans-serif",
-            fontSize: "0.6rem", letterSpacing: "0.22em", textTransform: "uppercase",
-            color: "#9BA17B", marginBottom: "0.5rem",
-          }}>
-            MATCHA
-          </p>
-        )}
+        <p style={{
+          fontFamily: "'Inter', sans-serif",
+          fontSize: "0.6rem", letterSpacing: "0.22em", textTransform: "uppercase",
+          color: "#9BA17B", marginBottom: "0.5rem",
+        }}>
+          MATCHA
+        </p>
 
         <Link href={`/products/${product._id}`}>
           <h3 style={{
@@ -71,13 +90,24 @@ export default function ProductCard({ product }: { product: any }) {
           display: "flex", alignItems: "center", justifyContent: "space-between",
           borderTop: "1px solid rgba(200,187,164,0.25)", paddingTop: "1rem",
         }}>
-          <span style={{
-            fontFamily: "'Cormorant Garamond', serif",
-            fontSize: "1.1rem", fontWeight: 400,
-            color: "#1F3929",
-          }}>
-            {product.price?.toFixed(0)} <span style={{ fontSize: "0.7rem", fontFamily: "'Inter',sans-serif", letterSpacing: "0.05em" }}>ر.س</span>
-          </span>
+          <div>
+            <span style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              fontSize: "1.1rem", fontWeight: 400,
+              color: "#1F3929",
+            }}>
+              {product.price?.toFixed(0)} <span style={{ fontSize: "0.7rem", fontFamily: "'Inter',sans-serif", letterSpacing: "0.05em" }}>ر.س</span>
+            </span>
+            {product.comparePrice > 0 && product.comparePrice > product.price && (
+              <span style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: "0.85rem", color: "#C8BBA4",
+                textDecoration: "line-through", marginRight: "0.4rem",
+              }}>
+                {product.comparePrice?.toFixed(0)}
+              </span>
+            )}
+          </div>
 
           <button
             onClick={() => add({ _id: product._id, name: product.name, price: product.price, image: img })}
