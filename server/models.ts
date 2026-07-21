@@ -30,7 +30,7 @@ const OrderSchema = new Schema({
   orderNumber: { type: String, unique: true },
   customerId: { type: Schema.Types.ObjectId, ref: "Customer" },
   customer: { name: String, phone: String, email: String },
-  address: { city: String, district: String, street: String, notes: String },
+  address: { city: String, district: String, street: String, notes: String, lat: Number, lng: Number, mapLink: String },
   items: [{ product: { type: Schema.Types.ObjectId, ref: "Product" }, name: String, price: Number, qty: Number }],
   subtotal: Number, discount: { type: Number, default: 0 },
   shipping: Number, total: Number,

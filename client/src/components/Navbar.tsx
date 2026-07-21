@@ -71,7 +71,7 @@ export default function Navbar() {
                 { href: "/products", label: "المنتجات" },
                 { href: "/about", label: "قصتنا" },
                 { href: "/ritual", label: "الريتشوال" },
-                { href: "/journal", label: "المجلة" },
+                { href: "/magazine", label: "المجلة" },
               ].map(({ href, label }) => (
                 <Link key={href} href={href} style={{
                   color: textColor, fontSize: "0.75rem",
@@ -180,7 +180,7 @@ export default function Navbar() {
               { href: "/products", label: "المنتجات", en: "Shop" },
               { href: "/about", label: "قصتنا", en: "Our Story" },
               { href: "/ritual", label: "الريتشوال", en: "Ritual" },
-              { href: "/journal", label: "المجلة", en: "Journal" },
+              { href: "/magazine", label: "المجلة", en: "Journal" },
               { href: "/cart", label: "السلة", en: "Cart" },
             ].map(({ href, label, en }) => (
               <Link

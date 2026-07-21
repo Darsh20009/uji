@@ -12,7 +12,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const FROM    = `"UJI MATCHA" <${process.env.CPANEL_SMTP_USER || "info@qirox.online"}>`;
-const ADMIN   = process.env.ADMIN_EMAIL || "qiroxsystem@gmail.com";
+const ADMIN   = process.env.ADMIN_EMAIL || "Ujimatchacomsa@gmail.com";
 const STORE   = "https://ujimatcha.store";
 
 /* ─────────────────────────────────────────────────────────────────
@@ -37,11 +37,36 @@ function layout(body: string): string {
 
       <!-- HEADER -->
       <tr>
-        <td style="background:#1F3929;padding:32px 40px;text-align:center;">
-          <div style="font-family:Georgia,'Times New Roman',serif;
-                      font-size:22px;font-weight:400;letter-spacing:0.3em;
-                      color:#F2EADB;">UJI MATCHA</div>
-          <div style="width:32px;height:1px;background:#9BA17B;margin:10px auto 0;"></div>
+        <td style="background:#1F3929;padding:0;text-align:center;position:relative;overflow:hidden;">
+          <!-- matcha powder splash bg -->
+          <div style="background:linear-gradient(135deg,#16281D 0%,#1F3929 50%,#2A4A35 100%);padding:36px 40px;">
+            <!-- logo image -->
+            <img src="${STORE}/assets/brand/uji-logo-white-transparent.png"
+                 alt="UJI MATCHA"
+                 width="120" height="48"
+                 style="display:block;margin:0 auto 10px;object-fit:contain;"
+                 onerror="this.style.display='none'" />
+            <!-- fallback text logo -->
+            <div style="font-family:Georgia,'Times New Roman',serif;
+                        font-size:18px;font-weight:400;letter-spacing:0.4em;
+                        color:#F2EADB;margin-bottom:6px;">UJI MATCHA</div>
+            <div style="width:32px;height:1px;background:#9BA17B;margin:0 auto 10px;"></div>
+            <div style="font-size:10px;letter-spacing:0.3em;color:#9BA17B;font-family:Arial,sans-serif;">
+              CEREMONIAL JAPANESE MATCHA
+            </div>
+          </div>
+          <!-- matcha visual strip -->
+          <div style="background:#9BA17B;height:3px;"></div>
+        </td>
+      </tr>
+      <!-- MATCHA IMAGE ROW -->
+      <tr>
+        <td style="background:#F7F4EF;padding:0;text-align:center;border-bottom:1px solid #E5DDD0;">
+          <img src="${STORE}/assets/brand/uji-brand-cup-matcha-repeat.png"
+               alt=""
+               width="560" height="120"
+               style="display:block;width:100%;max-width:560px;height:120px;object-fit:cover;object-position:center;"
+               onerror="this.style.display='none'" />
         </td>
       </tr>
 

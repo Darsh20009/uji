@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCart } from "../hooks/useCart";
 import { useAuth } from "../hooks/useAuth";
 import { api } from "../lib/api";
-import { CheckCircle, ShoppingBag, Tag, X, Star, CreditCard } from "lucide-react";
+import { CheckCircle, ShoppingBag, Tag, X, Star, CreditCard, MapPin, Navigation } from "lucide-react";
 import PhoneInput, { COUNTRIES, type Country } from "../components/PhoneInput";
 
 const inp: React.CSSProperties = {
@@ -43,6 +43,20 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
 
   // Coupon state
+  const [geoPos, setGeoPos] = useState<{ lat: number; lng: number } | null>(null);
+  const [geoLoading, setGeoLoading] = useState(false);
+  const [geoError, setGeoError] = useState("");
+
+  const getLocation = () => {
+    if (!navigator.geolocation) { setGeoError("المتصفح لا يدعم تحديد الموقع"); return; }
+    setGeoLoading(true); setGeoError("");
+    navigator.geolocation.getCurrentPosition(
+      pos => { setGeoPos({ lat: pos.coords.latitude, lng: pos.coords.longitude }); setGeoLoading(false); },
+      () => { setGeoError("تعذّر تحديد الموقع — تأكد من السماح بالوصول"); setGeoLoading(false); },
+      { timeout: 10000 }
+    );
+  };
+
   const [couponInput, setCouponInput] = useState("");
   const [couponLoading, setCouponLoading] = useState(false);
   const [couponData, setCouponData] = useState<{ code: string; discount: number; type: string; value: number } | null>(null);
@@ -58,6 +72,12 @@ export default function CheckoutPage() {
   const shippingThreshold = Number((settings as any)?.shippingFreeThreshold ?? 200);
   const geideaEnabled = (settings as any)?._geideaEnabled === true;
   const adminWhatsapp = (settings as any)?.whatsapp || "966552469643";
+  const codEnabled    = (settings as any)?._codEnabled  !== false;
+  const bankEnabled   = (settings as any)?._bankEnabled !== false;
+  const stcEnabled    = (settings as any)?._stcEnabled  !== false;
+  const bankIban      = (settings as any)?.bankIban  || "";
+  const bankName      = (settings as any)?.bankName  || "مصرف الراجحي";
+  const stcPayNumber  = (settings as any)?.stcPayNumber || "0552469643";
 
   const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
   const shipping = subtotal >= shippingThreshold ? 0 : shippingFeeValue;
@@ -84,7 +104,10 @@ export default function CheckoutPage() {
     try {
       const result = await api.post("/orders", {
         customer: { name: form.name, phone: form.phone, email: form.email || undefined },
-        address: { city: form.city, district: form.district, street: form.street, notes: form.addressNotes },
+        address: {
+          city: form.city, district: form.district, street: form.street, notes: form.addressNotes,
+          ...(geoPos ? { lat: geoPos.lat, lng: geoPos.lng, mapLink: `https://maps.google.com/?q=${geoPos.lat},${geoPos.lng}` } : {}),
+        },
         items: items.map(i => ({ product: i._id, name: i.name, price: i.price, qty: i.qty })),
         paymentMethod: form.paymentMethod,
         couponCode: couponData?.code,
@@ -202,6 +225,54 @@ export default function CheckoutPage() {
                   <label style={label}>ملاحظات العنوان</label>
                   <input style={inp} value={form.addressNotes} onChange={e => setForm({...form, addressNotes: e.target.value})} placeholder="الدور، رقم الشقة..." />
                 </div>
+
+                {/* Map location picker */}
+                <div style={{ gridColumn: "1 / -1" }}>
+                  <label style={label}>الموقع على الخريطة <span style={{ color: "#C8BBA4" }}>(اختياري — يساعد في التوصيل)</span></label>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexWrap: "wrap" }}>
+                    <button
+                      type="button"
+                      onClick={getLocation}
+                      disabled={geoLoading}
+                      style={{
+                        display: "flex", alignItems: "center", gap: "0.5rem",
+                        height: 44, padding: "0 1.25rem",
+                        background: geoPos ? "#1F3929" : "#F7F2E8",
+                        color: geoPos ? "#F2EADB" : "#1C201B",
+                        border: "1px solid rgba(200,187,164,0.5)",
+                        fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+                        fontSize: "0.82rem", cursor: geoLoading ? "wait" : "pointer",
+                        transition: "all 0.2s",
+                      }}
+                    >
+                      <Navigation size={14} />
+                      {geoLoading ? "جاري التحديد..." : geoPos ? "✓ تم تحديد موقعك" : "تحديد موقعي تلقائياً"}
+                    </button>
+                    {geoPos && (
+                      <a
+                        href={`https://maps.google.com/?q=${geoPos.lat},${geoPos.lng}`}
+                        target="_blank" rel="noopener"
+                        style={{ fontSize: "0.75rem", color: "#9BA17B", display: "flex", alignItems: "center", gap: 4 }}
+                      >
+                        <MapPin size={12} /> عرض على الخريطة
+                      </a>
+                    )}
+                    {geoPos && (
+                      <button type="button" onClick={() => setGeoPos(null)}
+                        style={{ background: "none", border: "none", cursor: "pointer", color: "#C8BBA4", fontSize: "0.75rem" }}>
+                        إلغاء
+                      </button>
+                    )}
+                  </div>
+                  {geoError && <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.75rem", color: "#C87070", marginTop: 6 }}>{geoError}</p>}
+                  {geoPos && (
+                    <iframe
+                      src={`https://www.openstreetmap.org/export/embed.html?bbox=${geoPos.lng-0.008},${geoPos.lat-0.008},${geoPos.lng+0.008},${geoPos.lat+0.008}&layer=mapnik&marker=${geoPos.lat},${geoPos.lng}`}
+                      style={{ width: "100%", height: 200, border: "1px solid rgba(200,187,164,0.4)", marginTop: "0.75rem", display: "block" }}
+                      title="موقعك"
+                    />
+                  )}
+                </div>
               </div>
             </section>
 
@@ -257,10 +328,10 @@ export default function CheckoutPage() {
               <p style={sectionTitle}>04 — طريقة الدفع</p>
               <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                 {[
-                  { val: "cod", label: "الدفع عند الاستلام", sub: "نقداً أو بطاقة عند وصول الطلب" },
+                  ...(codEnabled  ? [{ val: "cod",    label: "الدفع عند الاستلام", sub: "نقداً أو بطاقة عند وصول الطلب" }] : []),
                   ...(geideaEnabled ? [{ val: "geidea", label: "بطاقة ائتمانية", sub: "Visa / Mastercard — عبر Geidea" }] : []),
-                  { val: "stcpay", label: "STC Pay", sub: "حوّل على 0552469643" },
-                  { val: "bank", label: "تحويل بنكي", sub: "سيتم إرسال تفاصيل الحساب عبر واتساب" },
+                  ...(stcEnabled  ? [{ val: "stcpay", label: "STC Pay", sub: `حوّل على ${stcPayNumber}` }] : []),
+                  ...(bankEnabled ? [{ val: "bank",   label: "تحويل بنكي", sub: bankIban ? `${bankName} — ${bankIban}` : "سيتم إرسال تفاصيل الحساب عبر واتساب" }] : []),
                 ].map(opt => (
                   <label key={opt.val} style={{
                     display: "flex", alignItems: "center", gap: "1rem",

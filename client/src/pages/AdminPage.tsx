@@ -4,11 +4,12 @@ import { api } from "../lib/api";
 import {
   X, Plus, Pencil, Trash2, Package, ShoppingBag,
   Settings2, Mail, LogOut, Upload, LayoutDashboard,
-  TrendingUp, Users, ChevronDown, Check, Menu,
+  TrendingUp, Users, ChevronDown, Check, Menu, Tag,
+  Star, CreditCard, MapPin, Banknote,
 } from "lucide-react";
 import PhoneInput, { COUNTRIES, type Country } from "../components/PhoneInput";
 
-type Tab = "dashboard" | "products" | "orders" | "customers" | "settings";
+type Tab = "dashboard" | "products" | "orders" | "customers" | "coupons" | "reviews" | "settings";
 const ADMIN_PHONE = "0552469643";
 
 /* ─── Status maps ─── */
@@ -196,6 +197,8 @@ export default function AdminPage() {
     { key: "products"  as Tab, label: "المنتجات",    icon: <Package size={16} /> },
     { key: "orders"    as Tab, label: "الطلبات",     icon: <ShoppingBag size={16} /> },
     { key: "customers" as Tab, label: "العملاء والموظفون", icon: <Users size={16} /> },
+    { key: "coupons"   as Tab, label: "كوبونات الخصم", icon: <Tag size={16} /> },
+    { key: "reviews"   as Tab, label: "التقييمات",   icon: <Star size={16} /> },
     { key: "settings"  as Tab, label: "الإعدادات",   icon: <Settings2 size={16} /> },
   ];
 
@@ -283,6 +286,8 @@ export default function AdminPage() {
           {tab === "products"  && <AdminProducts />}
           {tab === "orders"    && <AdminOrders />}
           {tab === "customers" && <AdminCustomers />}
+          {tab === "coupons"   && <AdminCoupons />}
+          {tab === "reviews"   && <AdminReviews />}
           {tab === "settings"  && <AdminSettings />}
         </main>
       </div>
@@ -711,6 +716,12 @@ function AdminOrders() {
                   {selected.address?.street}
                   {selected.address?.notes && <><br /><span className="text-stone-400">{selected.address.notes}</span></>}
                 </p>
+                {selected.address?.mapLink && (
+                  <a href={selected.address.mapLink} target="_blank" rel="noopener"
+                    className="inline-flex items-center gap-1.5 mt-2 text-xs text-[#9BA17B] hover:text-[#1F3929] transition-colors">
+                    <MapPin size={12} /> عرض الموقع على الخريطة ←
+                  </a>
+                )}
               </div>
 
               {/* Items */}
@@ -894,6 +905,206 @@ function AdminCustomers() {
   );
 }
 
+/* ─── Coupons ─── */
+function AdminCoupons() {
+  const qc = useQueryClient();
+  const { data: coupons = [] } = useQuery({ queryKey: ["admin-coupons"], queryFn: () => api.get("/admin/coupons") });
+  const [modal, setModal] = useState(false);
+  const [editing, setEditing] = useState<any>(null);
+  const [form, setForm] = useState({ code: "", type: "percent", value: "", minOrder: "", maxUses: "", expiresAt: "", isActive: true });
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
+
+  const del = useMutation({
+    mutationFn: (id: string) => api.delete(`/admin/coupons/${id}`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-coupons"] }),
+  });
+
+  const openAdd = () => { setEditing(null); setForm({ code: "", type: "percent", value: "", minOrder: "", maxUses: "", expiresAt: "", isActive: true }); setErr(""); setModal(true); };
+  const openEdit = (c: any) => { setEditing(c); setForm({ code: c.code, type: c.type, value: String(c.value), minOrder: String(c.minOrder || ""), maxUses: String(c.maxUses || ""), expiresAt: c.expiresAt ? new Date(c.expiresAt).toISOString().split("T")[0] : "", isActive: c.isActive }); setErr(""); setModal(true); };
+
+  const save = async (e: React.FormEvent) => {
+    e.preventDefault(); setLoading(true); setErr("");
+    try {
+      const body = { ...form, value: Number(form.value), minOrder: Number(form.minOrder) || 0, maxUses: Number(form.maxUses) || 0, expiresAt: form.expiresAt || undefined };
+      if (editing) await api.put(`/admin/coupons/${editing._id}`, body);
+      else await api.post("/admin/coupons", body);
+      qc.invalidateQueries({ queryKey: ["admin-coupons"] });
+      setModal(false);
+    } catch (e: any) { setErr(e.message); }
+    setLoading(false);
+  };
+
+  const inputCls = "w-full h-10 px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none focus:border-[#9BA17B]";
+  const labelCls = "block text-xs text-stone-500 mb-1.5";
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-stone-800">كوبونات الخصم</h2>
+          <p className="text-xs text-stone-400 mt-0.5">{coupons.length} كوبون</p>
+        </div>
+        <button onClick={openAdd} className="flex items-center gap-2 h-10 px-4 rounded-xl bg-[#1F3929] text-[#F2EADB] text-sm hover:bg-[#16281D] transition-colors">
+          <Plus size={15} /> كوبون جديد
+        </button>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <div className="divide-y divide-stone-50">
+          {(coupons as any[]).length === 0 && (
+            <div className="py-16 text-center text-stone-400">
+              <Tag size={32} className="mx-auto mb-3 opacity-30" />
+              <p className="text-sm">لا توجد كوبونات بعد</p>
+            </div>
+          )}
+          {(coupons as any[]).map((c: any) => (
+            <div key={c._id} className="px-5 py-4 flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-sm font-bold text-[#1F3929] tracking-wider">{c.code}</span>
+                  {!c.isActive && <span className="text-[10px] bg-red-50 text-red-500 border border-red-100 px-2 py-0.5 rounded-full">معطّل</span>}
+                </div>
+                <p className="text-xs text-stone-400 mt-0.5">
+                  خصم {c.type === "percent" ? `${c.value}%` : `${c.value} ر.س`}
+                  {c.minOrder ? ` · حد أدنى ${c.minOrder} ر.س` : ""}
+                  {c.maxUses ? ` · يُستخدم ${c.usedCount || 0}/${c.maxUses} مرة` : ""}
+                  {c.expiresAt ? ` · ينتهي ${new Date(c.expiresAt).toLocaleDateString("ar-SA")}` : ""}
+                </p>
+              </div>
+              <div className="flex gap-2 shrink-0">
+                <button onClick={() => openEdit(c)} className="flex items-center gap-1 h-8 px-3 rounded-lg border border-stone-200 text-xs text-stone-600 hover:bg-stone-50">
+                  <Pencil size={11} /> تعديل
+                </button>
+                <button onClick={() => { if (confirm("حذف الكوبون؟")) del.mutate(c._id); }} className="w-8 h-8 rounded-lg border border-red-100 text-red-400 hover:bg-red-50 flex items-center justify-center">
+                  <Trash2 size={13} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {modal && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={e => e.target === e.currentTarget && setModal(false)}>
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-stone-100">
+              <h3 className="text-sm font-semibold text-stone-800">{editing ? "تعديل الكوبون" : "كوبون جديد"}</h3>
+              <button onClick={() => setModal(false)} className="text-stone-400"><X size={17} /></button>
+            </div>
+            <form onSubmit={save} className="p-5 space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className={labelCls}>رمز الكوبون *</label>
+                  <input className={inputCls + " uppercase font-mono tracking-wider"} value={form.code} onChange={e => setForm({ ...form, code: e.target.value.toUpperCase() })} required style={{ fontFamily: "monospace" }} />
+                </div>
+                <div>
+                  <label className={labelCls}>نوع الخصم</label>
+                  <select className={inputCls} value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} style={{ fontFamily: "inherit" }}>
+                    <option value="percent">نسبة مئوية (%)</option>
+                    <option value="fixed">مبلغ ثابت (ر.س)</option>
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <label className={labelCls}>قيمة الخصم *</label>
+                  <input type="number" className={inputCls} value={form.value} onChange={e => setForm({ ...form, value: e.target.value })} required min={0} style={{ fontFamily: "inherit" }} />
+                </div>
+                <div>
+                  <label className={labelCls}>حد أدنى للطلب</label>
+                  <input type="number" className={inputCls} value={form.minOrder} onChange={e => setForm({ ...form, minOrder: e.target.value })} min={0} placeholder="0" style={{ fontFamily: "inherit" }} />
+                </div>
+                <div>
+                  <label className={labelCls}>حد أقصى استخدام</label>
+                  <input type="number" className={inputCls} value={form.maxUses} onChange={e => setForm({ ...form, maxUses: e.target.value })} min={0} placeholder="∞" style={{ fontFamily: "inherit" }} />
+                </div>
+              </div>
+              <div>
+                <label className={labelCls}>تاريخ الانتهاء (اختياري)</label>
+                <input type="date" className={inputCls} value={form.expiresAt} onChange={e => setForm({ ...form, expiresAt: e.target.value })} style={{ fontFamily: "inherit" }} />
+              </div>
+              <label className="flex items-center gap-2 cursor-pointer text-sm text-stone-600">
+                <div onClick={() => setForm({ ...form, isActive: !form.isActive })}
+                  className={`w-9 h-5 rounded-full transition-colors ${form.isActive ? "bg-[#1F3929]" : "bg-stone-200"} relative`}>
+                  <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.isActive ? "translate-x-0.5" : "translate-x-4"}`} />
+                </div>
+                الكوبون نشط
+              </label>
+              {err && <p className="text-red-500 text-sm">{err}</p>}
+              <div className="flex gap-3 pt-2">
+                <button type="button" onClick={() => setModal(false)} className="flex-1 h-10 rounded-xl border border-stone-200 text-sm text-stone-600">إلغاء</button>
+                <button type="submit" disabled={loading} className="flex-1 h-10 rounded-xl bg-[#1F3929] text-[#F2EADB] text-sm disabled:opacity-60">
+                  {loading ? "جاري..." : editing ? "حفظ" : "إضافة"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Reviews ─── */
+function AdminReviews() {
+  const qc = useQueryClient();
+  const { data: reviews = [] } = useQuery({ queryKey: ["admin-reviews"], queryFn: () => api.get("/admin/reviews") });
+  const approve = useMutation({
+    mutationFn: ({ id, v }: any) => api.put(`/admin/reviews/${id}`, { isApproved: v }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-reviews"] }),
+  });
+  const del = useMutation({
+    mutationFn: (id: string) => api.delete(`/admin/reviews/${id}`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-reviews"] }),
+  });
+  const pending = (reviews as any[]).filter((r: any) => !r.isApproved).length;
+  return (
+    <div className="space-y-5">
+      <div>
+        <h2 className="text-lg font-semibold text-stone-800">التقييمات</h2>
+        <p className="text-xs text-stone-400 mt-0.5">{(reviews as any[]).length} تقييم · {pending} بانتظار الموافقة</p>
+      </div>
+      <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <div className="divide-y divide-stone-50">
+          {(reviews as any[]).length === 0 && (
+            <div className="py-16 text-center text-stone-400">
+              <Star size={32} className="mx-auto mb-3 opacity-30" />
+              <p className="text-sm">لا توجد تقييمات بعد</p>
+            </div>
+          )}
+          {(reviews as any[]).map((r: any) => (
+            <div key={r._id} className="px-5 py-4 flex items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-sm font-medium text-stone-700">{r.customerName || "مجهول"}</span>
+                  <span className="flex gap-0.5">{Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} size={11} fill={i < r.rating ? "#C89B5A" : "none"} color={i < r.rating ? "#C89B5A" : "#C8BBA4"} />
+                  ))}</span>
+                  {!r.isApproved && <span className="text-[10px] bg-amber-50 text-amber-600 border border-amber-100 px-2 py-0.5 rounded-full">بانتظار الموافقة</span>}
+                </div>
+                <p className="text-xs text-stone-500 mb-0.5">{(r.productId as any)?.name || "منتج محذوف"}</p>
+                {r.comment && <p className="text-sm text-stone-600 leading-relaxed">{r.comment}</p>}
+                <p className="text-xs text-stone-300 mt-1">{new Date(r.createdAt).toLocaleDateString("ar-SA")}</p>
+              </div>
+              <div className="flex gap-2 shrink-0">
+                <button onClick={() => approve.mutate({ id: r._id, v: !r.isApproved })}
+                  className={`h-8 px-3 rounded-lg text-xs transition-colors ${r.isApproved ? "border border-stone-200 text-stone-500 hover:bg-stone-50" : "bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-100"}`}>
+                  {r.isApproved ? "إخفاء" : "موافقة"}
+                </button>
+                <button onClick={() => { if (confirm("حذف التقييم؟")) del.mutate(r._id); }}
+                  className="w-8 h-8 rounded-lg border border-red-100 text-red-400 hover:bg-red-50 flex items-center justify-center">
+                  <Trash2 size={13} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Settings ─── */
 function AdminSettings() {
   const qc = useQueryClient();
@@ -918,6 +1129,12 @@ function AdminSettings() {
     maintenanceMode: false,
     trustBadges: DEFAULT_BADGES,
     trustBadgesPosition: "above" as "above" | "below" | "both",
+    _codEnabled: true,
+    _bankEnabled: true,
+    _stcEnabled: true,
+    bankIban: "",
+    bankName: "مصرف الراجحي",
+    stcPayNumber: "0552469643",
   };
 
   const current = form || (settings ? { ...defaults, ...settings } : defaults);
@@ -981,6 +1198,83 @@ function AdminSettings() {
           </div>
         </div>
         <p className="px-5 pb-4 text-xs text-stone-400">الطلبات التي تتجاوز {current.shippingFreeThreshold} ر.س تحصل على شحن مجاني</p>
+      </div>
+
+      {/* Payment Methods */}
+      <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-stone-50 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center"><CreditCard size={15} className="text-stone-500" /></div>
+          <div>
+            <p className="text-sm font-semibold text-stone-700">طرق الدفع</p>
+            <p className="text-xs text-stone-400 mt-0.5">فعّل أو عطّل طرق الدفع المتاحة للعملاء</p>
+          </div>
+        </div>
+        <div className="p-5 space-y-4">
+          {/* COD */}
+          <div className="flex items-center justify-between p-3 rounded-xl border border-stone-100">
+            <div className="flex items-center gap-3">
+              <Banknote size={18} className="text-emerald-600" />
+              <div>
+                <p className="text-sm font-medium text-stone-700">الدفع عند الاستلام</p>
+                <p className="text-xs text-stone-400">Cash on Delivery (COD)</p>
+              </div>
+            </div>
+            <button onClick={() => setForm({ ...current, _codEnabled: !current._codEnabled })}
+              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${current._codEnabled ? "bg-[#1F3929]" : "bg-stone-200"}`}>
+              <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${current._codEnabled ? "translate-x-4" : "translate-x-1"}`} />
+            </button>
+          </div>
+          {/* Bank Transfer */}
+          <div className="border border-stone-100 rounded-xl">
+            <div className="flex items-center justify-between p-3">
+              <div className="flex items-center gap-3">
+                <div className="text-lg">🏦</div>
+                <div>
+                  <p className="text-sm font-medium text-stone-700">التحويل البنكي</p>
+                  <p className="text-xs text-stone-400">Bank Transfer</p>
+                </div>
+              </div>
+              <button onClick={() => setForm({ ...current, _bankEnabled: !current._bankEnabled })}
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${current._bankEnabled ? "bg-[#1F3929]" : "bg-stone-200"}`}>
+                <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${current._bankEnabled ? "translate-x-4" : "translate-x-1"}`} />
+              </button>
+            </div>
+            {current._bankEnabled && (
+              <div className="px-3 pb-3 grid grid-cols-2 gap-2 border-t border-stone-50 pt-3">
+                <div>
+                  <label className={labelCls}>اسم البنك</label>
+                  <input className={inputCls} value={current.bankName ?? ""} onChange={e => setForm({ ...current, bankName: e.target.value })} placeholder="مصرف الراجحي" style={{ fontFamily: "inherit" }} />
+                </div>
+                <div>
+                  <label className={labelCls}>رقم الآيبان (IBAN)</label>
+                  <input className={inputCls} value={current.bankIban ?? ""} onChange={e => setForm({ ...current, bankIban: e.target.value })} placeholder="SA..." style={{ fontFamily: "monospace", direction: "ltr" }} />
+                </div>
+              </div>
+            )}
+          </div>
+          {/* STC Pay */}
+          <div className="border border-stone-100 rounded-xl">
+            <div className="flex items-center justify-between p-3">
+              <div className="flex items-center gap-3">
+                <div className="text-lg">📱</div>
+                <div>
+                  <p className="text-sm font-medium text-stone-700">STC Pay</p>
+                  <p className="text-xs text-stone-400">تحويل STC</p>
+                </div>
+              </div>
+              <button onClick={() => setForm({ ...current, _stcEnabled: !current._stcEnabled })}
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${current._stcEnabled ? "bg-[#1F3929]" : "bg-stone-200"}`}>
+                <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${current._stcEnabled ? "translate-x-4" : "translate-x-1"}`} />
+              </button>
+            </div>
+            {current._stcEnabled && (
+              <div className="px-3 pb-3 border-t border-stone-50 pt-3">
+                <label className={labelCls}>رقم STC Pay</label>
+                <input className={inputCls} value={current.stcPayNumber ?? ""} onChange={e => setForm({ ...current, stcPayNumber: e.target.value })} placeholder="05xxxxxxxx" style={{ fontFamily: "monospace", direction: "ltr" }} />
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Trust Badges */}

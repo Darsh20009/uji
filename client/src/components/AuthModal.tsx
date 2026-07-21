@@ -292,9 +292,6 @@ export default function AuthModal() {
             <div style={{ textAlign: "center" }}>
               <p style={{ fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif", fontSize: "1.35rem", fontWeight: 400, color: "#1C201B", margin: "0 0 4px" }}>{(user as any).name || "مرحباً"}</p>
               <p style={{ fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif", fontSize: "0.82rem", color: "#9BA17B", margin: 0, direction: "ltr" }}>{(user as any).phone}</p>
-              {(user as any).role === "employee" && (
-                <span style={{ display: "inline-block", marginTop: 6, background: "rgba(31,57,41,0.1)", color: "#1F3929", fontSize: "0.72rem", padding: "3px 10px", fontFamily: "'IBM Plex Sans Arabic',sans-serif" }}>موظف</span>
-              )}
             </div>
             {/* Loyalty points */}
             {(user as any).loyaltyPoints > 0 && (
