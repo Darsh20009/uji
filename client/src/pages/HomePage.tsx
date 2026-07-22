@@ -469,7 +469,12 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════════════
-          04 — THE COLLECTION
+          04 — MATCHA FINDER
+      ══════════════════════════════════════════════ */}
+      <MatchaFinder />
+
+      {/* ══════════════════════════════════════════════
+          05 — THE COLLECTION
       ══════════════════════════════════════════════ */}
       <section className="section" style={{ background: "#F2EADB" }}>
         <div className="container">
@@ -575,11 +580,6 @@ export default function HomePage() {
 
       {/* ══ TRUST BAR — below position ══ */}
       {(badgesPosition === "below" || badgesPosition === "both") && <TrustBar badges={trustBadges} />}
-
-      {/* ══════════════════════════════════════════════
-          06 — MATCHA FINDER
-      ══════════════════════════════════════════════ */}
-      <MatchaFinder />
 
       {/* 07 — NEWSLETTER */}
       <Newsletter />
