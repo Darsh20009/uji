@@ -408,21 +408,37 @@ router.post("/admin/seed-matcha-bag", requireAdmin, async (_req, res) => {
   try {
     // Delete all existing products
     await Product.deleteMany({});
-    // Add matcha bag product
-    const product = await Product.create({
-      name: "ماتشا UJI — كيس احتفالي",
-      nameEn: "UJI Matcha — Ceremonial Bag",
-      description: "ماتشا يابانية احتفالية من الدرجة الأولى، مصدرها أوجي، كيوتو. مطحونة بالحجر، مزروعة في الظل، نقية 100% بدون إضافات. كيس 30 جرام يكفي لـ 15 كوباً.",
+    // Product 1 — Premium
+    const p1 = await Product.create({
+      name: "ماتشا UJI فاخر",
+      nameEn: "UJI Matcha — Premium",
+      description: "ماتشا يابانية احتفالية من الدرجة الأولى، مطحونة بالحجر، مزروعة في الظل، نقية 100% بدون إضافات.",
       price: 149,
       comparePrice: 199,
       stock: 100,
       category: "matcha",
+      matchaType: "ceremonial",
       isActive: true,
       featured: true,
       sortOrder: 1,
-      images: ["/uploads/matcha-bag-1.png", "/uploads/matcha-bag-2.png", "/uploads/matcha-bag-3.png"],
+      images: [],
     });
-    res.json({ ok: true, product });
+    // Product 2 — Ultra Premium
+    const p2 = await Product.create({
+      name: "ماتشا UJI فاخر جداً",
+      nameEn: "UJI Matcha — Ultra Premium",
+      description: "ماتشا يابانية احتفالية من أعلى الدرجات، مصدر واحد، مطحونة بالحجر على الطريقة التقليدية. لمن يبحث عن أرقى تجربة ماتشا.",
+      price: 249,
+      comparePrice: 329,
+      stock: 100,
+      category: "matcha",
+      matchaType: "ceremonial",
+      isActive: true,
+      featured: true,
+      sortOrder: 2,
+      images: [],
+    });
+    res.json({ ok: true, products: [p1, p2] });
   } catch (e: any) { res.status(500).json({ message: e.message }); }
 });
 
