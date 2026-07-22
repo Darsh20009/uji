@@ -148,7 +148,8 @@ function TrustBar({ badges }: { badges?: typeof DEFAULT_BADGES }) {
         }}>
           {list.map((b, i) => (
             <div key={i} style={{
-              flex: "1 1 140px",
+              flex: "1 1 0",
+              minWidth: 0,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
