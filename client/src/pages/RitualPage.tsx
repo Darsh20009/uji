@@ -64,7 +64,7 @@ export default function RitualPage() {
           <p style={{
             fontFamily: "'DM Mono',monospace", fontSize: "0.58rem",
             letterSpacing: "0.4em", color: "#9BA17B", marginBottom: "1.25rem",
-          }}>THE MATCHA RITUAL — دليل الريتشوال</p>
+          }}>THE MATCHA RITUAL · دليل الريتشوال</p>
           <h1 style={{
             fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
             fontSize: "clamp(2.8rem,6vw,5rem)",
