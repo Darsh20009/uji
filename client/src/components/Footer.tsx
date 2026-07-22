@@ -34,7 +34,7 @@ export default function Footer() {
               fontSize: "0.8rem", lineHeight: 1.8,
               color: "rgba(155,161,123,0.85)",
             }}>
-              ماتشا يابانية احتفالية<br />من مزارع أوجي، كيوتو
+              ماتشا يابانية احتفالية<br />من قلب زراعة الشاي الياباني
             </p>
             <div style={{ display: "flex", gap: "1rem" }}>
               <a href="https://instagram.com" target="_blank" rel="noopener" style={{ color: "#9BA17B", transition: "color 0.2s" }}>
