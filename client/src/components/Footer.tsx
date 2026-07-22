@@ -58,7 +58,7 @@ export default function Footer() {
             { title: "الشركة", en: "COMPANY", links: [
               { label: "قصتنا", href: "/about" },
               { label: "دليل الريتشوال", href: "/ritual" },
-              { label: "المجلة", href: "/journal" },
+              { label: "المجلة", href: "/magazine" },
               { label: "مبيعات الجملة", href: "/wholesale" },
             ]},
             { title: "المساعدة", en: "HELP", links: [
