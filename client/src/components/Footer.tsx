@@ -29,7 +29,7 @@ export default function Footer() {
               style={{ height: 56, objectFit: "contain", objectPosition: "right" }}
             />
             <p style={{
-              fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+              fontFamily: "'Cairo', sans-serif",
               fontSize: "0.8rem", lineHeight: 1.8,
               color: "rgba(155,161,123,0.85)",
             }}>
@@ -86,19 +86,19 @@ export default function Footer() {
             <div key={title}>
               <div style={{ marginBottom: "1.5rem" }}>
                 <p style={{
-                  fontFamily: "'Inter', sans-serif",
+                  fontFamily: "'DM Mono', monospace",
                   fontSize: "0.6rem", letterSpacing: "0.28em", textTransform: "uppercase",
                   color: "#9BA17B", marginBottom: "0.25rem",
                 }}>{en}</p>
                 <p style={{
-                  fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                  fontFamily: "'Cairo', sans-serif",
                   fontSize: "0.85rem", color: "rgba(242,234,219,0.6)",
                 }}>{title}</p>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "0.875rem" }}>
                 {links.map(l => (
                   <Link key={l.label} href={l.href} style={{
-                    fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                    fontFamily: "'Cairo', sans-serif",
                     fontSize: "0.82rem", color: "rgba(155,161,123,0.8)",
                     transition: "color 0.2s", textDecoration: "none",
                   }}>{l.label}</Link>
@@ -111,10 +111,10 @@ export default function Footer() {
         {/* Bottom bar */}
         <div style={{
           display: "flex", justifyContent: "space-between", alignItems: "center",
-          padding: "2rem 0 3rem", flexWrap: "wrap", gap: "1rem",
+          padding: "2rem 0 2.5rem", flexWrap: "wrap", gap: "1rem",
         }}>
           <p style={{
-            fontFamily: "'Inter', sans-serif", fontSize: "0.65rem",
+            fontFamily: "'DM Mono', monospace", fontSize: "0.65rem",
             letterSpacing: "0.1em", color: "rgba(155,161,123,0.5)",
           }}>
             © 2026 UJI MATCHA — ريتشوالك اليومي
@@ -126,13 +126,80 @@ export default function Footer() {
               { label: "مبيعات الجملة", href: "/wholesale" },
             ].map(({ label, href }) => (
               <Link key={label} href={href} style={{
-                fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                fontFamily: "'Cairo', sans-serif",
                 fontSize: "0.65rem", color: "rgba(155,161,123,0.4)",
                 transition: "color 0.2s", textDecoration: "none",
               }}>{label}</Link>
             ))}
           </div>
         </div>
+
+        {/* Government logos row */}
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "center",
+          gap: "2.5rem", paddingBottom: "2rem",
+          borderTop: "1px solid rgba(155,161,123,0.15)",
+          paddingTop: "1.5rem",
+          flexWrap: "wrap",
+        }}>
+          <p style={{
+            fontFamily: "'Cairo', sans-serif", fontSize: "0.65rem",
+            color: "rgba(155,161,123,0.45)", letterSpacing: "0.05em",
+            flexShrink: 0,
+          }}>
+            مرخّص ومسجّل لدى
+          </p>
+          {/* Ministry of Commerce */}
+          <img
+            src="/assets/brand/logo-moc.svg"
+            alt="وزارة التجارة"
+            style={{ height: 36, objectFit: "contain", filter: "brightness(0) invert(1) opacity(0.55)" }}
+          />
+          {/* Saudi Business Center */}
+          <img
+            src="/assets/brand/logo-sbc.svg"
+            alt="المركز السعودي للأعمال"
+            style={{ height: 36, objectFit: "contain", filter: "brightness(0) invert(1) opacity(0.55)" }}
+          />
+        </div>
+      </div>
+
+      {/* Made by Qirox Studio — full-width bottom strip */}
+      <div style={{
+        background: "rgba(0,0,0,0.35)",
+        borderTop: "1px solid rgba(155,161,123,0.1)",
+        padding: "0.85rem 1.5rem",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        gap: "0.6rem",
+      }}>
+        <img
+          src="/assets/brand/qirox-icon-transparent.png"
+          alt="Qirox Studio"
+          style={{ height: 18, width: 18, objectFit: "contain", opacity: 0.7 }}
+        />
+        <p style={{
+          fontFamily: "'Cairo', sans-serif", fontSize: "0.62rem",
+          color: "rgba(155,161,123,0.45)", letterSpacing: "0.05em",
+          margin: 0,
+        }}>
+          صُنع بواسطة{" "}
+          <a
+            href="https://qiroxstudio.online"
+            target="_blank"
+            rel="noopener"
+            style={{
+              color: "rgba(155,161,123,0.7)",
+              textDecoration: "none",
+              fontWeight: 600,
+              transition: "color 0.2s",
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = "#9BA17B")}
+            onMouseLeave={e => (e.currentTarget.style.color = "rgba(155,161,123,0.7)")}
+          >
+            Qirox Studio
+          </a>
+          {" "}Group
+        </p>
       </div>
 
       <style>{`

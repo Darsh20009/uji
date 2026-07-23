@@ -27,12 +27,12 @@
   --font-display: 'Aref Ruqaa', 'IBM Plex Sans Arabic', system-ui, sans-serif;
   /* Editorial / en headlines   → Cormorant Garamond — luxury italic serif */
   --font-serif:   'Cormorant Garamond', 'Times New Roman', serif;
-  /* Body copy                  → IBM Plex Sans Arabic */
-  --font-arabic:  'IBM Plex Sans Arabic', system-ui, sans-serif;
+  /* Body copy                  → Cairo — modern geometric Arabic (Fuji-style) */
+  --font-arabic:  'Cairo', system-ui, sans-serif;
   /* Accent labels / mono       → DM Mono — unique techy contrast */
   --font-mono:    'DM Mono', 'Courier New', monospace;
   /* Legacy alias */
-  --font-sans:    'IBM Plex Sans Arabic', system-ui, sans-serif;
+  --font-sans:    'Cairo', system-ui, sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
