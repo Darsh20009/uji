@@ -327,18 +327,30 @@ export default function HomePage() {
             display: "grid", gridTemplateColumns: "1fr 1fr",
             gap: "5rem", alignItems: "center",
           }}>
-            {/* Left: product image */}
-            <div style={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", height: 480 }}>
+            {/* Left: blended image */}
+            <div style={{ position: "relative", height: 480, borderRadius: 4, overflow: "hidden" }}>
               <img
                 src="/assets/packaging/uji-tin-hero.png"
                 alt="علبة UJI الماتشا"
                 style={{
-                  width: "90%",
+                  width: "100%",
                   height: "100%",
-                  objectFit: "contain",
-                  filter: "drop-shadow(0 32px 64px rgba(22,40,29,0.18))",
+                  objectFit: "cover",
+                  objectPosition: "center",
+                  display: "block",
                 }}
               />
+              {/* Fade edges into section background */}
+              <div style={{
+                position: "absolute", inset: 0,
+                background: `linear-gradient(to right, #F2EADB 0%, transparent 18%, transparent 82%, #F2EADB 100%)`,
+                pointerEvents: "none",
+              }} />
+              <div style={{
+                position: "absolute", inset: 0,
+                background: `linear-gradient(to bottom, #F2EADB 0%, transparent 15%, transparent 82%, #F2EADB 100%)`,
+                pointerEvents: "none",
+              }} />
             </div>
 
             {/* Right: annotations */}
