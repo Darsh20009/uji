@@ -28,10 +28,11 @@ export default function App() {
   const isAdmin = location.startsWith("/admin");
   const prevLocation = useRef(location);
 
-  /* Page transition loader */
+  /* Page transition loader + scroll to top */
   useEffect(() => {
     if (location === prevLocation.current) return;
     prevLocation.current = location;
+    window.scrollTo({ top: 0, behavior: "instant" });
     setLoading(true);
     const t = setTimeout(() => setLoading(false), 900);
     return () => clearTimeout(t);

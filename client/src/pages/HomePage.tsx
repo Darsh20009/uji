@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { api } from "../lib/api";
@@ -179,6 +179,25 @@ function TrustBar({ badges }: { badges?: typeof DEFAULT_BADGES }) {
 }
 
 export default function HomePage() {
+  /* ── Hero auto-scroll: fires once after 3s, cancels if user scrolls first ── */
+  const heroRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    let fired = false;
+    const cancelScroll = () => { fired = true; };
+    window.addEventListener("scroll", cancelScroll, { passive: true, once: true });
+    const timer = setTimeout(() => {
+      if (!fired) {
+        const hero = heroRef.current;
+        const next = hero?.nextElementSibling as HTMLElement | null;
+        next?.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 3000);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", cancelScroll);
+    };
+  }, []);
+
   const { data: products } = useQuery({
     queryKey: ["products-featured"],
     queryFn: () => api.get("/products?featured=1"),
@@ -198,6 +217,7 @@ export default function HomePage() {
           01 — HERO (100vh)
       ══════════════════════════════════════════════ */}
       <section
+        ref={heroRef}
         style={{
           position: "relative", minHeight: "100vh",
           display: "flex", alignItems: "center",
