@@ -160,7 +160,7 @@ export default function MagazinePage() {
               fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
               fontSize: "clamp(2rem,4vw,3.5rem)",
               color: "#F2EADB", fontWeight: 700, lineHeight: 1.15, marginBottom: "1.25rem",
-            }}>ما معنى<br /><em>UJI؟</em></h2>
+            }}>ما معنى<br />UJI؟</h2>
             <p style={{
               fontFamily: "'IBM Plex Sans Arabic',sans-serif",
               fontSize: "0.88rem", color: "rgba(242,234,219,0.7)",

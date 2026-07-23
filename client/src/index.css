@@ -87,7 +87,6 @@ button { font-family: inherit; cursor: pointer; }
 .heading-serif {
   font-family: var(--font-serif);
   font-weight: 400;
-  font-style: italic;
   line-height: 1.2;
 }
 

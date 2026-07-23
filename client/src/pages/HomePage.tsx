@@ -237,7 +237,7 @@ export default function HomePage() {
               animation: "heroFadeUp 1s ease 0.25s both",
             }}>
               تجربة الماتشا<br />
-              <em>اليابانية الحقيقية</em>
+              اليابانية الحقيقية
             </h1>
 
             <p style={{
@@ -300,7 +300,7 @@ export default function HomePage() {
           <p style={{
             fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
             fontSize: "clamp(1.8rem, 3.5vw, 3rem)",
-            fontWeight: 300, fontStyle: "italic",
+            fontWeight: 300,
             color: "#1C201B", lineHeight: 1.4,
             marginBottom: "1.5rem",
           }}>
@@ -410,7 +410,7 @@ export default function HomePage() {
               fontWeight: 300, color: "#F2EADB", lineHeight: 1.15,
             }}>
               ماتشا مختارة بعناية<br />
-              <em>لكل طريقة تحضير.</em>
+              لكل طريقة تحضير.
             </h2>
             <p style={{
               fontFamily: "'IBM Plex Sans Arabic', sans-serif",
@@ -548,7 +548,7 @@ export default function HomePage() {
               <p style={{
                 fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
                 fontSize: "clamp(2rem, 3vw, 2.8rem)",
-                fontWeight: 300, fontStyle: "italic",
+                fontWeight: 300,
                 color: "#4C5734", lineHeight: 1.3, marginBottom: "2rem",
               }}>
                 "تباطأ.<br />تذوّق الماتشا."
@@ -568,7 +568,7 @@ export default function HomePage() {
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 <img src="/assets/lifestyle/uji-lifestyle-car-window-01.png" alt="كوب UJI" style={{ width: "100%", height: "60%", objectFit: "cover" }} />
                 <div style={{ flex: 1, background: "#16281D", display: "flex", alignItems: "center", justifyContent: "center", padding: "1.5rem" }}>
-                  <p style={{ fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif", fontSize: "1.3rem", fontWeight: 300, fontStyle: "italic", color: "#9BA17B", textAlign: "center", lineHeight: 1.4 }}>
+                  <p style={{ fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif", fontSize: "1.3rem", fontWeight: 300, color: "#9BA17B", textAlign: "center", lineHeight: 1.4 }}>
                     صُنعت<br />لريتشوالك.
                   </p>
                 </div>

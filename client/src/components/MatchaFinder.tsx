@@ -124,7 +124,7 @@ export default function MatchaFinder() {
               marginBottom: "1rem",
             }}>
               مو متأكد أي ماتشا<br />
-              <em>تناسبك؟</em>
+              تناسبك؟
             </h2>
             <p style={{
               fontFamily: "'IBM Plex Sans Arabic', sans-serif",
