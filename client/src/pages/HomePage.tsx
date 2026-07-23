@@ -327,25 +327,18 @@ export default function HomePage() {
             display: "grid", gridTemplateColumns: "1fr 1fr",
             gap: "5rem", alignItems: "center",
           }}>
-            {/* Left: product images */}
-            <div style={{ position: "relative" }}>
-              <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-end", gap: "2rem", height: 480 }}>
-                <img
-                  src="/assets/packaging/uji-tin-side-transparent.png"
-                  alt=""
-                  style={{ height: "55%", objectFit: "contain", opacity: 0.5, transform: "perspective(600px) rotateY(30deg)" }}
-                />
-                <img
-                  src="/assets/packaging/uji-tin-front-transparent.png"
-                  alt="علبة UJI الأمامية"
-                  style={{ height: "85%", objectFit: "contain", filter: "drop-shadow(0 24px 48px rgba(22,40,29,0.12))" }}
-                />
-                <img
-                  src="/assets/packaging/uji-tin-back-transparent.png"
-                  alt=""
-                  style={{ height: "55%", objectFit: "contain", opacity: 0.5, transform: "perspective(600px) rotateY(-30deg)" }}
-                />
-              </div>
+            {/* Left: product image */}
+            <div style={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", height: 480 }}>
+              <img
+                src="/assets/packaging/uji-tin-hero.png"
+                alt="علبة UJI الماتشا"
+                style={{
+                  width: "90%",
+                  height: "100%",
+                  objectFit: "contain",
+                  filter: "drop-shadow(0 32px 64px rgba(22,40,29,0.18))",
+                }}
+              />
             </div>
 
             {/* Right: annotations */}
