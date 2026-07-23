@@ -7,6 +7,7 @@ import routes from "./routes";
 import helmet from "helmet";
 import fs from "fs";
 import { Product, Settings } from "./models";
+import { trackVisit } from "./visitors";
 
 const app = express();
 app.set("trust proxy", 1);
@@ -42,6 +43,16 @@ app.get("/sitemap.xml", async (_req, res) => {
 (async () => {
   await connectDB();
   setupAuth(app);
+
+  // ── Visitor tracking middleware (non-API, non-asset requests) ──
+  app.use((req, _res, next) => {
+    if (!req.path.startsWith("/api") && !req.path.startsWith("/uploads") && !req.path.startsWith("/assets") && !req.path.includes(".")) {
+      const ip = (req.headers["x-forwarded-for"] as string)?.split(",")[0]?.trim() || req.ip || "anon";
+      trackVisit(ip);
+    }
+    next();
+  });
+
   app.use("/api", routes);
 
   const httpServer = createServer(app);

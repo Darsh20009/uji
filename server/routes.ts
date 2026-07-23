@@ -7,6 +7,7 @@ import { Product, Order, Customer, Settings, Review, Coupon, hashPass } from "./
 import { requireAuth } from "./auth";
 import { sendOrderConfirmation, sendAdminOrderAlert, sendNewsletterWelcome, sendTestEmail } from "./email";
 import { createGeideaSession, verifyGeideaCallback, geideaEnabled } from "./geidea";
+import { getActiveVisitors } from "./visitors";
 
 const router = Router();
 const upload = multer({ dest: "uploads/", limits: { fileSize: 20 * 1024 * 1024 } });
@@ -546,21 +547,84 @@ router.delete("/admin/coupons/:id", requireAdmin, async (req, res) => {
 /* ─── Admin — Stats ─────────────────────────────────────────────── */
 router.get("/admin/stats", requireAdmin, async (_req, res) => {
   try {
-    const [totalOrders, totalCustomers, totalEmployees, totalProducts, orders] = await Promise.all([
+    const [totalOrders, totalCustomers, totalEmployees, totalProducts, allOrders] = await Promise.all([
       Order.countDocuments(),
       Customer.countDocuments({ role: "customer" }),
       Customer.countDocuments({ role: "employee" }),
       Product.countDocuments({ isActive: true }),
-      Order.find({ status: { $ne: "cancelled" } }).select("total createdAt"),
+      Order.find().select("total createdAt status receiptStatus paymentMethod"),
     ]);
-    const totalRevenue = orders.reduce((s, o) => s + (o.total || 0), 0);
-    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+    const nonCancelled = allOrders.filter(o => o.status !== "cancelled");
+    const totalRevenue = nonCancelled.reduce((s, o) => s + (o.total || 0), 0);
+
+    // 30-day daily revenue
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     const dailyRevenue: Record<string, number> = {};
-    orders.filter(o => o.createdAt > sevenDaysAgo).forEach(o => {
-      const day = new Date(o.createdAt as Date).toLocaleDateString("ar-SA", { weekday: "short" });
+    nonCancelled.filter(o => o.createdAt > thirtyDaysAgo).forEach(o => {
+      const day = new Date(o.createdAt as Date).toISOString().split("T")[0];
       dailyRevenue[day] = (dailyRevenue[day] || 0) + (o.total || 0);
     });
-    res.json({ totalOrders, totalCustomers, totalEmployees, totalProducts, totalRevenue, dailyRevenue });
+
+    // Orders by status
+    const byStatus: Record<string, number> = {};
+    allOrders.forEach(o => { byStatus[o.status] = (byStatus[o.status] || 0) + 1; });
+
+    // Pending receipt reviews
+    const pendingReceipts = allOrders.filter(o => (o as any).receiptStatus === "pending").length;
+
+    // Month-over-month
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const thisMonthRev = nonCancelled.filter(o => o.createdAt >= startOfMonth).reduce((s, o) => s + (o.total || 0), 0);
+    const lastMonthRev = nonCancelled.filter(o => o.createdAt >= startOfLastMonth && o.createdAt < startOfMonth).reduce((s, o) => s + (o.total || 0), 0);
+
+    res.json({ totalOrders, totalCustomers, totalEmployees, totalProducts, totalRevenue, dailyRevenue, byStatus, pendingReceipts, thisMonthRev, lastMonthRev });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+/* ─── Admin — Active Visitors ───────────────────────────────────── */
+router.get("/admin/visitors", requireAdmin, (_req, res) => {
+  res.json({ count: getActiveVisitors() });
+});
+
+/* ─── Order Receipt upload (by customer/anyone with order ID) ────── */
+router.post("/orders/:id/receipt", upload.single("receipt"), async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: "الطلب غير موجود" });
+    if (!req.file) return res.status(400).json({ message: "لم يتم رفع الإيصال" });
+    const receiptUrl = `/uploads/${req.file.filename}`;
+    await Order.findByIdAndUpdate(order._id, { receiptUrl, receiptStatus: "pending" });
+    res.json({ ok: true, receiptUrl });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+/* ─── Admin — Review Receipt ─────────────────────────────────────── */
+router.put("/admin/orders/:id/receipt-status", requireAdmin, async (req, res) => {
+  try {
+    const { receiptStatus } = req.body; // "approved" | "rejected"
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      {
+        receiptStatus,
+        ...(receiptStatus === "approved" ? { status: "confirmed", paymentStatus: "paid" } : {}),
+        ...(receiptStatus === "rejected" ? { status: "pending" } : {}),
+      },
+      { new: true }
+    );
+    if (!order) return res.status(404).json({ message: "الطلب غير موجود" });
+    if (receiptStatus === "approved") {
+      // Award loyalty points
+      if ((order as any).customerId) {
+        await Customer.findByIdAndUpdate((order as any).customerId, {
+          $inc: { loyaltyPoints: (order as any).pointsEarned || 0, totalSpent: order.total || 0 },
+        });
+      }
+      sendOrderConfirmation(order).catch(console.error);
+    }
+    res.json(order);
   } catch (e: any) { res.status(500).json({ message: e.message }); }
 });
 

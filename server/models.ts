@@ -43,6 +43,8 @@ const OrderSchema = new Schema({
   paymentStatus: { type: String, enum: ["unpaid", "paid", "refunded"], default: "unpaid" },
   couponCode: String, notes: String,
   pointsEarned: { type: Number, default: 0 },
+  receiptUrl: String,
+  receiptStatus: { type: String, enum: ["none", "pending", "approved", "rejected"], default: "none" },
 }, { timestamps: true });
 export const Order = mongoose.model("Order", OrderSchema);
 
