@@ -3,14 +3,13 @@ import { useEffect, useRef, useState } from "react";
 const FRAMES = Array.from({ length: 13 }, (_, i) =>
   `/assets/ninja/n${String(i + 1).padStart(2, "0")}.png`
 );
-const FPS = 14; // frames per second — fast like video
+const FPS = 14;
 
 export default function PageLoader({ visible }: { visible: boolean }) {
   const [frame, setFrame] = useState(0);
   const [opacity, setOpacity] = useState(0);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  /* Fade in/out */
   useEffect(() => {
     if (visible) {
       setOpacity(0);
@@ -20,7 +19,6 @@ export default function PageLoader({ visible }: { visible: boolean }) {
     }
   }, [visible]);
 
-  /* Frame animation */
   useEffect(() => {
     if (visible) {
       intervalRef.current = setInterval(() => {
@@ -47,7 +45,8 @@ export default function PageLoader({ visible }: { visible: boolean }) {
         alignItems: "center",
         justifyContent: "center",
         gap: "1.5rem",
-        background: "rgba(16,26,20,0.88)",
+        /* Dark green overlay — multiply blend erases white bg from ninja frames */
+        background: "rgba(14, 24, 18, 0.92)",
         backdropFilter: "blur(14px)",
         WebkitBackdropFilter: "blur(14px)",
         opacity,
@@ -55,87 +54,68 @@ export default function PageLoader({ visible }: { visible: boolean }) {
         pointerEvents: visible ? "all" : "none",
       }}
     >
-      {/* ── Spinning ring + ninja frame ── */}
-      <div style={{ position: "relative", width: 220, height: 220 }}>
-
-        {/* Outer spinning ring */}
-        <div style={{
-          position: "absolute",
-          inset: 0,
-          borderRadius: "50%",
-          border: "2px solid transparent",
-          borderTopColor: "#9BA17B",
-          borderRightColor: "rgba(155,161,123,0.3)",
-          borderBottomColor: "rgba(155,161,123,0.1)",
-          borderLeftColor: "rgba(155,161,123,0.3)",
-          animation: "uji-spin 1s linear infinite",
-        }} />
-
-        {/* Inner counter-spinning ring (matcha green accent) */}
-        <div style={{
-          position: "absolute",
-          inset: 12,
-          borderRadius: "50%",
-          border: "1px solid transparent",
-          borderTopColor: "rgba(155,161,123,0.2)",
-          borderBottomColor: "#4C5734",
-          animation: "uji-spin-rev 1.6s linear infinite",
-        }} />
-
-        {/* White circle frame — mix-blend: multiply erases white bg */}
-        <div style={{
-          position: "absolute",
-          inset: 20,
-          borderRadius: "50%",
-          background: "#fff",
-          overflow: "hidden",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}>
-          {FRAMES.map((src, i) => (
-            <img
-              key={src}
-              src={src}
-              alt=""
-              style={{
-                position: "absolute",
-                width: "90%",
-                height: "90%",
-                objectFit: "contain",
-                mixBlendMode: "multiply",
-                opacity: i === frame ? 1 : 0,
-                transition: "none",
-              }}
-            />
-          ))}
-        </div>
-
-        {/* Center dot */}
-        <div style={{
-          position: "absolute",
-          top: "50%", left: "50%",
-          width: 6, height: 6,
-          borderRadius: "50%",
-          background: "#9BA17B",
-          transform: "translate(-50%,-50%)",
-          boxShadow: "0 0 12px 3px rgba(155,161,123,0.6)",
-        }} />
+      {/* ── Ninja sprite — no circle, centered, multiply blends away white bg ── */}
+      <div style={{
+        position: "relative",
+        width: "clamp(260px, 38vh, 400px)",
+        height: "clamp(260px, 38vh, 400px)",
+      }}>
+        {FRAMES.map((src, i) => (
+          <img
+            key={src}
+            src={src}
+            alt=""
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
+              /* multiply: white pixels × dark bg = dark bg (invisible), dark ninja stays dark */
+              mixBlendMode: "multiply",
+              opacity: i === frame ? 1 : 0,
+            }}
+          />
+        ))}
       </div>
 
+      {/* ── Spinning arc accent — decorative, not clipping the image ── */}
+      <div style={{
+        position: "absolute",
+        width: "clamp(300px, 44vh, 460px)",
+        height: "clamp(300px, 44vh, 460px)",
+        borderRadius: "50%",
+        border: "1px solid transparent",
+        borderTopColor: "rgba(155,161,123,0.55)",
+        borderRightColor: "rgba(155,161,123,0.18)",
+        animation: "uji-spin 1.4s linear infinite",
+        pointerEvents: "none",
+      }} />
+      <div style={{
+        position: "absolute",
+        width: "clamp(320px, 48vh, 500px)",
+        height: "clamp(320px, 48vh, 500px)",
+        borderRadius: "50%",
+        border: "1px solid transparent",
+        borderBottomColor: "rgba(76,87,52,0.7)",
+        animation: "uji-spin-rev 2s linear infinite",
+        pointerEvents: "none",
+      }} />
+
       {/* ── Brand label ── */}
-      <div style={{ textAlign: "center" }}>
+      <div style={{ textAlign: "center", position: "relative" }}>
         <p style={{
-          fontFamily: "'DM Mono',monospace",
+          fontFamily: "'DM Mono', monospace",
           fontSize: "0.52rem",
-          letterSpacing: "0.55em",
-          color: "rgba(155,161,123,0.9)",
+          letterSpacing: "0.6em",
+          color: "rgba(155,161,123,0.85)",
           textTransform: "uppercase",
-          marginBottom: "0.4rem",
+          marginBottom: "0.5rem",
         }}>UJI MATCHA</p>
         <div style={{
-          width: 120, height: 1,
-          background: "linear-gradient(to right, transparent, rgba(155,161,123,0.6), transparent)",
+          width: 80,
+          height: 1,
+          background: "linear-gradient(to right, transparent, rgba(155,161,123,0.5), transparent)",
           margin: "0 auto",
           animation: "uji-pulse 1.4s ease-in-out infinite",
         }} />
@@ -151,7 +131,7 @@ export default function PageLoader({ visible }: { visible: boolean }) {
           to   { transform: rotate(-360deg); }
         }
         @keyframes uji-pulse {
-          0%,100% { opacity: 0.3; transform: scaleX(0.6); }
+          0%,100% { opacity: 0.3; transform: scaleX(0.5); }
           50%      { opacity: 1;   transform: scaleX(1); }
         }
       `}</style>
