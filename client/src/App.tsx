@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Route, Switch, useLocation } from "wouter";
 import SplashScreen from "./components/SplashScreen";
+import PageLoader from "./components/PageLoader";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import AuthModal from "./components/AuthModal";
@@ -22,8 +23,19 @@ import { Link } from "wouter";
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [location] = useLocation();
   const isAdmin = location.startsWith("/admin");
+  const prevLocation = useRef(location);
+
+  /* Page transition loader */
+  useEffect(() => {
+    if (location === prevLocation.current) return;
+    prevLocation.current = location;
+    setLoading(true);
+    const t = setTimeout(() => setLoading(false), 900);
+    return () => clearTimeout(t);
+  }, [location]);
 
   useEffect(() => {
     const seen = sessionStorage.getItem("uji-splash");
@@ -40,6 +52,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <AuthModalProvider>
+        <PageLoader visible={loading} />
         <div style={{
           minHeight: "100vh", display: "flex", flexDirection: "column",
           background: "#F2EADB",
