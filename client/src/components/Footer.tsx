@@ -165,7 +165,7 @@ export default function Footer() {
       </div>
 
       {/* Made by Qirox Studio — full-width bottom strip */}
-      <div style={{
+      <div className="footer-credit" style={{
         background: "rgba(0,0,0,0.35)",
         borderTop: "1px solid rgba(155,161,123,0.1)",
         padding: "0.85rem 1.5rem",
@@ -173,13 +173,16 @@ export default function Footer() {
         gap: "0.6rem",
       }}>
         <img
-          src="/assets/brand/qirox-icon-transparent.png"
+          src="/assets/brand/qirox-icon.png"
           alt="Qirox Studio"
-          style={{ height: 18, width: 18, objectFit: "contain", opacity: 0.7 }}
+          style={{
+            height: 24, width: 24, objectFit: "contain", opacity: 0.95,
+            mixBlendMode: "screen", borderRadius: "50%",
+          }}
         />
         <p style={{
           fontFamily: "'Cairo', sans-serif", fontSize: "0.62rem",
-          color: "rgba(155,161,123,0.45)", letterSpacing: "0.05em",
+          color: "rgba(242,234,219,0.72)", letterSpacing: "0.05em",
           margin: 0,
         }}>
           صُنع بواسطة{" "}
@@ -188,17 +191,18 @@ export default function Footer() {
             target="_blank"
             rel="noopener"
             style={{
-              color: "rgba(155,161,123,0.7)",
+              color: "#F2EADB",
               textDecoration: "none",
               fontWeight: 600,
               transition: "color 0.2s",
             }}
             onMouseEnter={e => (e.currentTarget.style.color = "#9BA17B")}
-            onMouseLeave={e => (e.currentTarget.style.color = "rgba(155,161,123,0.7)")}
+            onMouseLeave={e => (e.currentTarget.style.color = "#F2EADB")}
           >
             Qirox Studio
           </a>
-          {" "}Group
+          <span style={{ color: "rgba(242,234,219,0.48)", marginRight: "0.2rem" }}>·</span>
+          <span style={{ color: "rgba(242,234,219,0.58)", fontSize: "0.56rem" }}>QIROX GROUP</span>
         </p>
       </div>
 
@@ -214,6 +218,8 @@ export default function Footer() {
         @media (min-width: 1024px) {
           footer.lg\\:pb-0 { padding-bottom: 0 !important; }
         }
+        .footer-credit a { text-underline-offset: 3px; }
+        .footer-credit a:hover { text-decoration: underline !important; }
       `}</style>
     </footer>
   );

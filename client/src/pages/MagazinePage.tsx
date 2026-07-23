@@ -67,10 +67,10 @@ export default function MagazinePage() {
   const [hovered, setHovered] = useState<number | null>(null);
 
   return (
-    <div style={{ background: "#F2EADB", minHeight: "100vh", direction: "rtl" }}>
+    <div className="magazine-page" style={{ background: "#F2EADB", minHeight: "100vh", direction: "rtl" }}>
 
       {/* ══ HERO — cinematic street walk ══ */}
-      <div style={{ position: "relative", height: "100vh", minHeight: 600, overflow: "hidden" }}>
+      <div className="mag-hero" style={{ position: "relative", height: "100vh", minHeight: 600, overflow: "hidden" }}>
         <img
           src="/assets/magazine/mag-street-walk.png"
           alt=""
@@ -113,7 +113,7 @@ export default function MagazinePage() {
       </div>
 
       {/* ══ BRAND IDENTITY FULL-WIDTH ══ */}
-      <div style={{ position: "relative", width: "100%", overflow: "hidden", display: "flex" }}>
+      <div className="mag-brand-banner" style={{ position: "relative", width: "100%", overflow: "hidden", display: "flex" }}>
         <img
           src="/assets/magazine/mag-brand-identity.png"
           alt="UJI Brand Identity"
@@ -144,11 +144,11 @@ export default function MagazinePage() {
       </div>
 
       {/* ══ CONTENT ══ */}
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 1.25rem" }}>
+      <div className="mag-content" style={{ maxWidth: 1200, margin: "0 auto", padding: "0 1.25rem" }}>
 
         {/* ── "ما معنى UJI?" EDITORIAL INSERT ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, margin: "0 0 0" }}>
-          <div style={{
+        <div className="mag-meaning" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, margin: "0 0 0" }}>
+          <div className="mag-copy-panel" style={{
             background: "#16281D", padding: "4rem 3.5rem",
             display: "flex", flexDirection: "column", justifyContent: "center",
           }}>
@@ -176,7 +176,7 @@ export default function MagazinePage() {
               تشتهر بمناخها المثالي وتربتها الغنية وأساليب زراعة الشاي التقليدية التي تُنتج ماتشا ذات جودة استثنائية.
             </p>
           </div>
-          <div style={{ overflow: "hidden", minHeight: 420 }}>
+          <div className="mag-image-panel" style={{ overflow: "hidden", minHeight: 420 }}>
             <img
               src="/assets/magazine/mag-uji-meaning.png"
               alt="ما معنى UJI؟"
@@ -186,7 +186,7 @@ export default function MagazinePage() {
         </div>
 
         {/* ── FEATURED ARTICLE ── */}
-        <div style={{ margin: "0 0 0" }}>
+        <div className="mag-featured" style={{ margin: "0 0 0" }}>
           <div style={{
             position: "relative", minHeight: 520, overflow: "hidden",
             display: "grid", gridTemplateColumns: "1fr 1fr",
@@ -240,7 +240,7 @@ export default function MagazinePage() {
         </div>
 
         {/* ── 3-IMAGE ROW: bench / newspaper / night ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 0 }}>
+        <div className="mag-photo-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 0 }}>
           {[
             { img: "/assets/magazine/mag-man-bench.png", pos: "center top" },
             { img: "/assets/magazine/mag-newspaper.png", pos: "center" },
@@ -263,15 +263,15 @@ export default function MagazinePage() {
         </div>
 
         {/* ── LOGO DESIGN EDITORIAL ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
-          <div style={{ overflow: "hidden", minHeight: 480 }}>
+        <div className="mag-logo-section" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
+          <div className="mag-image-panel" style={{ overflow: "hidden", minHeight: 480 }}>
             <img
               src="/assets/magazine/mag-logo-design.png"
               alt="UJI Logo Design"
               style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
             />
           </div>
-          <div style={{
+          <div className="mag-copy-panel" style={{
             background: "#F7F2E8", padding: "4rem 3.5rem",
             display: "flex", flexDirection: "column", justifyContent: "center",
             borderRight: "1px solid rgba(200,187,164,0.4)",
@@ -303,8 +303,63 @@ export default function MagazinePage() {
           </div>
         </div>
 
+        {/* ── NEW UJI EDITORIAL IMAGES ── */}
+        <div className="mag-tin-feature" style={{
+          display: "grid", gridTemplateColumns: "1.12fr 0.88fr", gap: 0,
+          background: "#E9DECB", minHeight: 390,
+        }}>
+          <div style={{ overflow: "hidden", minHeight: 390 }}>
+            <img
+              src="/assets/magazine/uji-tin-editorial.png"
+              alt="علبة ماتشا UJI — جودة احتفالية"
+              style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+            />
+          </div>
+          <div className="mag-tin-copy" style={{
+            padding: "3.25rem 3rem", display: "flex",
+            flexDirection: "column", justifyContent: "center",
+          }}>
+            <p style={{
+              fontFamily: "'DM Mono',monospace", fontSize: "0.52rem",
+              letterSpacing: "0.4em", color: "#7E8962", marginBottom: "1.25rem",
+            }}>✦ THE TIN — 01</p>
+            <h2 style={{
+              fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+              fontSize: "clamp(1.8rem,3.2vw,2.8rem)", color: "#1C201B",
+              lineHeight: 1.25, marginBottom: "1rem",
+            }}>علبة صُممت<br />بعناية فائقة</h2>
+            <p style={{
+              fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+              fontSize: "0.86rem", color: "#6D7559", lineHeight: 1.95,
+            }}>من الملمس إلى آخر تفصيلة في الغطاء، صُممت علبة UJI لتحتفظ بنضارة الماتشا وتحضر طقساً جميلاً في كل مرة.</p>
+            <span style={{
+              marginTop: "1.5rem", fontFamily: "'DM Mono',monospace",
+              fontSize: "0.5rem", letterSpacing: "0.25em", color: "#1F3929",
+            }}>CEREMONIAL GRADE · STONE GROUND</span>
+          </div>
+        </div>
+
+        <div className="mag-fields-feature" style={{ position: "relative", overflow: "hidden", minHeight: 420 }}>
+          <img
+            src="/assets/magazine/uji-fields-editorial.png"
+            alt="حقول شاي UJI في اليابان"
+            style={{ width: "100%", height: "clamp(360px,42vw,520px)", objectFit: "cover", objectPosition: "center", display: "block" }}
+          />
+          <div style={{
+            position: "absolute", inset: 0,
+            background: "linear-gradient(90deg, rgba(22,40,29,0.78), rgba(22,40,29,0.08) 72%)",
+            display: "flex", alignItems: "center",
+          }}>
+            <div className="mag-fields-copy" style={{ padding: "3rem 4rem", maxWidth: 420 }}>
+              <p style={{ fontFamily: "'DM Mono',monospace", fontSize: "0.52rem", letterSpacing: "0.42em", color: "#C8D09F", marginBottom: "1rem" }}>✦ FROM THE SOURCE</p>
+              <h2 style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "clamp(1.9rem,3.5vw,3rem)", color: "#F2EADB", lineHeight: 1.2, marginBottom: "1rem" }}>من قلب الحقول<br />إلى طقسك اليومي</h2>
+              <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.86rem", color: "rgba(242,234,219,0.78)", lineHeight: 1.9 }}>أوجي ليست اسماً على العلبة فقط؛ إنها أرض ومناخ وحرفة تتوارثها الأجيال.</p>
+            </div>
+          </div>
+        </div>
+
         {/* ── PRODUCT SHOWCASE ── */}
-        <div style={{
+        <div className="mag-showcase" style={{
           position: "relative", overflow: "hidden",
           minHeight: 500,
         }}>
@@ -337,7 +392,7 @@ export default function MagazinePage() {
         </div>
 
         {/* ── ICED MATCHA + ARTICLE GRID ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 0 }}>
+        <div className="mag-articles" style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 0 }}>
           <div style={{ overflow: "hidden" }}>
             <img
               src="/assets/magazine/mag-iced-matcha.png"
@@ -398,7 +453,7 @@ export default function MagazinePage() {
         </div>
 
         {/* ── LIFESTYLE WIDE ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
+        <div className="mag-lifestyle" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0 }}>
           <div style={{ overflow: "hidden", height: 420 }}>
             <img
               src="/assets/magazine/mag-man-bag.png"
@@ -422,7 +477,7 @@ export default function MagazinePage() {
         </div>
 
         {/* ── NEWSLETTER ── */}
-        <div style={{
+        <div className="mag-newsletter" style={{
           background: "#1F3929",
           padding: "5rem 2.5rem",
           display: "flex",
@@ -488,7 +543,43 @@ export default function MagazinePage() {
           50%{opacity:1;transform:scaleY(1);transform-origin:top}
         }
         @media (max-width: 768px) {
-          .mag-split { grid-template-columns: 1fr !important; }
+          .magazine-page { overflow: hidden; }
+          .mag-hero { height: min(78svh, 620px) !important; min-height: 500px !important; }
+          .mag-hero h1 { font-size: clamp(3rem, 15vw, 4.8rem) !important; }
+          .mag-brand-banner { display: block !important; }
+          .mag-brand-banner > img { height: 360px !important; object-position: center !important; }
+          .mag-brand-banner > div { min-height: 250px; position: relative !important; padding: 2.5rem 1.35rem !important; background: #16281D; }
+          .mag-brand-banner > div > div { padding: 0 !important; max-width: none !important; }
+          .mag-content { padding: 0 !important; }
+          .mag-meaning, .mag-featured, .mag-logo-section, .mag-tin-feature, .mag-lifestyle { display: flex !important; flex-direction: column !important; }
+          .mag-copy-panel, .mag-feature-copy, .mag-tin-copy { padding: 2.75rem 1.35rem !important; min-height: 0 !important; }
+          .mag-image-panel { min-height: 300px !important; height: 300px !important; }
+          .mag-featured > div:first-child { height: 300px; min-height: 0; }
+          .mag-featured > div:last-child { padding: 2.75rem 1.35rem !important; }
+          .mag-photo-row { display: grid !important; grid-template-columns: 1fr 1fr !important; }
+          .mag-photo-row > div { height: 190px !important; }
+          .mag-photo-row > div:last-child { grid-column: 1 / -1; height: 230px !important; }
+          .mag-tin-feature { min-height: 0 !important; }
+          .mag-tin-feature > div:first-child { min-height: 0 !important; height: auto !important; }
+          .mag-tin-feature > div:first-child img { height: auto !important; aspect-ratio: 1.72; object-fit: cover !important; }
+          .mag-fields-feature { min-height: 390px !important; }
+          .mag-fields-feature > img { height: 390px !important; object-position: center !important; }
+          .mag-fields-feature > div { background: linear-gradient(180deg, rgba(22,40,29,0.05) 15%, rgba(22,40,29,0.88) 100%) !important; align-items: flex-end !important; }
+          .mag-fields-copy { padding: 2rem 1.35rem !important; max-width: none !important; width: 100%; }
+          .mag-logo-section .mag-image-panel { order: 0; }
+          .mag-logo-section .mag-copy-panel { order: 1; }
+          .mag-showcase { min-height: 0 !important; }
+          .mag-showcase > img { height: 300px !important; object-position: center !important; }
+          .mag-showcase > div { align-items: flex-end !important; background: linear-gradient(180deg, rgba(22,40,29,0.05) 15%, rgba(22,40,29,0.9) 100%) !important; }
+          .mag-showcase > div > div { padding: 2rem 1.35rem !important; max-width: none !important; }
+          .mag-articles { display: flex !important; flex-direction: column !important; }
+          .mag-articles > div:first-child img { min-height: 0 !important; height: 290px !important; }
+          .mag-articles > div:last-child { display: grid !important; grid-template-columns: 1fr !important; }
+          .mag-articles > div:last-child > div { padding: 2rem 1.35rem !important; }
+          .mag-lifestyle > div { height: 260px !important; }
+          .mag-newsletter { padding: 3.25rem 1.25rem !important; }
+          .mag-newsletter form { flex-direction: column !important; max-width: none !important; }
+          .mag-newsletter form input, .mag-newsletter form button { width: 100% !important; }
         }
       `}</style>
     </div>
