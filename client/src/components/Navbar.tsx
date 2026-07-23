@@ -74,7 +74,7 @@ export default function Navbar() {
               ].map(({ href, label }) => (
                 <Link key={href} href={href} style={{
                   color: textColor, fontSize: "0.75rem",
-                  fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                  fontFamily: "'Cairo', sans-serif",
                   letterSpacing: "0.04em", fontWeight: 400,
                   opacity: 0.85, transition: "opacity 0.2s",
                 }}>

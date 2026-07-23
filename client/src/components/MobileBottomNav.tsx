@@ -89,7 +89,7 @@ export default function MobileBottomNav() {
               )}
             </div>
             <span style={{
-              fontSize: "0.6rem", fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+              fontSize: "0.6rem", fontFamily: "'Cairo', sans-serif",
               color, letterSpacing: "0.02em", lineHeight: 1,
             }}>{label}</span>
             {active && (
