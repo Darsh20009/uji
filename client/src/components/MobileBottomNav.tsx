@@ -13,7 +13,7 @@ export default function MobileBottomNav() {
   const isActive = (path: string) => location === path || (path !== "/" && location.startsWith(path));
 
   const activeColor = "#1F3929";
-  const inactiveColor = "#9BA17B";
+  const inactiveColor = "#4A7C59";
 
   return (
     <nav style={{

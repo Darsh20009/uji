@@ -23,10 +23,10 @@
   --radius:       0px;
 
   /* ── Typography System ──────────────────────────────── */
-  /* Display headings (Arabic)  → Aref Ruqaa — calligraphic Ruqaa, connected, unique */
-  --font-display: 'Aref Ruqaa', 'IBM Plex Sans Arabic', system-ui, sans-serif;
-  /* Editorial / en headlines   → Cormorant Garamond — luxury italic serif */
-  --font-serif:   'Cormorant Garamond', 'Times New Roman', serif;
+  /* Display headings (Arabic)  → El Messiri — elegant modern Arabic, upright & readable */
+  --font-display: 'El Messiri', 'Cairo', system-ui, sans-serif;
+  /* Editorial / en headlines   → Playfair Display — luxury serif, upright, easy to read */
+  --font-serif:   'Playfair Display', 'Georgia', serif;
   /* Body copy                  → Cairo — modern geometric Arabic (Fuji-style) */
   --font-arabic:  'Cairo', system-ui, sans-serif;
   /* Accent labels / mono       → DM Mono — unique techy contrast */
