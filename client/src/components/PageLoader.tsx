@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 const FRAMES = Array.from({ length: 12 }, (_, i) =>
   `/assets/ninja/f${String(i + 1).padStart(2, "0")}.png`
 );
-const FPS = 16;
+const FPS = 10;
 
 export default function PageLoader({ visible }: { visible: boolean }) {
   const [frame, setFrame] = useState(0);
