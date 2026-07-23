@@ -5,7 +5,7 @@ import path from "path";
 import fs from "fs";
 import { Product, Order, Customer, Settings, Review, Coupon, Invoice, Quote, Expense, Campaign, hashPass } from "./models";
 import { requireAuth } from "./auth";
-import { sendOrderConfirmation, sendAdminOrderAlert, sendNewsletterWelcome, sendTestEmail } from "./email";
+import { sendOrderConfirmation, sendAdminOrderAlert, sendNewsletterWelcome, sendTestEmail, verifyEmailTransport, emailAttachments, layout } from "./email";
 import { createGeideaSession, verifyGeideaCallback, geideaEnabled } from "./geidea";
 import { getActiveVisitors } from "./visitors";
 
@@ -767,7 +767,21 @@ router.post("/admin/campaigns/:id/send", requireAdmin, async (req, res) => {
   if (campaign.channel !== "email") return res.status(400).json({ message: "الإرسال الجماعي المتاح حالياً عبر البريد الإلكتروني فقط" });
   const { transporter } = await import("./email");
   const from = `"UJI MATCHA" <${process.env.CPANEL_SMTP_USER || "info@qirox.online"}>`;
-  await Promise.all(emails.map(to => transporter.sendMail({ from, to, subject: campaign.subject || campaign.name, text: campaign.message || "", html: `<div dir="rtl" style="font-family:Arial;white-space:pre-line">${campaign.message || ""}</div>` })));
+  await Promise.all(emails.map(to => transporter.sendMail({
+    from, to, subject: campaign.subject || campaign.name,
+    text: campaign.message || "",
+    html: layout(`
+      <tr>
+        <td style="padding:32px 40px;text-align:right;direction:rtl;">
+          <h1 style="margin:0 0 14px;font-size:22px;font-weight:400;color:#1C201B;">${campaign.subject || campaign.name}</h1>
+          <div style="font-family:Arial,Tahoma,sans-serif;font-size:14px;color:#555;line-height:2;white-space:pre-line;">${campaign.message || ""}</div>
+          <div style="text-align:center;margin-top:28px;">
+            <a href="${process.env.PUBLIC_URL || process.env.STORE_URL || "https://ujimatcha.store"}" style="display:inline-block;background:#1F3929;color:#F2EADB;padding:13px 36px;text-decoration:none;border-radius:3px;font-size:13px;">اكتشف المتجر</a>
+          </div>
+        </td>
+      </tr>`),
+    attachments: emailAttachments(),
+  })));
   res.json(await Campaign.findByIdAndUpdate(campaign._id, { status: "sent", sentAt: new Date(), recipients: emails.length }, { new: true }));
 });
 
@@ -829,6 +843,24 @@ router.post("/admin/send-test-email", requireAdmin, async (req: any, res) => {
   if (!to) return res.status(400).json({ message: "missing `to`" });
   try { await sendTestEmail(to); res.json({ ok: true }); }
   catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+router.get("/admin/email-status", requireAdmin, async (_req, res) => {
+  try {
+    res.json({ ok: true, ...(await verifyEmailTransport()) });
+  } catch (e: any) {
+    console.error("[email] transport verification failed:", e.message);
+    res.status(503).json({
+      ok: false,
+      message: e.message,
+      configured: {
+        host: process.env.CPANEL_SMTP_HOST || "server222.web-hosting.com",
+        port: Number(process.env.CPANEL_SMTP_PORT || 465),
+        user: process.env.CPANEL_SMTP_USER || "info@qirox.online",
+        passwordConfigured: Boolean(process.env.SMTP_PASS),
+      },
+    });
+  }
 });
 
 export default router;

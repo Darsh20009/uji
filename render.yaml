@@ -26,5 +26,7 @@ services:
         value: info@qirox.online
       - key: CPANEL_USERNAME
         value: rfpeddku
+      - key: PUBLIC_URL
+        value: https://ujimatcha.store
       - key: SMTP_PASS
         sync: false   # تُدخله يدوياً في Render dashboard

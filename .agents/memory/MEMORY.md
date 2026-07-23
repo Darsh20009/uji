@@ -1,3 +1,4 @@
 - [UJI design system](uji-design-system.md) — brand colors, fonts, logo assets, email (cPanel SMTP), SEO/AEO schemas, admin auth bootstrap, Render deployment config.
 - [Preview workflow dependencies](preview-workflow-dependencies.md) — the mockup preview workflow resolves its Vite plugins from the workspace root dependencies.
 - [Magazine mobile layout](magazine-mobile-layout.md) — desktop editorial layout stays intact; mobile uses stacked sections, shorter media, and vertical newsletter controls.
+- [Email delivery setup](email-delivery-setup.md) — Render must receive SMTP_PASS separately; email branding uses inline CID assets instead of public image URLs.

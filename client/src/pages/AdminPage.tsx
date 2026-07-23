@@ -1309,6 +1309,11 @@ function AdminSettings() {
   const qc = useQueryClient();
   const { data: settings, isLoading } = useQuery({ queryKey: ["admin-settings"], queryFn: () => api.get("/admin/settings") });
   const { data: newsletter } = useQuery({ queryKey: ["admin-newsletter"], queryFn: () => api.get("/admin/newsletter") });
+  const { data: emailStatus, isLoading: emailStatusLoading } = useQuery({
+    queryKey: ["admin-email-status"],
+    queryFn: () => api.get("/admin/email-status"),
+    retry: false,
+  });
   const [form, setForm] = useState<any>(null);
   const [saved, setSaved] = useState(false);
   const [testEmail, setTestEmail] = useState("");
@@ -1543,6 +1548,18 @@ function AdminSettings() {
           <p className="text-sm font-semibold text-stone-700">النشرة البريدية</p>
         </div>
         <div className="p-5 space-y-4">
+          <div className={`rounded-xl border p-3 ${emailStatus?.ok ? "bg-emerald-50 border-emerald-100" : "bg-amber-50 border-amber-100"}`}>
+            <div className="flex items-start gap-2">
+              <div className={`mt-1 h-2.5 w-2.5 rounded-full shrink-0 ${emailStatus?.ok ? "bg-emerald-500" : "bg-amber-500"}`} />
+              <div className="min-w-0">
+                <p className={`text-xs font-semibold ${emailStatus?.ok ? "text-emerald-800" : "text-amber-800"}`}>
+                  {emailStatusLoading ? "جاري فحص SMTP..." : emailStatus?.ok ? "البريد مضبوط ويستطيع الاتصال بخادم SMTP" : "البريد غير جاهز للإرسال"}
+                </p>
+                {!emailStatus?.ok && <p className="text-[11px] text-amber-700 mt-1 leading-relaxed">{emailStatus?.message || "أضف SMTP_PASS في إعدادات Render ثم أعد النشر."}</p>}
+                {emailStatus?.ok && <p className="text-[11px] text-emerald-700 mt-1">الأصول المضمّنة في الرسالة: {emailStatus.inlineAssets}/2 — الشعار والبانر</p>}
+              </div>
+            </div>
+          </div>
           <div className="flex items-center gap-4">
             <div className="text-3xl font-bold text-[#1F3929]">{newsletter?.count || 0}</div>
             <p className="text-sm text-stone-500">مشترك في النشرة البريدية</p>

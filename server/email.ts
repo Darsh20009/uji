@@ -1,4 +1,6 @@
 import nodemailer from "nodemailer";
+import fs from "fs";
+import path from "path";
 
 const transporter = nodemailer.createTransport({
   host: process.env.CPANEL_SMTP_HOST || "server222.web-hosting.com",
@@ -12,14 +14,56 @@ const transporter = nodemailer.createTransport({
 });
 
 const FROM    = `"UJI MATCHA" <${process.env.CPANEL_SMTP_USER || "info@qirox.online"}>`;
-const ADMIN   = process.env.ADMIN_EMAIL || "Ujimatchacomsa@gmail.com";
-const STORE   = "https://ujimatcha.store";
+const STORE   = (process.env.PUBLIC_URL || process.env.STORE_URL || "https://ujimatcha.store").replace(/\/+$/, "");
+
+function adminEmail() {
+  return process.env.ADMIN_EMAIL || "Ujimatchacomsa@gmail.com";
+}
+
+function resolveAsset(...parts: string[]): string | null {
+  const candidates = [
+    path.join(process.cwd(), "dist", "public", "assets", ...parts),
+    path.join(process.cwd(), "client", "public", "assets", ...parts),
+    path.join(path.dirname(new URL(import.meta.url).pathname), "..", "public", "assets", ...parts),
+  ];
+  return candidates.find(file => fs.existsSync(file)) || null;
+}
+
+export function emailAttachments() {
+  const logo = resolveAsset("brand", "uji-logo-white-transparent.png");
+  const banner = resolveAsset("hero", "uji-banner-matcha-powder.jpg");
+  const attachments: Array<{ filename: string; path: string; cid: string; contentDisposition: "inline" }> = [];
+  if (logo) attachments.push({ filename: "uji-logo.png", path: logo, cid: "uji-logo", contentDisposition: "inline" });
+  if (banner) attachments.push({ filename: "uji-banner.jpg", path: banner, cid: "uji-banner", contentDisposition: "inline" });
+  if (!logo || !banner) {
+    console.warn("[email] inline assets missing", {
+      logo: Boolean(logo),
+      banner: Boolean(banner),
+      cwd: process.cwd(),
+    });
+  }
+  return attachments;
+}
+
+export async function verifyEmailTransport() {
+  const missing = ["SMTP_PASS", "CPANEL_SMTP_USER"].filter(key => !process.env[key]);
+  if (missing.length) {
+    throw new Error(`SMTP configuration is incomplete: missing ${missing.join(", ")}`);
+  }
+  await transporter.verify();
+  return {
+    host: process.env.CPANEL_SMTP_HOST || "server222.web-hosting.com",
+    port: Number(process.env.CPANEL_SMTP_PORT || 465),
+    user: process.env.CPANEL_SMTP_USER,
+    inlineAssets: emailAttachments().length,
+  };
+}
 
 /* ─────────────────────────────────────────────────────────────────
    SHARED LAYOUT
    Clean white card, no external images, works in all email clients
 ───────────────────────────────────────────────────────────────── */
-function layout(body: string): string {
+export function layout(body: string): string {
   return `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -41,11 +85,10 @@ function layout(body: string): string {
           <!-- matcha powder splash bg -->
           <div style="background:linear-gradient(135deg,#16281D 0%,#1F3929 50%,#2A4A35 100%);padding:36px 40px;">
             <!-- logo image -->
-            <img src="${STORE}/assets/brand/uji-logo-white-transparent.png"
+            <img src="cid:uji-logo"
                  alt="UJI MATCHA"
-                 width="120" height="48"
-                 style="display:block;margin:0 auto 10px;object-fit:contain;"
-                 onerror="this.style.display='none'" />
+                 width="88" height="88"
+                 style="display:block;margin:0 auto 10px;width:88px;height:88px;" />
             <!-- fallback text logo -->
             <div style="font-family:Georgia,'Times New Roman',serif;
                         font-size:18px;font-weight:400;letter-spacing:0.4em;
@@ -62,11 +105,10 @@ function layout(body: string): string {
       <!-- MATCHA IMAGE ROW -->
       <tr>
         <td style="background:#F7F4EF;padding:0;text-align:center;border-bottom:1px solid #E5DDD0;">
-          <img src="${STORE}/assets/brand/uji-brand-cup-matcha-repeat.png"
-               alt=""
-               width="560" height="120"
-               style="display:block;width:100%;max-width:560px;height:120px;object-fit:cover;object-position:center;"
-               onerror="this.style.display='none'" />
+          <img src="cid:uji-banner"
+               alt="حقول الماتشا اليابانية"
+               width="560" height="150"
+               style="display:block;width:100%;max-width:560px;height:150px;object-fit:cover;" />
         </td>
       </tr>
 
@@ -180,14 +222,16 @@ export async function sendAdminOrderAlert(order: any) {
   try {
     await transporter.sendMail({
       from: FROM,
-      to: ADMIN,
+      to: adminEmail(),
       subject: `🛒 طلب جديد ${order.orderNumber} — ${(order.total || 0).toFixed(2)} ر.س`,
       html: layout(body),
+      attachments: emailAttachments(),
       text: `طلب جديد: ${order.orderNumber}\nالعميل: ${order.customer?.name} ${order.customer?.phone}\nالإجمالي: ${(order.total || 0).toFixed(2)} ر.س`,
     });
-    console.log("[email] admin alert →", ADMIN, "for", order.orderNumber);
+    console.log("[email] admin alert →", adminEmail(), "for", order.orderNumber);
   } catch (e) {
     console.error("[email] admin alert failed:", e);
+    throw e;
   }
 }
 
@@ -280,11 +324,13 @@ export async function sendOrderConfirmation(order: any) {
       to: order.customer.email,
       subject: `تأكيد طلبك ${order.orderNumber} — UJI MATCHA`,
       html: layout(body),
+      attachments: emailAttachments(),
       text: `تأكيد الطلب ${order.orderNumber} — الإجمالي: ${(order.total || 0).toFixed(2)} ر.س`,
     });
     console.log("[email] order confirmation →", order.customer.email);
   } catch (e) {
     console.error("[email] order confirmation failed:", e);
+    throw e;
   }
 }
 
@@ -346,11 +392,13 @@ export async function sendNewsletterWelcome(email: string) {
       to: email,
       subject: "أهلاً بك في UJI MATCHA ✦",
       html: layout(body),
+      attachments: emailAttachments(),
       text: "مرحباً بك في UJI MATCHA — شكراً لاشتراكك في نشرتنا البريدية.",
     });
     console.log("[email] newsletter welcome →", email);
   } catch (e) {
     console.error("[email] newsletter welcome failed:", e);
+    throw e;
   }
 }
 
@@ -393,11 +441,13 @@ export async function sendPasswordResetOtp(email: string, name: string, otp: str
       to: email,
       subject: `${otp} — رمز التحقق في UJI MATCHA`,
       html: layout(body),
+      attachments: emailAttachments(),
       text: `رمز التحقق: ${otp}\nصالح لمدة ١٥ دقيقة.`,
     });
     console.log("[email] OTP →", email);
   } catch (e) {
     console.error("[email] OTP failed:", e);
+    throw e;
   }
 }
 
@@ -422,6 +472,7 @@ export async function sendTestEmail(to: string) {
   const originalAdmin = process.env.ADMIN_EMAIL;
   process.env.ADMIN_EMAIL = to;
 
+  await verifyEmailTransport();
   await sendAdminOrderAlert(mockOrder);
   await sendOrderConfirmation(mockOrder);
 
