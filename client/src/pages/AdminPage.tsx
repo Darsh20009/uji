@@ -8,10 +8,11 @@ import {
   Star, CreditCard, MapPin, Banknote, Truck, Eye,
   BarChart2, UserCheck, Shield, Receipt, CheckCircle2,
   XCircle, Clock, AlertCircle, ExternalLink, RefreshCw,
+  FileText, WalletCards, Megaphone, Search, Send, CalendarDays,
 } from "lucide-react";
 import PhoneInput, { COUNTRIES, type Country } from "../components/PhoneInput";
 
-type Tab = "dashboard" | "analytics" | "products" | "orders" | "employees" | "customers" | "coupons" | "reviews" | "settings";
+type Tab = "dashboard" | "analytics" | "finance" | "invoices" | "quotes" | "products" | "orders" | "employees" | "customers" | "coupons" | "reviews" | "marketing" | "seo" | "settings";
 const ADMIN_PHONE = "0552469643";
 
 const STATUS_AR: Record<string, string> = {
@@ -45,6 +46,12 @@ const PERMISSIONS_LIST = [
   { key: "manage_coupons",   label: "إدارة الكوبونات",  icon: <Tag size={13} /> },
   { key: "manage_reviews",   label: "مراجعة التقييمات", icon: <Star size={13} /> },
   { key: "view_analytics",   label: "عرض التحليلات",    icon: <BarChart2 size={13} /> },
+  { key: "manage_finance",   label: "إدارة المالية",    icon: <WalletCards size={13} /> },
+  { key: "manage_invoices",  label: "إدارة الفواتير",   icon: <FileText size={13} /> },
+  { key: "manage_quotes",    label: "عروض الأسعار",     icon: <Receipt size={13} /> },
+  { key: "manage_marketing", label: "إدارة التسويق",    icon: <Megaphone size={13} /> },
+  { key: "manage_seo",       label: "SEO / AEO",        icon: <Search size={13} /> },
+  { key: "manage_settings",  label: "إدارة الإعدادات",  icon: <Settings2 size={13} /> },
 ];
 
 function Badge({ status }: { status: string }) {
@@ -209,20 +216,27 @@ export default function AdminPage() {
     </div>
   );
   if (!me && !authed) return <LoginScreen onLogin={() => { setAuthed(true); qc.invalidateQueries({ queryKey: ["me"] }); }} />;
-  const isAdmin = (me as any)?.phone === ADMIN_PHONE || (me as any)?.role === "admin" || authed;
+  const isAdmin = (me as any)?.phone === ADMIN_PHONE || (me as any)?.role === "admin" || (me as any)?.role === "employee";
   if (!isAdmin) return <LoginScreen onLogin={() => { setAuthed(true); qc.invalidateQueries({ queryKey: ["me"] }); }} />;
 
-  const NAV = [
+  const allNav = [
     { key: "dashboard"  as Tab, label: "لوحة التحكم",       icon: <LayoutDashboard size={16} /> },
-    { key: "analytics"  as Tab, label: "التحليلات",          icon: <BarChart2 size={16} /> },
-    { key: "products"   as Tab, label: "المنتجات",           icon: <Package size={16} /> },
-    { key: "orders"     as Tab, label: "الطلبات",            icon: <ShoppingBag size={16} />, badge: pendingReceipts },
-    { key: "employees"  as Tab, label: "الموظفون",           icon: <UserCheck size={16} /> },
-    { key: "customers"  as Tab, label: "العملاء",            icon: <Users size={16} /> },
-    { key: "coupons"    as Tab, label: "كوبونات الخصم",      icon: <Tag size={16} /> },
-    { key: "reviews"    as Tab, label: "التقييمات",          icon: <Star size={16} /> },
-    { key: "settings"   as Tab, label: "الإعدادات",          icon: <Settings2 size={16} /> },
+    { key: "analytics"  as Tab, label: "تقرير المبيعات",     icon: <BarChart2 size={16} />, permission: "view_analytics" },
+    { key: "finance"    as Tab, label: "نظرة مالية",         icon: <WalletCards size={16} />, permission: "manage_finance" },
+    { key: "invoices"   as Tab, label: "الفواتير",            icon: <FileText size={16} />, permission: "manage_invoices" },
+    { key: "quotes"     as Tab, label: "عروض الأسعار",        icon: <Receipt size={16} />, permission: "manage_quotes" },
+    { key: "products"   as Tab, label: "المنتجات",           icon: <Package size={16} />, permission: "manage_products" },
+    { key: "orders"     as Tab, label: "الطلبات",            icon: <ShoppingBag size={16} />, badge: pendingReceipts, permission: "manage_orders" },
+    { key: "employees"  as Tab, label: "الموظفون",           icon: <UserCheck size={16} />, permission: "manage_employees" },
+    { key: "customers"  as Tab, label: "قاعدة العملاء",       icon: <Users size={16} />, permission: "manage_customers" },
+    { key: "coupons"    as Tab, label: "كوبونات الخصم",       icon: <Tag size={16} />, permission: "manage_coupons" },
+    { key: "reviews"    as Tab, label: "تقييمات العملاء",     icon: <Star size={16} />, permission: "manage_reviews" },
+    { key: "marketing"  as Tab, label: "التسويق والرسائل",    icon: <Megaphone size={16} />, permission: "manage_marketing" },
+    { key: "seo"       as Tab, label: "SEO / AEO",            icon: <Search size={16} />, permission: "manage_seo" },
+    { key: "settings"   as Tab, label: "الإعدادات",            icon: <Settings2 size={16} />, permission: "manage_settings" },
   ];
+  const isFullAdmin = (me as any)?.phone === ADMIN_PHONE || (me as any)?.role === "admin";
+  const NAV = allNav.filter(n => isFullAdmin || !n.permission || (me as any)?.permissions?.includes(n.permission));
 
   const logout = () => { api.post("/auth/logout", {}); window.location.href = "/"; };
   const visitors = (visitorData as any)?.count ?? 0;
@@ -307,12 +321,17 @@ export default function AdminPage() {
         <main className="flex-1 p-4 lg:p-6 overflow-auto">
           {tab === "dashboard"  && <AdminDashboard onNavigate={setTab} stats={statsData} visitors={visitors} />}
           {tab === "analytics"  && <AdminAnalytics stats={statsData} />}
+          {tab === "finance"    && <AdminFinance stats={statsData} />}
+          {tab === "invoices"   && <AdminInvoices />}
+          {tab === "quotes"     && <AdminQuotes />}
           {tab === "products"   && <AdminProducts />}
           {tab === "orders"     && <AdminOrders />}
           {tab === "employees"  && <AdminEmployees />}
           {tab === "customers"  && <AdminCustomers />}
           {tab === "coupons"    && <AdminCoupons />}
           {tab === "reviews"    && <AdminReviews />}
+          {tab === "marketing"  && <AdminMarketing />}
+          {tab === "seo"        && <AdminSEO />}
           {tab === "settings"   && <AdminSettings />}
         </main>
       </div>
@@ -1302,7 +1321,7 @@ function AdminSettings() {
   ];
   const defaults = {
     storeName: "UJI MATCHA", storePhone: "0552469643", storeEmail: "info@qirox.online",
-    whatsapp: "966552469643", shippingFee: 30, shippingFreeThreshold: 200,
+    whatsapp: "", shippingFee: 30, shippingFreeThreshold: 200,
     maintenanceMode: false, trustBadges: DEFAULT_BADGES, trustBadgesPosition: "above" as const,
     _codEnabled: true, _bankEnabled: true, _stcEnabled: true,
     bankIban: "", bankName: "مصرف الراجحي", stcPayNumber: "0552469643",
@@ -1577,4 +1596,73 @@ function AdminSettings() {
       </button>
     </div>
   );
+}
+
+/* ─── Finance / invoices / quotes / marketing / SEO ─── */
+function AdminFinance({ stats }: { stats: any }) {
+  const qc = useQueryClient();
+  const { data: expenses = [] } = useQuery({ queryKey: ["admin-expenses"], queryFn: () => api.get("/admin/expenses") });
+  const [form, setForm] = useState({ title: "", category: "تشغيل", amount: "", notes: "" });
+  const [showForm, setShowForm] = useState(false);
+  const add = useMutation({
+    mutationFn: () => api.post("/admin/expenses", { ...form, amount: Number(form.amount) }),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-expenses"] }); setForm({ title: "", category: "تشغيل", amount: "", notes: "" }); setShowForm(false); },
+  });
+  const del = useMutation({ mutationFn: (id: string) => api.delete(`/admin/expenses/${id}`), onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-expenses"] }) });
+  const totalExpenses = (expenses as any[]).reduce((sum, e) => sum + Number(e.amount || 0), 0);
+  const revenue = Number(stats?.totalRevenue || 0);
+  return <div className="space-y-5">
+    <div><h2 className="text-lg font-semibold text-stone-800">النظرة المالية</h2><p className="text-xs text-stone-400 mt-0.5">الإيرادات والمصروفات وصافي التشغيل</p></div>
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <StatCard label="الإيرادات" value={`${revenue.toFixed(0)} ر.س`} icon={<TrendingUp size={18} />} />
+      <StatCard label="المصروفات" value={`${totalExpenses.toFixed(0)} ر.س`} icon={<WalletCards size={18} />} />
+      <StatCard label="صافي التشغيل" value={`${(revenue - totalExpenses).toFixed(0)} ر.س`} icon={<Banknote size={18} />} />
+      <StatCard label="طلبات هذا الشهر" value={stats?.thisMonthRev ? `${Number(stats.thisMonthRev).toFixed(0)} ر.س` : "0 ر.س"} icon={<CalendarDays size={18} />} />
+    </div>
+    <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+      <div className="px-5 py-4 border-b border-stone-50 flex items-center justify-between"><div><h3 className="text-sm font-semibold text-stone-700">المصروفات</h3><p className="text-xs text-stone-400 mt-1">{(expenses as any[]).length} سجل</p></div><button onClick={() => setShowForm(v => !v)} className="h-9 px-3 rounded-xl bg-[#1F3929] text-[#F2EADB] text-xs flex items-center gap-1"><Plus size={14} /> مصروف جديد</button></div>
+      {showForm && <div className="p-5 bg-stone-50 border-b border-stone-100 grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <input placeholder="اسم المصروف" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} />
+        <input placeholder="التصنيف" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} />
+        <input type="number" placeholder="المبلغ ر.س" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} />
+        <button disabled={!form.title || !form.amount || add.isPending} onClick={() => add.mutate()} className="h-10 rounded-xl bg-[#1F3929] text-white text-sm disabled:opacity-50">حفظ المصروف</button>
+      </div>}
+      <div className="divide-y divide-stone-50">{(expenses as any[]).map(e => <div key={e._id} className="px-5 py-3 flex items-center justify-between"><div><p className="text-sm text-stone-700">{e.title}</p><p className="text-xs text-stone-400">{e.category} · {new Date(e.date || e.createdAt).toLocaleDateString("ar-SA")}</p></div><div className="flex items-center gap-3"><b className="text-sm text-red-600">-{Number(e.amount).toFixed(2)} ر.س</b><button onClick={() => del.mutate(e._id)} className="text-red-300 hover:text-red-600"><Trash2 size={14} /></button></div></div>)}{!(expenses as any[]).length && <p className="py-12 text-center text-sm text-stone-400">لا توجد مصروفات مسجلة</p>}</div>
+    </div>
+  </div>;
+}
+
+function AdminInvoices() {
+  const { data: invoices = [] } = useQuery({ queryKey: ["admin-invoices"], queryFn: () => api.get("/admin/invoices") });
+  return <div className="space-y-5"><div><h2 className="text-lg font-semibold text-stone-800">الفواتير</h2><p className="text-xs text-stone-400 mt-0.5">الفواتير التي أنشئت من الطلبات المعتمدة</p></div><div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden"><div className="divide-y divide-stone-50">{(invoices as any[]).map(inv => <div key={inv._id} className="px-5 py-4 flex items-center justify-between gap-3"><div><p className="font-mono text-sm font-bold text-[#1F3929]">{inv.invoiceNumber}</p><p className="text-xs text-stone-400 mt-1">{inv.customer?.name || "عميل"} · {new Date(inv.createdAt).toLocaleDateString("ar-SA")}</p></div><div className="text-left"><p className="font-semibold text-stone-700">{Number(inv.total || 0).toFixed(2)} ر.س</p><span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-full px-2 py-1">{inv.status === "paid" ? "مدفوعة" : "صادرة"}</span></div></div>)}{!(invoices as any[]).length && <p className="py-12 text-center text-sm text-stone-400">ستظهر الفواتير بعد اعتماد الإيصالات</p>}</div></div></div>;
+}
+
+function AdminQuotes() {
+  const qc = useQueryClient();
+  const { data: quotes = [] } = useQuery({ queryKey: ["admin-quotes"], queryFn: () => api.get("/admin/quotes") });
+  const [open, setOpen] = useState(false);
+  const [form, setForm] = useState({ name: "", phone: "", email: "", item: "منتج ماتشا", qty: "1", price: "", notes: "", validUntil: "" });
+  const create = useMutation({ mutationFn: () => api.post("/admin/quotes", { customer: { name: form.name, phone: form.phone, email: form.email }, items: [{ name: form.item, qty: Number(form.qty), price: Number(form.price) }], notes: form.notes, validUntil: form.validUntil || undefined }), onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-quotes"] }); setOpen(false); } });
+  const statusLabel: Record<string, string> = { draft: "مسودة", sent: "مرسل", accepted: "مقبول", expired: "منتهي" };
+  return <div className="space-y-5"><div className="flex items-center justify-between"><div><h2 className="text-lg font-semibold text-stone-800">عروض الأسعار</h2><p className="text-xs text-stone-400 mt-0.5">إنشاء عرض للعميل ومتابعة حالته</p></div><button onClick={() => setOpen(v => !v)} className="h-10 px-4 rounded-xl bg-[#1F3929] text-white text-sm flex items-center gap-2"><Plus size={15} /> عرض جديد</button></div>{open && <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-5 grid grid-cols-2 lg:grid-cols-4 gap-3"><input placeholder="اسم العميل" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /><input placeholder="جوال العميل" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} /><input placeholder="البريد" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} /><input placeholder="اسم المنتج" value={form.item} onChange={e => setForm({ ...form, item: e.target.value })} /><input type="number" placeholder="الكمية" value={form.qty} onChange={e => setForm({ ...form, qty: e.target.value })} /><input type="number" placeholder="السعر" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} /><input type="date" value={form.validUntil} onChange={e => setForm({ ...form, validUntil: e.target.value })} /><button disabled={!form.name || !form.price || create.isPending} onClick={() => create.mutate()} className="h-10 rounded-xl bg-[#1F3929] text-white text-sm disabled:opacity-50">حفظ العرض</button></div>}<div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden"><div className="divide-y divide-stone-50">{(quotes as any[]).map(q => <div key={q._id} className="px-5 py-4 flex items-center justify-between"><div><p className="font-mono text-sm font-bold text-[#1F3929]">{q.quoteNumber}</p><p className="text-xs text-stone-400 mt-1">{q.customer?.name} · {q.items?.[0]?.name}</p></div><div className="text-left"><p className="font-semibold text-stone-700">{Number(q.total || 0).toFixed(2)} ر.س</p><span className="text-[10px] text-stone-500 bg-stone-50 border border-stone-200 rounded-full px-2 py-1">{statusLabel[q.status] || q.status}</span></div></div>)}{!(quotes as any[]).length && <p className="py-12 text-center text-sm text-stone-400">لا توجد عروض أسعار</p>}</div></div></div>;
+}
+
+function AdminMarketing() {
+  const qc = useQueryClient();
+  const { data: campaigns = [] } = useQuery({ queryKey: ["admin-campaigns"], queryFn: () => api.get("/admin/campaigns") });
+  const { data: newsletter } = useQuery({ queryKey: ["admin-newsletter"], queryFn: () => api.get("/admin/newsletter") });
+  const [form, setForm] = useState({ name: "", subject: "", message: "", channel: "email" });
+  const create = useMutation({ mutationFn: () => api.post("/admin/campaigns", form), onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-campaigns"] }); setForm({ name: "", subject: "", message: "", channel: "email" }); } });
+  const send = useMutation({ mutationFn: (id: string) => api.post(`/admin/campaigns/${id}/send`, {}), onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-campaigns"] }) });
+  return <div className="space-y-5"><div><h2 className="text-lg font-semibold text-stone-800">التسويق والرسائل الجماعية</h2><p className="text-xs text-stone-400 mt-0.5">أنشئ حملات بريدية للمشتركين وتابع أثرها</p></div><div className="grid grid-cols-2 lg:grid-cols-3 gap-4"><StatCard label="مشتركو النشرة" value={newsletter?.count || 0} icon={<Mail size={18} />} /><StatCard label="الحملات" value={(campaigns as any[]).length} icon={<Megaphone size={18} />} /><StatCard label="القنوات" value="Email · WhatsApp" icon={<Send size={18} />} /></div><div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-5 space-y-3"><h3 className="text-sm font-semibold text-stone-700">حملة جديدة</h3><div className="grid grid-cols-2 gap-3"><input placeholder="اسم الحملة" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /><input placeholder="عنوان الرسالة" value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} /></div><textarea className="!h-28" placeholder="اكتب الرسالة للعملاء..." value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} /><button disabled={!form.name || !form.message || create.isPending} onClick={() => create.mutate()} className="h-10 px-4 rounded-xl bg-[#1F3929] text-white text-sm disabled:opacity-50">حفظ الحملة</button></div><div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden"><div className="divide-y divide-stone-50">{(campaigns as any[]).map(c => <div key={c._id} className="px-5 py-4 flex items-center justify-between gap-3"><div><p className="text-sm font-semibold text-stone-700">{c.name}</p><p className="text-xs text-stone-400">{c.recipients || 0} مستلم · {c.status === "sent" ? "تم الإرسال" : "مسودة"}</p></div><button disabled={c.status === "sent" || send.isPending} onClick={() => send.mutate(c._id)} className="h-8 px-3 rounded-lg border border-[#1F3929] text-xs text-[#1F3929] flex items-center gap-1 disabled:opacity-40"><Send size={12} /> إرسال</button></div>)}{!(campaigns as any[]).length && <p className="py-10 text-center text-sm text-stone-400">لا توجد حملات بعد</p>}</div></div></div>;
+}
+
+function AdminSEO() {
+  const qc = useQueryClient();
+  const { data: defaults } = useQuery({ queryKey: ["seo-site"], queryFn: () => api.get("/seo/site") });
+  const { data: saved } = useQuery({ queryKey: ["admin-seo"], queryFn: () => api.get("/admin/seo") });
+  const [form, setForm] = useState<any>(null);
+  const current = form || saved || {};
+  const save = useMutation({ mutationFn: () => api.put("/admin/seo", current), onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-seo"] }); alert("تم حفظ إعدادات SEO / AEO"); } });
+  return <div className="space-y-5 max-w-4xl"><div><h2 className="text-lg font-semibold text-stone-800">SEO / AEO</h2><p className="text-xs text-stone-400 mt-0.5">الكلمات والبيانات التي تساعد Google ونتائج الذكاء الاصطناعي على فهم UJI</p></div><div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-5 space-y-4"><div><label className="text-xs text-stone-500 mb-1.5 block">العنوان الرئيسي</label><input value={current.title || "UJI MATCHA — ماتشا يابانية أصلية من أوجي إلى السعودية"} onChange={e => setForm({ ...current, title: e.target.value })} /></div><div><label className="text-xs text-stone-500 mb-1.5 block">الوصف</label><textarea className="!h-24" value={current.description || "ماتشا يابانية أصلية من أوجي، توصيل سريع إلى الرياض وجميع مدن السعودية. ماتشا لاتيه بارد وساخن ومشروبات صيفية وشتوية."} onChange={e => setForm({ ...current, description: e.target.value })} /></div><div><label className="text-xs text-stone-500 mb-1.5 block">كلمات البحث العربية والإنجليزية (كلمة في كل سطر)</label><textarea className="!h-40" value={(current.keywords || defaults?.keywords || []).join("\n")} onChange={e => setForm({ ...current, keywords: e.target.value.split("\n").map((x: string) => x.trim()).filter(Boolean) })} /></div><div><label className="text-xs text-stone-500 mb-1.5 block">أسئلة AEO إضافية — JSON اختياري</label><textarea className="!h-32 font-mono text-xs" value={JSON.stringify(current.faqs || defaults?.faqs || [], null, 2)} onChange={e => { try { setForm({ ...current, faqs: JSON.parse(e.target.value) }); } catch {} }} /></div><button onClick={() => save.mutate()} disabled={save.isPending} className="h-11 w-full rounded-xl bg-[#1F3929] text-white text-sm disabled:opacity-50">{save.isPending ? "جاري الحفظ..." : "حفظ SEO / AEO"}</button></div><div className="bg-[#1F3929] text-[#F2EADB] rounded-2xl p-5"><p className="text-sm font-semibold mb-2">مفعل تلقائياً</p><p className="text-xs leading-7 text-[#C8BBA4]">Sitemap XML · robots.txt · llms.txt · Product schema · FAQ schema · كلمات ماتشا بالعربية والإنجليزية · مدن السعودية · صيف وشتاء · روابط Canonical وOpen Graph.</p></div></div>;
 }

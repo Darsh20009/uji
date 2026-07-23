@@ -502,3 +502,62 @@ export default function CheckoutPage() {
     </div>
   );
 }
+
+function OrderSuccess({ order, user, font, serif, mono }: { order: any; user: any; font: string; serif: string; mono: string }) {
+  const [receipt, setReceipt] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [receiptData, setReceiptData] = useState<any>(order.receiptUrl ? { receiptUrl: order.receiptUrl, status: order.receiptStatus } : null);
+  const [error, setError] = useState("");
+  const isBankPayment = order.paymentMethod === "bank" || order.paymentMethod === "stcpay";
+
+  const uploadReceipt = async () => {
+    if (!receipt || !order._id) return;
+    setUploading(true); setError("");
+    try {
+      const fd = new FormData();
+      fd.append("receipt", receipt);
+      const res = await fetch(`/api/orders/${order._id}/receipt`, { method: "POST", body: fd, credentials: "include" });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "تعذر رفع الإيصال");
+      setReceiptData(data);
+    } catch (e: any) { setError(e.message || "تعذر رفع الإيصال"); }
+    setUploading(false);
+  };
+
+  const statusText = receiptData?.status === "approved" ? "تم اعتماد الإيصال" : receiptData ? "الإيصال قيد المراجعة" : "بانتظار إرفاق الإيصال";
+
+  return (
+    <div style={{ minHeight: "75vh", background: "#F2EADB", padding: "7rem 1.25rem 5rem" }} dir="rtl">
+      <div style={{ maxWidth: 680, margin: "0 auto", background: "#F7F2E8", border: "1px solid rgba(200,187,164,0.35)", padding: "2.5rem", textAlign: "center" }}>
+        <CheckCircle size={42} color="#1F3929" strokeWidth={1.2} style={{ margin: "0 auto 1rem" }} />
+        <p style={{ fontFamily: mono, fontSize: "0.62rem", letterSpacing: "0.2em", color: "#9BA17B" }}>UJI MATCHA · ORDER RECEIVED</p>
+        <h1 style={{ fontFamily: serif, fontSize: "2rem", fontWeight: 300, color: "#1C201B", margin: "0.75rem 0" }}>تم استلام طلبك بنجاح</h1>
+        <p style={{ fontFamily, fontSize: "0.9rem", color: "#6F7860", lineHeight: 1.9 }}>طلبك الآن <b style={{ color: "#1F3929" }}>جاري المعالجة</b> وسيتم تحديث حالته بعد مراجعة الدفع.</p>
+        <div style={{ display: "flex", justifyContent: "space-between", gap: 12, background: "rgba(31,57,41,0.06)", padding: "1rem 1.25rem", margin: "1.5rem 0", textAlign: "right" }}>
+          <span style={{ fontFamily, color: "#9BA17B", fontSize: "0.8rem" }}>رقم الطلب</span>
+          <b style={{ fontFamily: mono, color: "#1F3929", direction: "ltr" }}>{order.orderNumber}</b>
+          <b style={{ fontFamily, color: "#1F3929" }}>{Number(order.total || 0).toFixed(2)} ر.س</b>
+        </div>
+        {isBankPayment && (
+          <div style={{ borderTop: "1px solid rgba(200,187,164,0.35)", paddingTop: "1.5rem", textAlign: "right" }}>
+            <h2 style={{ fontFamily, fontSize: "1rem", color: "#1C201B", marginBottom: "0.5rem" }}>إرفاق إيصال التحويل</h2>
+            <p style={{ fontFamily, fontSize: "0.8rem", color: "#9BA17B", marginBottom: "1rem" }}>ارفع صورة الإيصال ليتمكن فريق UJI من مراجعته. سيبقى الطلب قيد المعالجة حتى الاعتماد.</p>
+            {receiptData ? (
+              <div style={{ background: "rgba(5,150,105,0.07)", border: "1px solid rgba(5,150,105,0.22)", padding: "1rem", textAlign: "center" }}>
+                <p style={{ fontFamily, color: "#047857", fontSize: "0.9rem", marginBottom: "0.75rem" }}>✓ {statusText}</p>
+                {receiptData.whatsappUrl && <a href={receiptData.whatsappUrl} target="_blank" rel="noopener" className="btn-primary" style={{ height: 42, fontFamily, fontSize: "0.8rem" }}>إرسال الإيصال عبر واتساب</a>}
+              </div>
+            ) : (
+              <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
+                <input type="file" accept="image/*,.pdf" onChange={e => setReceipt(e.target.files?.[0] || null)} style={{ flex: 1, height: 48, padding: "0.7rem", fontFamily, fontSize: "0.8rem" }} />
+                <button type="button" onClick={uploadReceipt} disabled={!receipt || uploading} className="btn-primary" style={{ height: 48, fontFamily, fontSize: "0.8rem", opacity: !receipt || uploading ? 0.55 : 1 }}>{uploading ? "جاري الرفع..." : "رفع الإيصال"}</button>
+              </div>
+            )}
+            {error && <p style={{ fontFamily, color: "#c0392b", fontSize: "0.8rem", marginTop: 10 }}>{error}</p>}
+          </div>
+        )}
+        <Link href="/products" className="btn-outline" style={{ marginTop: "1.75rem", height: 44, fontFamily, fontSize: "0.8rem" }}>العودة للمتجر</Link>
+      </div>
+    </div>
+  );
+}

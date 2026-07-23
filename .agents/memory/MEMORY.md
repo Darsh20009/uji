@@ -1,1 +1,2 @@
 - [UJI design system](uji-design-system.md) — brand colors, fonts, logo assets, email (cPanel SMTP), SEO/AEO schemas, admin auth bootstrap, Render deployment config.
+- [Preview workflow dependencies](preview-workflow-dependencies.md) — the mockup preview workflow resolves its Vite plugins from the workspace root dependencies.

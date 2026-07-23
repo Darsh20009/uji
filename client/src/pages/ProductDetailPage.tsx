@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRoute, Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
@@ -15,6 +15,41 @@ export default function ProductDetailPage() {
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const { add } = useCart();
+
+  useEffect(() => {
+    if (!p) return;
+    const title = `${p.name}${p.nameEn ? ` | ${p.nameEn}` : ""} — UJI MATCHA`;
+    document.title = title;
+    const description = document.querySelector('meta[name="description"]');
+    if (description) description.setAttribute("content", p.description || `اشترِ ${p.name} من UJI MATCHA — ماتشا يابانية أصلية مع توصيل إلى الرياض وجميع مدن السعودية.`);
+    const schemaId = "uji-product-schema";
+    document.getElementById(schemaId)?.remove();
+    const script = document.createElement("script");
+    script.id = schemaId;
+    script.type = "application/ld+json";
+    script.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: p.name,
+      alternateName: p.nameEn,
+      description: p.description,
+      image: p.images || [],
+      sku: String(p._id),
+      brand: { "@type": "Brand", name: "UJI MATCHA" },
+      offers: {
+        "@type": "Offer",
+        priceCurrency: "SAR",
+        price: Number(p.price || 0).toFixed(2),
+        availability: p.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+        url: `${window.location.origin}/products/${p._id}`,
+      },
+      ...(p.avgRating > 0 && p.reviewCount > 0 ? {
+        aggregateRating: { "@type": "AggregateRating", ratingValue: p.avgRating, reviewCount: p.reviewCount },
+      } : {}),
+    });
+    document.head.appendChild(script);
+    return () => { document.getElementById(schemaId)?.remove(); };
+  }, [p]);
 
   if (isLoading) return (
     <div style={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#F2EADB" }}>

@@ -47,6 +47,35 @@ export default function App() {
     return () => clearTimeout(t);
   }, []);
 
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/seo/site").then(r => r.ok ? r.json() : null).then((seo) => {
+      if (cancelled || !seo) return;
+      if (seo.title) document.title = seo.title;
+      const description = document.querySelector('meta[name="description"]');
+      if (description && seo.description) description.setAttribute("content", seo.description);
+      const keywords = document.querySelector('meta[name="keywords"]');
+      if (keywords && Array.isArray(seo.keywords)) keywords.setAttribute("content", seo.keywords.join(", "));
+      const existing = document.getElementById("uji-dynamic-faq-schema");
+      existing?.remove();
+      if (Array.isArray(seo.faqs) && seo.faqs.length) {
+        const script = document.createElement("script");
+        script.id = "uji-dynamic-faq-schema";
+        script.type = "application/ld+json";
+        script.textContent = JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: seo.faqs.map((faq: any) => ({
+            "@type": "Question", name: faq.question,
+            acceptedAnswer: { "@type": "Answer", text: faq.answer },
+          })),
+        });
+        document.head.appendChild(script);
+      }
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
   if (showSplash) return <SplashScreen onDone={() => { setShowSplash(false); sessionStorage.setItem("uji-splash","1"); }} />;
 
   return (

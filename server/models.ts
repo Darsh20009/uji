@@ -14,6 +14,7 @@ export function checkPass(supplied: string, stored: string) {
 /* ─── Product ────────────────────────────────────────────────────── */
 const ProductSchema = new Schema({
   name: String, nameEn: String, description: String, price: Number,
+  cost: { type: Number, default: 0 },
   comparePrice: Number, images: [String], category: String,
   matchaType: { type: String, enum: ["ceremonial","everyday","culinary"], default: null },
   stock: { type: Number, default: 0 },
@@ -96,3 +97,43 @@ const SettingsSchema = new Schema({
   key: { type: String, unique: true }, value: Schema.Types.Mixed,
 });
 export const Settings = mongoose.model("Settings", SettingsSchema);
+
+/* ─── Back office records ───────────────────────────────────────── */
+const InvoiceSchema = new Schema({
+  invoiceNumber: { type: String, unique: true },
+  orderId: { type: Schema.Types.ObjectId, ref: "Order" },
+  customerId: { type: Schema.Types.ObjectId, ref: "Customer" },
+  customer: { name: String, phone: String, email: String },
+  items: [{ name: String, qty: Number, price: Number }],
+  subtotal: Number, tax: { type: Number, default: 0 }, total: Number,
+  status: { type: String, enum: ["issued", "paid", "void"], default: "issued" },
+}, { timestamps: true });
+export const Invoice = mongoose.model("Invoice", InvoiceSchema);
+
+const QuoteSchema = new Schema({
+  quoteNumber: { type: String, unique: true },
+  customer: { name: String, phone: String, email: String },
+  items: [{ name: String, qty: Number, price: Number }],
+  subtotal: Number, tax: { type: Number, default: 0 }, total: Number,
+  notes: String,
+  status: { type: String, enum: ["draft", "sent", "accepted", "expired"], default: "draft" },
+  validUntil: Date,
+  createdBy: { type: Schema.Types.ObjectId, ref: "Customer" },
+}, { timestamps: true });
+export const Quote = mongoose.model("Quote", QuoteSchema);
+
+const ExpenseSchema = new Schema({
+  title: String, category: String, amount: Number, notes: String,
+  date: { type: Date, default: Date.now },
+  createdBy: { type: Schema.Types.ObjectId, ref: "Customer" },
+}, { timestamps: true });
+export const Expense = mongoose.model("Expense", ExpenseSchema);
+
+const CampaignSchema = new Schema({
+  name: String, channel: { type: String, enum: ["email", "whatsapp", "sms", "social"], default: "email" },
+  subject: String, message: String, audience: { type: String, default: "all" },
+  status: { type: String, enum: ["draft", "scheduled", "sent"], default: "draft" },
+  scheduledAt: Date, sentAt: Date, recipients: { type: Number, default: 0 },
+  createdBy: { type: Schema.Types.ObjectId, ref: "Customer" },
+}, { timestamps: true });
+export const Campaign = mongoose.model("Campaign", CampaignSchema);

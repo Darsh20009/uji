@@ -26,6 +26,15 @@ app.get("/robots.txt", (_req, res) => {
   res.send("User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/admin\nSitemap: https://ujimatcha.store/sitemap.xml");
 });
 
+app.get("/llms.txt", (_req, res) => {
+  res.type("text/plain").send(`# UJI MATCHA
+UJI MATCHA (أوجي ماتشا) is a Saudi online store for authentic Japanese matcha from Uji, Kyoto.
+Arabic: ماتشا، ماتشا يابانية، أوجي ماتشا، اوجي ماتشا، ماتشا الرياض، ماتشا السعودية، ماتشا جدة، ماتشا بارد، ماتشا ساخن، ماتشا لاتيه، مشروب صيفي، مشروب شتوي، طريقة تحضير الماتشا.
+English: matcha, uji matcha, matcha Riyadh, matcha Saudi Arabia, ceremonial matcha, Japanese matcha, matcha latte, iced matcha, hot matcha, matcha delivery Saudi.
+Canonical website: https://ujimatcha.store
+`);
+});
+
 app.get("/sitemap.xml", async (_req, res) => {
   try {
     const products = await Product.find({ isActive: true }).select("_id updatedAt");

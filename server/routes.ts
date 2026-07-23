@@ -3,7 +3,7 @@ import passport from "passport";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { Product, Order, Customer, Settings, Review, Coupon, hashPass } from "./models";
+import { Product, Order, Customer, Settings, Review, Coupon, Invoice, Quote, Expense, Campaign, hashPass } from "./models";
 import { requireAuth } from "./auth";
 import { sendOrderConfirmation, sendAdminOrderAlert, sendNewsletterWelcome, sendTestEmail } from "./email";
 import { createGeideaSession, verifyGeideaCallback, geideaEnabled } from "./geidea";
@@ -15,13 +15,29 @@ const upload = multer({ dest: "uploads/", limits: { fileSize: 20 * 1024 * 1024 }
 const ADMIN_PHONE = process.env.ADMIN_PHONE || "0552469643";
 
 const requireAdmin = (req: any, res: any, next: any) => {
-  if (req.isAuthenticated() && ((req.user as any).phone === ADMIN_PHONE || (req.user as any).role === "admin")) return next();
+  const user = req.user as any;
+  const permissionByPath: Record<string, string> = {
+    products: "manage_products", orders: "manage_orders", customers: "manage_customers",
+    employees: "manage_employees", reviews: "manage_reviews", coupons: "manage_coupons",
+    invoices: "manage_invoices", quotes: "manage_quotes", expenses: "manage_finance",
+    campaigns: "manage_marketing", seo: "manage_seo", settings: "manage_settings",
+    stats: "view_analytics", visitors: "view_analytics", newsletter: "manage_marketing",
+  };
+  const section = Object.keys(permissionByPath).find(key => req.path.includes(`/admin/${key}`));
+  const canEmployee = user?.role === "employee" && (!section || user.permissions?.includes(permissionByPath[section]));
+  if (req.isAuthenticated() && (user?.phone === ADMIN_PHONE || user?.role === "admin" || canEmployee)) return next();
   res.status(403).json({ message: "غير مصرح" });
 };
 
 const requireEmployee = (req: any, res: any, next: any) => {
   if (req.isAuthenticated()) return next();
   res.status(401).json({ message: "يرجى تسجيل الدخول" });
+};
+
+const requirePermission = (permission: string) => (req: any, res: any, next: any) => {
+  const user = req.user as any;
+  if (user?.phone === ADMIN_PHONE || user?.role === "admin" || (user?.role === "employee" && user?.permissions?.includes(permission))) return next();
+  return res.status(403).json({ message: "ليس لديك صلاحية لهذا القسم" });
 };
 
 function getLoyaltyTier(points: number): string {
@@ -65,6 +81,16 @@ router.get("/robots.txt", (_req, res) => {
   res.send(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /api/admin\nSitemap: https://ujimatcha.store/sitemap.xml`);
 });
 
+router.get("/llms.txt", (_req, res) => {
+  res.type("text/plain").send(`# UJI MATCHA
+UJI MATCHA (أوجي ماتشا) is a Saudi online store for authentic Japanese matcha from Uji, Kyoto.
+Topics: ceremonial matcha, everyday matcha, matcha latte, iced matcha, hot matcha, Japanese green tea, matcha delivery in Riyadh and Saudi Arabia.
+Arabic queries: ماتشا، أوجي ماتشا، ماتشا الرياض، ماتشا السعودية، ماتشا لاتيه، ماتشا بارد، ماتشا ساخن، مشروب صيفي، مشروب شتوي، طريقة تحضير الماتشا.
+English queries: Uji matcha, matcha Riyadh, matcha Saudi Arabia, ceremonial Japanese matcha, iced matcha, hot matcha, matcha latte.
+Canonical website: https://ujimatcha.store
+`);
+});
+
 /* ─── Products ──────────────────────────────────────────────────── */
 router.get("/products", async (req, res) => {
   try {
@@ -83,6 +109,25 @@ router.get("/products/:id", async (req, res) => {
     if (!p) return res.status(404).json({ message: "المنتج غير موجود" });
     res.json(p);
   } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+router.get("/seo/site", async (_req, res) => {
+  const products = await Product.find({ isActive: true }).select("name nameEn description price images category matchaType avgRating reviewCount updatedAt");
+  const saved = await Settings.findOne({ key: "seo_config" });
+  const configured = (saved?.value || {}) as any;
+  res.json({
+    brand: "UJI MATCHA", alternateNames: ["أوجي ماتشا", "اوجي ماتشا", "Uji Matcha", "UJI"],
+    title: configured.title || "UJI MATCHA — ماتشا يابانية أصلية من أوجي إلى السعودية",
+    description: configured.description || "ماتشا يابانية أصلية من أوجي، توصيل سريع إلى الرياض وجميع مدن السعودية. ماتشا لاتيه بارد وساخن ومشروبات صيفية وشتوية.",
+    keywords: configured.keywords?.length ? configured.keywords : ["ماتشا", "ماتشا يابانية", "ماتشا الرياض", "ماتشا السعودية", "ماتشا جدة", "ماتشا الدمام", "أوجي ماتشا", "اوجي ماتشا", "ماتشا لاتيه", "ماتشا بارد", "ماتشا ساخن", "مشروب صيفي", "مشروب شتوي", "طريقة تحضير الماتشا", "matcha", "uji matcha", "matcha Riyadh", "matcha Saudi Arabia", "ceremonial matcha", "Japanese matcha", "matcha latte", "iced matcha", "hot matcha", "matcha delivery Saudi"],
+    faqs: configured.faqs?.length ? configured.faqs : [
+      { question: "ما هي ماتشا أوجي؟", answer: "ماتشا أوجي هي مسحوق شاي أخضر ياباني أصيل من مدينة أوجي في كيوتو، مطحون بالحجر." },
+      { question: "هل توصلون الماتشا إلى الرياض؟", answer: "نعم، توصل UJI MATCHA إلى الرياض وجدة والدمام وجميع مدن المملكة العربية السعودية." },
+      { question: "هل الماتشا مشروب صيفي أم شتوي؟", answer: "كلاهما؛ تقدم باردة مع الثلج في الصيف وساخنة أو كـماتشا لاتيه في الشتاء." },
+      { question: "كيف أحضر ماتشا لاتيه؟", answer: "اخفق ملعقة ماتشا مع ماء دافئ ثم أضف الحليب والثلج أو سخنه حسب رغبتك." },
+    ],
+    products,
+  });
 });
 
 /* ─── Reviews ───────────────────────────────────────────────────── */
@@ -596,8 +641,15 @@ router.post("/orders/:id/receipt", upload.single("receipt"), async (req, res) =>
     if (!order) return res.status(404).json({ message: "الطلب غير موجود" });
     if (!req.file) return res.status(400).json({ message: "لم يتم رفع الإيصال" });
     const receiptUrl = `/uploads/${req.file.filename}`;
-    await Order.findByIdAndUpdate(order._id, { receiptUrl, receiptStatus: "pending" });
-    res.json({ ok: true, receiptUrl });
+    await Order.findByIdAndUpdate(order._id, { receiptUrl, receiptStatus: "pending", status: "pending" });
+    const configuredPhone = (await Settings.findOne({ key: "whatsapp" }))?.value;
+    const origin = `${req.protocol}://${req.get("host")}`;
+    const receiptLink = `${origin}${receiptUrl}`;
+    const message = `إيصال دفع جديد للطلب ${order.orderNumber}\nالعميل: ${order.customer?.name || ""}\nالإجمالي: ${order.total || 0} ر.س\n${receiptLink}`;
+    res.json({
+      ok: true, receiptUrl, status: "pending",
+      ...(configuredPhone ? { whatsappUrl: `https://wa.me/${String(configuredPhone).replace(/\D/g, "")}?text=${encodeURIComponent(message)}` } : {}),
+    });
   } catch (e: any) { res.status(500).json({ message: e.message }); }
 });
 
@@ -623,9 +675,109 @@ router.put("/admin/orders/:id/receipt-status", requireAdmin, async (req, res) =>
         });
       }
       sendOrderConfirmation(order).catch(console.error);
+      await Invoice.findOneAndUpdate(
+        { orderId: order._id },
+        {
+          invoiceNumber: `INV-${order.orderNumber}`,
+          orderId: order._id, customerId: order.customerId, customer: order.customer,
+          items: order.items, subtotal: order.subtotal, total: order.total, status: "paid",
+        },
+        { upsert: true, new: true }
+      );
     }
     res.json(order);
   } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+/* ─── Admin — Financial documents ───────────────────────────────── */
+router.get("/admin/invoices", requireAdmin, async (_req, res) => {
+  res.json(await Invoice.find().sort({ createdAt: -1 }));
+});
+
+router.post("/admin/invoices/from-order/:id", requireAdmin, async (req, res) => {
+  const order = await Order.findById(req.params.id);
+  if (!order) return res.status(404).json({ message: "الطلب غير موجود" });
+  const invoice = await Invoice.findOneAndUpdate(
+    { orderId: order._id },
+    { invoiceNumber: `INV-${order.orderNumber}`, orderId: order._id, customerId: order.customerId, customer: order.customer, items: order.items, subtotal: order.subtotal, total: order.total, status: order.paymentStatus === "paid" ? "paid" : "issued" },
+    { upsert: true, new: true }
+  );
+  res.json(invoice);
+});
+
+router.get("/admin/quotes", requireAdmin, async (_req, res) => {
+  res.json(await Quote.find().sort({ createdAt: -1 }));
+});
+
+router.post("/admin/quotes", requireAdmin, async (req: any, res) => {
+  try {
+    const { customer, items = [], notes, validUntil, status } = req.body;
+    const subtotal = items.reduce((sum: number, item: any) => sum + Number(item.price || 0) * Number(item.qty || 0), 0);
+    res.json(await Quote.create({
+      quoteNumber: `QUO-${Date.now()}`, customer, items, subtotal, total: subtotal,
+      notes, validUntil: validUntil ? new Date(validUntil) : undefined, status: status || "draft", createdBy: req.user?._id,
+    }));
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+router.put("/admin/quotes/:id", requireAdmin, async (req, res) => {
+  res.json(await Quote.findByIdAndUpdate(req.params.id, req.body, { new: true }));
+});
+
+router.delete("/admin/quotes/:id", requireAdmin, async (req, res) => {
+  await Quote.findByIdAndDelete(req.params.id); res.json({ ok: true });
+});
+
+router.get("/admin/expenses", requireAdmin, async (_req, res) => {
+  res.json(await Expense.find().sort({ date: -1, createdAt: -1 }));
+});
+
+router.post("/admin/expenses", requireAdmin, async (req: any, res) => {
+  const expense = await Expense.create({ ...req.body, amount: Number(req.body.amount || 0), createdBy: req.user?._id });
+  res.json(expense);
+});
+
+router.put("/admin/expenses/:id", requireAdmin, async (req, res) => {
+  res.json(await Expense.findByIdAndUpdate(req.params.id, req.body, { new: true }));
+});
+
+router.delete("/admin/expenses/:id", requireAdmin, async (req, res) => {
+  await Expense.findByIdAndDelete(req.params.id); res.json({ ok: true });
+});
+
+router.get("/admin/campaigns", requireAdmin, async (_req, res) => {
+  res.json(await Campaign.find().sort({ createdAt: -1 }));
+});
+
+router.post("/admin/campaigns", requireAdmin, async (req: any, res) => {
+  const subscribers = await Settings.findOne({ key: "newsletter_subscribers" });
+  const recipients = Array.isArray(subscribers?.value) ? subscribers.value.length : 0;
+  res.json(await Campaign.create({ ...req.body, recipients, createdBy: req.user?._id }));
+});
+
+router.put("/admin/campaigns/:id", requireAdmin, async (req, res) => {
+  res.json(await Campaign.findByIdAndUpdate(req.params.id, req.body, { new: true }));
+});
+
+router.post("/admin/campaigns/:id/send", requireAdmin, async (req, res) => {
+  const campaign = await Campaign.findById(req.params.id);
+  if (!campaign) return res.status(404).json({ message: "الحملة غير موجودة" });
+  const subscriberSetting = await Settings.findOne({ key: "newsletter_subscribers" });
+  const emails: string[] = Array.isArray(subscriberSetting?.value) ? subscriberSetting.value : [];
+  if (campaign.channel !== "email") return res.status(400).json({ message: "الإرسال الجماعي المتاح حالياً عبر البريد الإلكتروني فقط" });
+  const { transporter } = await import("./email");
+  const from = `"UJI MATCHA" <${process.env.CPANEL_SMTP_USER || "info@qirox.online"}>`;
+  await Promise.all(emails.map(to => transporter.sendMail({ from, to, subject: campaign.subject || campaign.name, text: campaign.message || "", html: `<div dir="rtl" style="font-family:Arial;white-space:pre-line">${campaign.message || ""}</div>` })));
+  res.json(await Campaign.findByIdAndUpdate(campaign._id, { status: "sent", sentAt: new Date(), recipients: emails.length }, { new: true }));
+});
+
+router.get("/admin/seo", requireAdmin, async (_req, res) => {
+  const s = await Settings.findOne({ key: "seo_config" });
+  res.json(s?.value || {});
+});
+
+router.put("/admin/seo", requireAdmin, async (req, res) => {
+  res.json(await Settings.findOneAndUpdate({ key: "seo_config" }, { value: req.body }, { upsert: true, new: true }));
 });
 
 /* ─── Admin — Upload ────────────────────────────────────────────── */
