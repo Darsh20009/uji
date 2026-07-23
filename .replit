@@ -15,6 +15,7 @@ CPANEL_SMTP_PORT = "465"
 CPANEL_SMTP_USER = "info@qirox.online"
 CPANEL_USERNAME = "rfpeddku"
 ADMIN_EMAIL = "Ujimatchacomsa@gmail.com"
+PUBLIC_URL = "https://ujimatcha.store"
 
 [workflows]
 runButton = "Project"
@@ -47,6 +48,10 @@ externalPort = 80
 [[ports]]
 localPort = 5001
 externalPort = 3002
+
+[[ports]]
+localPort = 5002
+externalPort = 3003
 
 [[ports]]
 localPort = 23636
