@@ -43,8 +43,8 @@ export default function PageLoader({ visible }: { visible: boolean }) {
       transition: "opacity 0.18s ease",
       pointerEvents: visible ? "all" : "none",
     }}>
-      {/* Small ninja — screen blend makes black bg transparent */}
-      <div style={{ position: "relative", width: 140, height: 140 }}>
+      {/* Small ninja — transparent PNGs, no blend mode needed */}
+      <div style={{ position: "relative", width: 90, height: 90 }}>
         {FRAMES.map((src, i) => (
           <img
             key={src}
@@ -56,7 +56,6 @@ export default function PageLoader({ visible }: { visible: boolean }) {
               width: "100%",
               height: "100%",
               objectFit: "contain",
-              mixBlendMode: "screen",
               opacity: i === frame ? 1 : 0,
             }}
           />
