@@ -207,8 +207,8 @@ export default function HomePage() {
         {/* Full-bleed background */}
         <div style={{
           position: "absolute", inset: 0,
-          backgroundImage: `url(/assets/hero/uji-hero-tin-powder-explosion.png)`,
-          backgroundSize: "cover", backgroundPosition: "40% center",
+          backgroundImage: `url(/assets/hero/uji-banner-matcha-powder.jpg)`,
+          backgroundSize: "cover", backgroundPosition: "center center",
         }} />
         {/* Gradient overlay */}
         <div style={{
@@ -282,15 +282,6 @@ export default function HomePage() {
           }
         `}</style>
       </section>
-
-      {/* ══ FULL-WIDTH BANNER ══ */}
-      <div style={{ position: "relative", width: "100%", height: "clamp(180px, 28vw, 420px)", overflow: "hidden" }}>
-        <img
-          src="/assets/hero/uji-banner-matcha-powder.jpg"
-          alt="UJI Matcha"
-          style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center 40%", display: "block" }}
-        />
-      </div>
 
       {/* ══ TRUST BAR — above position ══ */}
       {(badgesPosition === "above" || badgesPosition === "both") && <TrustBar badges={trustBadges} />}
