@@ -1,14 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useCart } from "../hooks/useCart";
-import { useAuth } from "../hooks/useAuth";
-import { useAuthModal } from "../context/AuthModalContext";
-import { ShoppingBag, Search, AlignJustify, X, User } from "lucide-react";
+import { ShoppingBag, Search, AlignJustify, X } from "lucide-react";
 
 export default function Navbar() {
   const { items } = useCart();
-  const { user } = useAuth();
-  const { openAuth } = useAuthModal();
   const [location] = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -131,29 +127,6 @@ export default function Navbar() {
               AR/EN
             </span>
 
-            {/* Account button — opens auth modal */}
-            <button
-              onClick={() => openAuth(user ? "login" : "login")}
-              aria-label="حسابي"
-              style={{
-                background: "none", border: "none", padding: 4,
-                cursor: "pointer", color: textColor,
-                display: "flex", alignItems: "center", gap: 6,
-                transition: "color 0.3s",
-              }}
-            >
-              <User size={17} strokeWidth={1.5} />
-              {user && (
-                <span style={{
-                  fontFamily: "'IBM Plex Sans Arabic', sans-serif",
-                  fontSize: "0.68rem", opacity: 0.8,
-                  maxWidth: 80, overflow: "hidden",
-                  textOverflow: "ellipsis", whiteSpace: "nowrap",
-                }}>
-                  {(user as any).name?.split(" ")[0]}
-                </span>
-              )}
-            </button>
           </div>
         </div>
       </nav>
