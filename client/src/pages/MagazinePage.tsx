@@ -16,7 +16,7 @@ const articles = [
     title: "L-Theanine: السر وراء هدوء الماتشا",
     excerpt: "الكافيين وحده يعطيك طاقة مع توتر — لكن الماتشا تحتوي على L-Theanine الذي يوازن التأثير ويمنحك تركيزاً صافياً.",
     read: "٣ دقائق",
-    img: "/assets/magazine/mag-iced-matcha.png",
+    img: "/assets/magazine/uji-matcha-latte-still.png",
   },
   {
     id: 3,
@@ -32,7 +32,7 @@ const articles = [
     title: "Matcha Latte المثالي — خطوة بخطوة",
     excerpt: "ليس مجرد خفق الماتشا في الحليب. النسب، درجة الحرارة، ونوع الحليب — كل تفصيلة تصنع الفرق.",
     read: "٣ دقائق",
-    img: "/assets/magazine/mag-product-lineup.png",
+    img: "/assets/magazine/uji-matcha-latte-editorial.png",
   },
   {
     id: 5,
@@ -364,7 +364,7 @@ export default function MagazinePage() {
           minHeight: 500,
         }}>
           <img
-            src="/assets/magazine/mag-product-lineup.png"
+            src="/assets/magazine/uji-matcha-latte-editorial.png"
             alt="UJI Product Lineup"
             style={{ width: "100%", height: "clamp(380px,45vw,580px)", objectFit: "cover", objectPosition: "center", display: "block" }}
           />
@@ -395,7 +395,7 @@ export default function MagazinePage() {
         <div className="mag-articles" style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 0 }}>
           <div style={{ overflow: "hidden" }}>
             <img
-              src="/assets/magazine/mag-iced-matcha.png"
+              src="/assets/magazine/uji-matcha-latte-still.png"
               alt="UJI Iced Matcha"
               style={{ width: "100%", height: "100%", minHeight: 500, objectFit: "cover", display: "block" }}
             />
