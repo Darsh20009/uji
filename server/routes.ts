@@ -5,7 +5,7 @@ import path from "path";
 import fs from "fs";
 import { Product, Order, Customer, Settings, Review, Coupon, Invoice, Quote, Expense, Campaign, hashPass } from "./models";
 import { requireAuth } from "./auth";
-import { sendOrderConfirmation, sendAdminOrderAlert, sendNewsletterWelcome, sendTestEmail, verifyEmailTransport, emailAttachments, layout } from "./email";
+import { sendOrderConfirmation, sendAdminOrderAlert, sendNewsletterWelcome, sendTestEmail, verifyEmailTransport, emailAttachments, layout, sendInvoiceEmail, sendQuoteEmail } from "./email";
 import { createGeideaSession, verifyGeideaCallback, geideaEnabled } from "./geidea";
 import { getActiveVisitors } from "./visitors";
 
@@ -705,6 +705,16 @@ router.post("/admin/invoices/from-order/:id", requireAdmin, async (req, res) => 
   res.json(invoice);
 });
 
+router.post("/admin/invoices/:id/send", requireAdmin, async (req, res) => {
+  try {
+    const invoice = await Invoice.findById(req.params.id);
+    if (!invoice) return res.status(404).json({ message: "الفاتورة غير موجودة" });
+    if (!invoice.customer?.email) return res.status(400).json({ message: "لا يوجد بريد إلكتروني للعميل" });
+    await sendInvoiceEmail(invoice);
+    res.json({ ok: true, sent: invoice.customer.email });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
 router.get("/admin/quotes", requireAdmin, async (_req, res) => {
   res.json(await Quote.find().sort({ createdAt: -1 }));
 });
@@ -722,6 +732,17 @@ router.post("/admin/quotes", requireAdmin, async (req: any, res) => {
 
 router.put("/admin/quotes/:id", requireAdmin, async (req, res) => {
   res.json(await Quote.findByIdAndUpdate(req.params.id, req.body, { new: true }));
+});
+
+router.post("/admin/quotes/:id/send", requireAdmin, async (req, res) => {
+  try {
+    const quote = await Quote.findById(req.params.id);
+    if (!quote) return res.status(404).json({ message: "العرض غير موجود" });
+    if (!quote.customer?.email) return res.status(400).json({ message: "لا يوجد بريد إلكتروني للعميل" });
+    await sendQuoteEmail(quote);
+    await Quote.findByIdAndUpdate(req.params.id, { status: "sent" });
+    res.json({ ok: true, sent: quote.customer.email });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
 });
 
 router.delete("/admin/quotes/:id", requireAdmin, async (req, res) => {

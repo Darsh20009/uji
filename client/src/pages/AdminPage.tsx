@@ -1649,9 +1649,140 @@ function AdminFinance({ stats }: { stats: any }) {
   </div>;
 }
 
+/* ── print helper: opens a new window with Arabic-formatted document ── */
+function printDocument(title: string, number: string, customer: any, items: any[], total: number, notes?: string, validUntil?: string) {
+  const rows = (items || []).map((i: any) => `
+    <tr>
+      <td>${i.name}</td>
+      <td style="text-align:center">${i.qty}</td>
+      <td style="text-align:left">${(i.price || 0).toFixed(2)}</td>
+      <td style="text-align:left;font-weight:600">${((i.price || 0) * (i.qty || 1)).toFixed(2)} ر.س</td>
+    </tr>`).join("");
+
+  const html = `<!DOCTYPE html><html lang="ar" dir="rtl">
+<head><meta charset="UTF-8"/><title>${title} — ${number}</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Tahoma, Arial, sans-serif; font-size: 13px; color: #1C201B; background: #fff; padding: 40px; }
+  .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #1F3929; padding-bottom: 20px; margin-bottom: 24px; }
+  .brand { font-size: 22px; font-weight: 700; color: #1F3929; letter-spacing: 0.1em; }
+  .brand-sub { font-size: 10px; color: #9BA17B; letter-spacing: 0.2em; margin-top: 4px; }
+  .doc-meta { text-align: left; }
+  .doc-num { font-size: 18px; font-weight: 700; color: #1F3929; }
+  .doc-date { font-size: 11px; color: #9BA17B; margin-top: 4px; }
+  .section { margin-bottom: 20px; }
+  .section-title { font-size: 11px; letter-spacing: 0.15em; color: #9BA17B; margin-bottom: 8px; text-transform: uppercase; }
+  .customer-box { background: #F7F4EF; border-right: 3px solid #9BA17B; padding: 14px 16px; border-radius: 2px; line-height: 1.9; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+  th { background: #1F3929; color: #F2EADB; padding: 10px 12px; text-align: right; font-size: 11px; letter-spacing: 0.1em; }
+  th:last-child, th:nth-child(2), th:nth-child(3) { text-align: left; }
+  td { padding: 10px 12px; border-bottom: 1px solid #F0EBE1; }
+  .total-row { font-size: 16px; font-weight: 700; color: #1F3929; }
+  .notes-box { background: #F7F4EF; padding: 12px 16px; border-radius: 2px; margin-top: 16px; line-height: 1.8; font-size: 12px; color: #555; }
+  .footer { margin-top: 40px; border-top: 1px solid #F0EBE1; padding-top: 16px; text-align: center; font-size: 11px; color: #9BA17B; }
+  @media print { body { padding: 20px; } }
+</style></head>
+<body>
+  <div class="header">
+    <div><div class="brand">UJI MATCHA</div><div class="brand-sub">ماتشا يابانية احتفالية</div></div>
+    <div class="doc-meta">
+      <div class="doc-num">${title}: ${number}</div>
+      <div class="doc-date">التاريخ: ${new Date().toLocaleDateString("ar-SA", { year: "numeric", month: "long", day: "numeric" })}</div>
+      ${validUntil ? `<div class="doc-date">صالح حتى: ${new Date(validUntil).toLocaleDateString("ar-SA", { year: "numeric", month: "long", day: "numeric" })}</div>` : ""}
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">العميل</div>
+    <div class="customer-box">
+      <strong>${customer?.name || "—"}</strong><br/>
+      ${customer?.phone ? `📱 ${customer.phone}<br/>` : ""}
+      ${customer?.email ? `✉ ${customer.email}` : ""}
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">البنود</div>
+    <table>
+      <thead><tr><th>المنتج</th><th>الكمية</th><th>السعر</th><th>الإجمالي</th></tr></thead>
+      <tbody>
+        ${rows}
+        <tr class="total-row"><td colspan="3" style="text-align:right;padding-top:16px">الإجمالي</td><td style="text-align:left;padding-top:16px">${total.toFixed(2)} ر.س</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  ${notes ? `<div class="section"><div class="section-title">ملاحظات</div><div class="notes-box">${notes}</div></div>` : ""}
+
+  <div class="footer">ujimatcha.store · info@qirox.online · © 2026 UJI MATCHA</div>
+</body></html>`;
+
+  const w = window.open("", "_blank");
+  if (!w) return;
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  setTimeout(() => w.print(), 400);
+}
+
 function AdminInvoices() {
+  const qc = useQueryClient();
   const { data: invoices = [] } = useQuery({ queryKey: ["admin-invoices"], queryFn: () => api.get("/admin/invoices") });
-  return <div className="space-y-5"><div><h2 className="text-lg font-semibold text-stone-800">الفواتير</h2><p className="text-xs text-stone-400 mt-0.5">الفواتير التي أنشئت من الطلبات المعتمدة</p></div><div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden"><div className="divide-y divide-stone-50">{(invoices as any[]).map(inv => <div key={inv._id} className="px-5 py-4 flex items-center justify-between gap-3"><div><p className="font-mono text-sm font-bold text-[#1F3929]">{inv.invoiceNumber}</p><p className="text-xs text-stone-400 mt-1">{inv.customer?.name || "عميل"} · {new Date(inv.createdAt).toLocaleDateString("ar-SA")}</p></div><div className="text-left"><p className="font-semibold text-stone-700">{Number(inv.total || 0).toFixed(2)} ر.س</p><span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-full px-2 py-1">{inv.status === "paid" ? "مدفوعة" : "صادرة"}</span></div></div>)}{!(invoices as any[]).length && <p className="py-12 text-center text-sm text-stone-400">ستظهر الفواتير بعد اعتماد الإيصالات</p>}</div></div></div>;
+  const send = useMutation({
+    mutationFn: (id: string) => api.post(`/admin/invoices/${id}/send`, {}),
+    onSuccess: (_d, id) => {
+      qc.invalidateQueries({ queryKey: ["admin-invoices"] });
+      alert(`✓ تم إرسال الفاتورة إلى بريد العميل`);
+    },
+    onError: (e: any) => alert(`خطأ: ${e.message}`),
+  });
+
+  return (
+    <div className="space-y-5">
+      <div>
+        <h2 className="text-lg font-semibold text-stone-800">الفواتير</h2>
+        <p className="text-xs text-stone-400 mt-0.5">الفواتير التي أنشئت من الطلبات المعتمدة</p>
+      </div>
+      <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <div className="divide-y divide-stone-50">
+          {(invoices as any[]).map(inv => (
+            <div key={inv._id} className="px-5 py-4 flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-mono text-sm font-bold text-[#1F3929]">{inv.invoiceNumber}</p>
+                <p className="text-xs text-stone-400 mt-1">
+                  {inv.customer?.name || "عميل"} {inv.customer?.email ? `· ${inv.customer.email}` : ""} · {new Date(inv.createdAt).toLocaleDateString("ar-SA")}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className={`text-[10px] rounded-full px-2 py-1 border ${inv.status === "paid" ? "text-emerald-700 bg-emerald-50 border-emerald-100" : "text-stone-500 bg-stone-50 border-stone-200"}`}>
+                  {inv.status === "paid" ? "مدفوعة" : "صادرة"}
+                </span>
+                <p className="text-sm font-semibold text-stone-700">{Number(inv.total || 0).toFixed(2)} ر.س</p>
+                <button
+                  onClick={() => printDocument("فاتورة", inv.invoiceNumber, inv.customer, inv.items, inv.total)}
+                  title="طباعة"
+                  className="h-8 w-8 rounded-lg border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-stone-50"
+                >
+                  <FileText size={14} />
+                </button>
+                <button
+                  disabled={!inv.customer?.email || send.isPending}
+                  onClick={() => send.mutate(inv._id)}
+                  title={inv.customer?.email ? "إرسال بالبريد" : "لا يوجد بريد إلكتروني"}
+                  className="h-8 w-8 rounded-lg border border-[#1F3929] flex items-center justify-center text-[#1F3929] hover:bg-[#1F3929] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  <Send size={14} />
+                </button>
+              </div>
+            </div>
+          ))}
+          {!(invoices as any[]).length && (
+            <p className="py-12 text-center text-sm text-stone-400">ستظهر الفواتير بعد اعتماد الطلبات</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function AdminQuotes() {
@@ -1659,9 +1790,115 @@ function AdminQuotes() {
   const { data: quotes = [] } = useQuery({ queryKey: ["admin-quotes"], queryFn: () => api.get("/admin/quotes") });
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: "", phone: "", email: "", item: "منتج ماتشا", qty: "1", price: "", notes: "", validUntil: "" });
-  const create = useMutation({ mutationFn: () => api.post("/admin/quotes", { customer: { name: form.name, phone: form.phone, email: form.email }, items: [{ name: form.item, qty: Number(form.qty), price: Number(form.price) }], notes: form.notes, validUntil: form.validUntil || undefined }), onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-quotes"] }); setOpen(false); } });
+
+  const create = useMutation({
+    mutationFn: () => api.post("/admin/quotes", {
+      customer: { name: form.name, phone: form.phone, email: form.email },
+      items: [{ name: form.item, qty: Number(form.qty), price: Number(form.price) }],
+      notes: form.notes, validUntil: form.validUntil || undefined,
+    }),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-quotes"] }); setOpen(false); setForm({ name: "", phone: "", email: "", item: "منتج ماتشا", qty: "1", price: "", notes: "", validUntil: "" }); },
+  });
+
+  const sendQ = useMutation({
+    mutationFn: (id: string) => api.post(`/admin/quotes/${id}/send`, {}),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-quotes"] }); alert("✓ تم إرسال عرض السعر إلى بريد العميل"); },
+    onError: (e: any) => alert(`خطأ: ${e.message}`),
+  });
+
+  const del = useMutation({
+    mutationFn: (id: string) => api.delete(`/admin/quotes/${id}`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-quotes"] }),
+  });
+
   const statusLabel: Record<string, string> = { draft: "مسودة", sent: "مرسل", accepted: "مقبول", expired: "منتهي" };
-  return <div className="space-y-5"><div className="flex items-center justify-between"><div><h2 className="text-lg font-semibold text-stone-800">عروض الأسعار</h2><p className="text-xs text-stone-400 mt-0.5">إنشاء عرض للعميل ومتابعة حالته</p></div><button onClick={() => setOpen(v => !v)} className="h-10 px-4 rounded-xl bg-[#1F3929] text-white text-sm flex items-center gap-2"><Plus size={15} /> عرض جديد</button></div>{open && <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-5 grid grid-cols-2 lg:grid-cols-4 gap-3"><input placeholder="اسم العميل" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /><input placeholder="جوال العميل" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} /><input placeholder="البريد" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} /><input placeholder="اسم المنتج" value={form.item} onChange={e => setForm({ ...form, item: e.target.value })} /><input type="number" placeholder="الكمية" value={form.qty} onChange={e => setForm({ ...form, qty: e.target.value })} /><input type="number" placeholder="السعر" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} /><input type="date" value={form.validUntil} onChange={e => setForm({ ...form, validUntil: e.target.value })} /><button disabled={!form.name || !form.price || create.isPending} onClick={() => create.mutate()} className="h-10 rounded-xl bg-[#1F3929] text-white text-sm disabled:opacity-50">حفظ العرض</button></div>}<div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden"><div className="divide-y divide-stone-50">{(quotes as any[]).map(q => <div key={q._id} className="px-5 py-4 flex items-center justify-between"><div><p className="font-mono text-sm font-bold text-[#1F3929]">{q.quoteNumber}</p><p className="text-xs text-stone-400 mt-1">{q.customer?.name} · {q.items?.[0]?.name}</p></div><div className="text-left"><p className="font-semibold text-stone-700">{Number(q.total || 0).toFixed(2)} ر.س</p><span className="text-[10px] text-stone-500 bg-stone-50 border border-stone-200 rounded-full px-2 py-1">{statusLabel[q.status] || q.status}</span></div></div>)}{!(quotes as any[]).length && <p className="py-12 text-center text-sm text-stone-400">لا توجد عروض أسعار</p>}</div></div></div>;
+  const statusColor: Record<string, string> = {
+    draft: "text-stone-500 bg-stone-50 border-stone-200",
+    sent: "text-blue-600 bg-blue-50 border-blue-100",
+    accepted: "text-emerald-700 bg-emerald-50 border-emerald-100",
+    expired: "text-red-500 bg-red-50 border-red-100",
+  };
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-stone-800">عروض الأسعار</h2>
+          <p className="text-xs text-stone-400 mt-0.5">أنشئ عرضاً للعميل وأرسله مباشرة لبريده</p>
+        </div>
+        <button onClick={() => setOpen(v => !v)} className="h-10 px-4 rounded-xl bg-[#1F3929] text-white text-sm flex items-center gap-2">
+          <Plus size={15} /> عرض جديد
+        </button>
+      </div>
+
+      {open && (
+        <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-5 space-y-3">
+          <h3 className="text-sm font-semibold text-stone-700">بيانات العرض</h3>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+            <input placeholder="اسم العميل *" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+            <input placeholder="جوال العميل" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
+            <input placeholder="البريد الإلكتروني *" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+            <input placeholder="اسم المنتج *" value={form.item} onChange={e => setForm({ ...form, item: e.target.value })} />
+            <input type="number" placeholder="الكمية" value={form.qty} onChange={e => setForm({ ...form, qty: e.target.value })} />
+            <input type="number" placeholder="السعر (ر.س) *" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} />
+            <input type="date" title="صالح حتى" value={form.validUntil} onChange={e => setForm({ ...form, validUntil: e.target.value })} className="col-span-1" />
+            <textarea placeholder="ملاحظات (اختياري)" value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} className="col-span-2 lg:col-span-2 !h-20 resize-none" />
+          </div>
+          <div className="flex gap-2">
+            <button disabled={!form.name || !form.price || create.isPending} onClick={() => create.mutate()} className="h-10 px-5 rounded-xl bg-[#1F3929] text-white text-sm disabled:opacity-50">
+              {create.isPending ? "جاري الحفظ..." : "حفظ العرض"}
+            </button>
+            <button onClick={() => setOpen(false)} className="h-10 px-4 rounded-xl border border-stone-200 text-stone-500 text-sm">إلغاء</button>
+          </div>
+        </div>
+      )}
+
+      <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <div className="divide-y divide-stone-50">
+          {(quotes as any[]).map(q => (
+            <div key={q._id} className="px-5 py-4 flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-mono text-sm font-bold text-[#1F3929]">{q.quoteNumber}</p>
+                <p className="text-xs text-stone-400 mt-1">
+                  {q.customer?.name} {q.customer?.email ? `· ${q.customer.email}` : ""} · {q.items?.[0]?.name}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className={`text-[10px] rounded-full px-2 py-1 border ${statusColor[q.status] || "text-stone-500 bg-stone-50 border-stone-200"}`}>
+                  {statusLabel[q.status] || q.status}
+                </span>
+                <p className="text-sm font-semibold text-stone-700">{Number(q.total || 0).toFixed(2)} ر.س</p>
+                <button
+                  onClick={() => printDocument("عرض سعر", q.quoteNumber, q.customer, q.items, q.total, q.notes, q.validUntil)}
+                  title="طباعة"
+                  className="h-8 w-8 rounded-lg border border-stone-200 flex items-center justify-center text-stone-500 hover:bg-stone-50"
+                >
+                  <FileText size={14} />
+                </button>
+                <button
+                  disabled={!q.customer?.email || q.status === "accepted" || sendQ.isPending}
+                  onClick={() => sendQ.mutate(q._id)}
+                  title={q.customer?.email ? "إرسال بالبريد" : "لا يوجد بريد إلكتروني"}
+                  className="h-8 w-8 rounded-lg border border-[#1F3929] flex items-center justify-center text-[#1F3929] hover:bg-[#1F3929] hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  <Send size={14} />
+                </button>
+                <button
+                  onClick={() => { if (confirm("حذف العرض؟")) del.mutate(q._id); }}
+                  className="h-8 w-8 rounded-lg border border-red-100 flex items-center justify-center text-red-400 hover:bg-red-50"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            </div>
+          ))}
+          {!(quotes as any[]).length && (
+            <p className="py-12 text-center text-sm text-stone-400">لا توجد عروض أسعار بعد</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function AdminMarketing() {

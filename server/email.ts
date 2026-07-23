@@ -452,7 +452,168 @@ export async function sendPasswordResetOtp(email: string, name: string, otp: str
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   5.  TEST — sends admin alert + order confirmation to one address
+   5.  INVOICE EMAIL  →  customer
+═══════════════════════════════════════════════════════════════ */
+export async function sendInvoiceEmail(invoice: any) {
+  const email = invoice.customer?.email;
+  if (!email) throw new Error("لا يوجد بريد إلكتروني للعميل");
+
+  const itemsRows = (invoice.items || []).map((i: any) => `
+    <tr>
+      <td style="padding:10px 0;border-bottom:1px solid #F0EBE1;font-size:13px;color:#1C201B;text-align:right;">${i.name}</td>
+      <td style="padding:10px 0;border-bottom:1px solid #F0EBE1;font-size:13px;color:#9BA17B;text-align:center;width:40px;">×${i.qty}</td>
+      <td style="padding:10px 0;border-bottom:1px solid #F0EBE1;font-size:13px;font-weight:600;color:#1F3929;text-align:left;white-space:nowrap;width:90px;">
+        ${((i.price || 0) * (i.qty || 1)).toFixed(2)} ر.س
+      </td>
+    </tr>`).join("");
+
+  const body = `
+    <tr>
+      <td style="padding:32px 40px;">
+
+        <div style="display:inline-block;background:#F0EBE1;border-radius:20px;
+                    padding:4px 16px;font-size:11px;letter-spacing:0.12em;
+                    color:#9BA17B;margin-bottom:20px;">فاتورة ضريبية</div>
+
+        <h1 style="margin:0 0 4px;font-size:22px;font-weight:400;color:#1C201B;">
+          أهلاً ${invoice.customer?.name || ""}،
+        </h1>
+        <p style="margin:0 0 24px;font-size:13px;color:#A09680;line-height:1.8;">
+          يسعدنا إرسال فاتورتك الرسمية. رقم الفاتورة:
+          <strong style="color:#1F3929;">${invoice.invoiceNumber}</strong>
+        </p>
+
+        <div style="height:1px;background:#F0EBE1;margin-bottom:20px;"></div>
+
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          ${itemsRows}
+          <tr>
+            <td style="padding:14px 0 0;font-size:15px;font-weight:700;color:#1F3929;">الإجمالي</td>
+            <td></td>
+            <td style="padding:14px 0 0;font-size:15px;font-weight:700;color:#1F3929;text-align:left;">
+              ${(invoice.total || 0).toFixed(2)} ر.س
+            </td>
+          </tr>
+        </table>
+
+        <div style="margin-top:24px;background:#F7F4EF;border-right:3px solid #9BA17B;
+                    padding:16px 18px;border-radius:2px;">
+          <div style="font-size:11px;letter-spacing:0.15em;color:#9BA17B;margin-bottom:6px;">الحالة</div>
+          <div style="font-size:14px;font-weight:600;color:#1F3929;">
+            ${invoice.status === "paid" ? "✓ مدفوعة" : "صادرة — في انتظار السداد"}
+          </div>
+        </div>
+
+        <div style="text-align:center;margin-top:28px;">
+          <a href="${STORE}"
+             style="display:inline-block;background:#1F3929;color:#F2EADB;
+                    padding:13px 36px;text-decoration:none;border-radius:3px;
+                    font-size:13px;letter-spacing:0.08em;">
+            تصفّح المتجر
+          </a>
+        </div>
+
+      </td>
+    </tr>`;
+
+  await transporter.sendMail({
+    from: FROM,
+    to: email,
+    subject: `فاتورتك ${invoice.invoiceNumber} من UJI MATCHA`,
+    html: layout(body),
+    attachments: emailAttachments(),
+    text: `فاتورة ${invoice.invoiceNumber} — الإجمالي: ${(invoice.total || 0).toFixed(2)} ر.س`,
+  });
+  console.log("[email] invoice →", email, invoice.invoiceNumber);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   6.  QUOTE EMAIL  →  customer
+═══════════════════════════════════════════════════════════════ */
+export async function sendQuoteEmail(quote: any) {
+  const email = quote.customer?.email;
+  if (!email) throw new Error("لا يوجد بريد إلكتروني للعميل");
+
+  const itemsRows = (quote.items || []).map((i: any) => `
+    <tr>
+      <td style="padding:10px 0;border-bottom:1px solid #F0EBE1;font-size:13px;color:#1C201B;text-align:right;">${i.name}</td>
+      <td style="padding:10px 0;border-bottom:1px solid #F0EBE1;font-size:13px;color:#9BA17B;text-align:center;width:40px;">×${i.qty}</td>
+      <td style="padding:10px 0;border-bottom:1px solid #F0EBE1;font-size:13px;font-weight:600;color:#1F3929;text-align:left;white-space:nowrap;width:90px;">
+        ${((i.price || 0) * (i.qty || 1)).toFixed(2)} ر.س
+      </td>
+    </tr>`).join("");
+
+  const validDate = quote.validUntil
+    ? new Date(quote.validUntil).toLocaleDateString("ar-SA", { year: "numeric", month: "long", day: "numeric" })
+    : null;
+
+  const body = `
+    <tr>
+      <td style="padding:32px 40px;">
+
+        <div style="display:inline-block;background:#F0EBE1;border-radius:20px;
+                    padding:4px 16px;font-size:11px;letter-spacing:0.12em;
+                    color:#9BA17B;margin-bottom:20px;">عرض سعر</div>
+
+        <h1 style="margin:0 0 4px;font-size:22px;font-weight:400;color:#1C201B;">
+          أهلاً ${quote.customer?.name || ""}،
+        </h1>
+        <p style="margin:0 0 24px;font-size:13px;color:#A09680;line-height:1.8;">
+          يسعدنا تقديم عرض الأسعار التالي لك. رقم العرض:
+          <strong style="color:#1F3929;">${quote.quoteNumber}</strong>
+          ${validDate ? `<br/>صالح حتى: <strong style="color:#1F3929;">${validDate}</strong>` : ""}
+        </p>
+
+        <div style="height:1px;background:#F0EBE1;margin-bottom:20px;"></div>
+
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td style="padding:6px 0;font-size:11px;letter-spacing:0.15em;color:#9BA17B;text-align:right;">المنتج</td>
+            <td style="padding:6px 0;font-size:11px;color:#9BA17B;text-align:center;">الكمية</td>
+            <td style="padding:6px 0;font-size:11px;color:#9BA17B;text-align:left;">المبلغ</td>
+          </tr>
+          ${itemsRows}
+          <tr>
+            <td style="padding:14px 0 0;font-size:15px;font-weight:700;color:#1F3929;">الإجمالي</td>
+            <td></td>
+            <td style="padding:14px 0 0;font-size:15px;font-weight:700;color:#1F3929;text-align:left;">
+              ${(quote.total || 0).toFixed(2)} ر.س
+            </td>
+          </tr>
+        </table>
+
+        ${quote.notes ? `
+        <div style="margin-top:20px;background:#F7F4EF;border-right:3px solid #9BA17B;
+                    padding:14px 18px;border-radius:2px;">
+          <div style="font-size:11px;color:#9BA17B;margin-bottom:6px;">ملاحظات</div>
+          <div style="font-size:13px;color:#555;line-height:1.8;">${quote.notes}</div>
+        </div>` : ""}
+
+        <div style="text-align:center;margin-top:28px;">
+          <a href="${STORE}"
+             style="display:inline-block;background:#1F3929;color:#F2EADB;
+                    padding:13px 36px;text-decoration:none;border-radius:3px;
+                    font-size:13px;letter-spacing:0.08em;">
+            تواصل معنا للتأكيد
+          </a>
+        </div>
+
+      </td>
+    </tr>`;
+
+  await transporter.sendMail({
+    from: FROM,
+    to: email,
+    subject: `عرض سعر ${quote.quoteNumber} من UJI MATCHA`,
+    html: layout(body),
+    attachments: emailAttachments(),
+    text: `عرض سعر ${quote.quoteNumber} — الإجمالي: ${(quote.total || 0).toFixed(2)} ر.س`,
+  });
+  console.log("[email] quote →", email, quote.quoteNumber);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   7.  TEST — sends admin alert + order confirmation to one address
 ═══════════════════════════════════════════════════════════════ */
 export async function sendTestEmail(to: string) {
   const mockOrder = {
