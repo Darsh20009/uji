@@ -5,7 +5,7 @@ import {
   X, Plus, Pencil, Trash2, Package, ShoppingBag,
   Settings2, Mail, LogOut, Upload, LayoutDashboard,
   TrendingUp, Users, ChevronDown, Check, Menu, Tag,
-  Star, CreditCard, MapPin, Banknote,
+  Star, CreditCard, MapPin, Banknote, Truck,
 } from "lucide-react";
 import PhoneInput, { COUNTRIES, type Country } from "../components/PhoneInput";
 
@@ -1274,6 +1274,67 @@ function AdminSettings() {
               </div>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Delivery Providers */}
+      <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-stone-50 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center"><Truck size={15} className="text-stone-500" /></div>
+          <div>
+            <p className="text-sm font-semibold text-stone-700">شركات التوصيل</p>
+            <p className="text-xs text-stone-400 mt-0.5">فعّل الشركات وحدد سعر كل واحدة — تظهر للعميل عند الطلب</p>
+          </div>
+        </div>
+        <div className="p-5 space-y-3">
+          {(() => {
+            const DEFAULT_PROVIDERS = [
+              { id: "aramex", name: "أرامكس",       nameEn: "Aramex",       price: 35, days: "2-3 أيام عمل", enabled: true, logo: "/assets/brand/logo-aramex.svg" },
+              { id: "smsa",   name: "SMSA Express", nameEn: "SMSA Express", price: 30, days: "3-5 أيام عمل", enabled: true, logo: "/assets/brand/logo-smsa.svg"   },
+              { id: "jt",     name: "J&T Express",  nameEn: "J&T Express",  price: 25, days: "3-5 أيام عمل", enabled: true, logo: "/assets/brand/logo-jt.svg"     },
+            ];
+            const providers: any[] = current.deliveryProviders ?? DEFAULT_PROVIDERS;
+            const update = (idx: number, field: string, val: any) => {
+              const next = providers.map((p, i) => i === idx ? { ...p, [field]: val } : p);
+              setForm({ ...current, deliveryProviders: next });
+            };
+            return providers.map((p: any, i: number) => (
+              <div key={p.id} className="border border-stone-100 rounded-xl overflow-hidden">
+                <div className="flex items-center gap-3 p-3">
+                  {/* Logo preview */}
+                  <div className="w-16 h-10 bg-stone-50 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    <img src={p.logo} alt={p.nameEn} className="max-h-8 max-w-full object-contain"
+                      onError={(e) => { (e.target as HTMLImageElement).src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23f5f5f5'/%3E%3C/svg%3E"; }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-stone-700">{p.name}</p>
+                    <p className="text-xs text-stone-400">{p.days}</p>
+                  </div>
+                  {/* Toggle */}
+                  <button onClick={() => update(i, "enabled", !p.enabled)}
+                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors flex-shrink-0 ${p.enabled ? "bg-[#1F3929]" : "bg-stone-200"}`}>
+                    <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${p.enabled ? "translate-x-4" : "translate-x-1"}`} />
+                  </button>
+                </div>
+                {p.enabled && (
+                  <div className="px-3 pb-3 border-t border-stone-50 pt-3 grid grid-cols-2 gap-2">
+                    <div>
+                      <label className={labelCls}>سعر الشحن (ر.س)</label>
+                      <input type="number" className={inputCls} min={0} value={p.price}
+                        onChange={e => update(i, "price", Number(e.target.value))}
+                        style={{ fontFamily: "monospace" }} />
+                    </div>
+                    <div>
+                      <label className={labelCls}>مدة التوصيل</label>
+                      <input className={inputCls} value={p.days}
+                        onChange={e => update(i, "days", e.target.value)}
+                        style={{ fontFamily: "inherit" }} />
+                    </div>
+                  </div>
+                )}
+              </div>
+            ));
+          })()}
         </div>
       </div>
 

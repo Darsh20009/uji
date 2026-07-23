@@ -151,15 +151,15 @@ export default function Footer() {
           </p>
           {/* Ministry of Commerce */}
           <img
-            src="/assets/brand/logo-moc.svg"
+            src="/assets/brand/logo-moc-real.png"
             alt="وزارة التجارة"
-            style={{ height: 36, objectFit: "contain", filter: "brightness(0) invert(1) opacity(0.55)" }}
+            style={{ height: 48, objectFit: "contain", opacity: 0.75 }}
           />
           {/* Saudi Business Center */}
           <img
-            src="/assets/brand/logo-sbc.svg"
+            src="/assets/brand/logo-sbc-real.png"
             alt="المركز السعودي للأعمال"
-            style={{ height: 36, objectFit: "contain", filter: "brightness(0) invert(1) opacity(0.55)" }}
+            style={{ height: 48, objectFit: "contain", opacity: 0.75 }}
           />
         </div>
       </div>

@@ -31,11 +31,11 @@ const sectionTitle: React.CSSProperties = {
   marginBottom: "1.25rem",
 };
 
-// ── Delivery providers ──────────────────────────────────────
-const DELIVERY_PROVIDERS = [
-  { id: "aramex",  name: "أرامكس",       nameEn: "Aramex",       price: 35, days: "2-3 أيام عمل",  logo: "🚚" },
-  { id: "smsa",   name: "SMSA Express", nameEn: "SMSA",         price: 30, days: "3-5 أيام عمل",  logo: "📦" },
-  { id: "jt",     name: "J&T Express",  nameEn: "J&T Express",  price: 25, days: "3-5 أيام عمل",  logo: "🏎️" },
+// ── Default delivery providers (fallback if not configured in admin) ──
+const DEFAULT_DELIVERY_PROVIDERS = [
+  { id: "aramex", name: "أرامكس",       nameEn: "Aramex",      price: 35, days: "2-3 أيام عمل", enabled: true, logo: "/assets/brand/logo-aramex.svg" },
+  { id: "smsa",   name: "SMSA Express", nameEn: "SMSA Express", price: 30, days: "3-5 أيام عمل", enabled: true, logo: "/assets/brand/logo-smsa.svg"   },
+  { id: "jt",     name: "J&T Express",  nameEn: "J&T Express",  price: 25, days: "3-5 أيام عمل", enabled: true, logo: "/assets/brand/logo-jt.svg"     },
 ];
 
 // ── Saudi cities ─────────────────────────────────────────────
@@ -73,15 +73,22 @@ export default function CheckoutPage() {
   const [couponData, setCouponData] = useState<{ code: string; discount: number; type: string; value: number } | null>(null);
   const [couponError, setCouponError] = useState("");
 
-  // Delivery provider
-  const [deliveryProvider, setDeliveryProvider] = useState(DELIVERY_PROVIDERS[0]);
-
-  // Settings
+  // Settings (must be declared before using settings)
   const { data: settings } = useQuery({
     queryKey: ["settings"],
     queryFn: () => api.get("/settings"),
     staleTime: 5 * 60 * 1000,
   });
+
+  // Delivery providers from settings (or defaults)
+  const rawProviders: any[] = (settings as any)?.deliveryProviders ?? DEFAULT_DELIVERY_PROVIDERS;
+  const enabledProviders = rawProviders.filter((p: any) => p.enabled !== false);
+  const activeProviders = enabledProviders.length > 0 ? enabledProviders : DEFAULT_DELIVERY_PROVIDERS;
+
+  // Delivery provider selection
+  const [deliveryProviderId, setDeliveryProviderId] = useState<string>("");
+  const deliveryProvider = activeProviders.find((p: any) => p.id === deliveryProviderId) ?? activeProviders[0];
+
   const shippingThreshold = Number((settings as any)?.shippingFreeThreshold ?? 200);
   const geideaEnabled = (settings as any)?._geideaEnabled === true;
   const codEnabled    = (settings as any)?._codEnabled  !== false;
@@ -363,24 +370,34 @@ export default function CheckoutPage() {
                 03 — مزود التوصيل
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
-                {DELIVERY_PROVIDERS.map(p => (
-                  <label key={p.id} onClick={() => setDeliveryProvider(p)}
-                    style={{ display: "flex", alignItems: "center", gap: "1rem", border: `1px solid ${deliveryProvider.id === p.id ? "#1F3929" : "rgba(200,187,164,0.3)"}`, background: deliveryProvider.id === p.id ? "rgba(31,57,41,0.05)" : "#F7F2E8", padding: "0.9rem 1.1rem", cursor: "pointer", transition: "all 0.2s" }}>
-                    <input type="radio" name="delivery" value={p.id} checked={deliveryProvider.id === p.id} onChange={() => setDeliveryProvider(p)} style={{ width: "auto", accentColor: "#1F3929", flexShrink: 0 }} />
-                    <span style={{ fontSize: "1.3rem", flexShrink: 0 }}>{p.logo}</span>
-                    <div style={{ flex: 1 }}>
-                      <p style={{ fontFamily: font, fontSize: "0.88rem", fontWeight: 600, color: "#1C201B", margin: 0 }}>{p.name}</p>
-                      <p style={{ fontFamily: font, fontSize: "0.75rem", color: "#9BA17B", margin: 0 }}>{p.days}</p>
-                    </div>
-                    <div style={{ textAlign: "left", flexShrink: 0 }}>
-                      {isFreeShipping ? (
-                        <span style={{ fontFamily: font, fontSize: "0.82rem", color: "#059669", fontWeight: 600 }}>مجاني</span>
-                      ) : (
-                        <span style={{ fontFamily: font, fontSize: "0.9rem", fontWeight: 700, color: "#1F3929" }}>{p.price} ر.س</span>
-                      )}
-                    </div>
-                  </label>
-                ))}
+                {activeProviders.map((p: any) => {
+                  const isSelected = deliveryProvider.id === p.id;
+                  return (
+                    <label key={p.id} onClick={() => setDeliveryProviderId(p.id)}
+                      style={{ display: "flex", alignItems: "center", gap: "1rem", border: `1px solid ${isSelected ? "#1F3929" : "rgba(200,187,164,0.3)"}`, background: isSelected ? "rgba(31,57,41,0.05)" : "#F7F2E8", padding: "0.9rem 1.1rem", cursor: "pointer", transition: "all 0.2s" }}>
+                      <input type="radio" name="delivery" value={p.id} checked={isSelected} onChange={() => setDeliveryProviderId(p.id)} style={{ width: "auto", accentColor: "#1F3929", flexShrink: 0 }} />
+                      {/* Logo image or emoji fallback */}
+                      <div style={{ width: 64, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        {p.logo?.startsWith("/") ? (
+                          <img src={p.logo} alt={p.nameEn} style={{ maxHeight: 28, maxWidth: 64, objectFit: "contain" }} onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                        ) : (
+                          <span style={{ fontSize: "1.4rem" }}>{p.logo ?? "🚚"}</span>
+                        )}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <p style={{ fontFamily: font, fontSize: "0.88rem", fontWeight: 600, color: "#1C201B", margin: 0 }}>{p.name}</p>
+                        <p style={{ fontFamily: font, fontSize: "0.75rem", color: "#9BA17B", margin: 0 }}>{p.days}</p>
+                      </div>
+                      <div style={{ textAlign: "left", flexShrink: 0 }}>
+                        {isFreeShipping ? (
+                          <span style={{ fontFamily: font, fontSize: "0.82rem", color: "#059669", fontWeight: 600 }}>مجاني</span>
+                        ) : (
+                          <span style={{ fontFamily: font, fontSize: "0.9rem", fontWeight: 700, color: "#1F3929" }}>{p.price} ر.س</span>
+                        )}
+                      </div>
+                    </label>
+                  );
+                })}
               </div>
               {isFreeShipping && (
                 <div style={{ marginTop: "0.75rem", display: "flex", alignItems: "center", gap: 8, background: "rgba(5,150,105,0.06)", padding: "10px 12px", border: "1px solid rgba(5,150,105,0.2)" }}>
