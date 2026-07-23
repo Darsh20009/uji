@@ -62,7 +62,6 @@ export default function Navbar() {
               aria-label="القائمة"
             >
               <AlignJustify size={18} strokeWidth={1.5} />
-              <span style={{ fontFamily: "'Inter',sans-serif", fontSize: "0.7rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>MENU</span>
             </button>
 
             {/* Desktop nav links */}
