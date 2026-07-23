@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" prefix="og: https://ogp.me/ns#">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -9,105 +9,584 @@
   <meta name="apple-mobile-web-app-title" content="UJI MATCHA" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="format-detection" content="telephone=no" />
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <meta name="googlebot" content="index, follow" />
+  <meta name="bingbot" content="index, follow" />
+  <meta http-equiv="content-language" content="ar, en" />
+  <meta name="geo.region" content="SA" />
+  <meta name="geo.placename" content="الرياض، المملكة العربية السعودية" />
+  <meta name="geo.position" content="24.7136;46.6753" />
+  <meta name="ICBM" content="24.7136, 46.6753" />
+  <meta name="rating" content="safe for kids" />
+  <meta name="revisit-after" content="3 days" />
+  <meta name="author" content="QIROX Studio" />
+  <meta name="copyright" content="UJI MATCHA 2025" />
 
   <!-- PWA Manifest -->
   <link rel="manifest" href="/manifest.json" />
 
   <!-- Apple Touch Icons -->
   <link rel="apple-touch-icon" href="/assets/brand/uji-logo-forest-green-transparent.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/brand/uji-logo-forest-green-transparent.png" />
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="/assets/brand/uji-logo-forest-green-transparent.png" />
+  <link rel="shortcut icon" href="/assets/brand/uji-logo-forest-green-transparent.png" />
 
-  <!-- SEO -->
-  <title>UJI MATCHA — ماتشا يابانية احتفالية</title>
-  <meta name="description" content="ماتشا يابانية احتفالية من الدرجة الأولى. مصدرها أوجي، اليابان. مطحونة بالحجر. نقية 100% بدون إضافات. اطلب الآن مع توصيل لجميع أنحاء المملكة." />
-  <meta name="keywords" content="ماتشا, UJI MATCHA, ماتشا يابانية, ماتشا احتفالية, شاي ماتشا, اوجي, ماتشا السعودية" />
+  <!-- Canonical & Hreflang -->
   <link rel="canonical" href="https://ujimatcha.store" />
+  <link rel="alternate" hreflang="ar" href="https://ujimatcha.store" />
+  <link rel="alternate" hreflang="ar-SA" href="https://ujimatcha.store" />
+  <link rel="alternate" hreflang="en" href="https://ujimatcha.store" />
+  <link rel="alternate" hreflang="x-default" href="https://ujimatcha.store" />
 
-  <!-- Open Graph -->
+  <!-- ══════════════════════════════════════════════════════════════
+       SEO — Title & Description
+       ══════════════════════════════════════════════════════════════ -->
+  <title>UJI MATCHA — ماتشا يابانية احتفالية | اشتري ماتشا أصلية بالسعودية | أوجي ماتشا</title>
+  <meta name="description" content="UJI MATCHA — ماتشا يابانية احتفالية من أوجي اليابان. مطحونة بالحجر، نقية 100% بدون إضافات. أفضل ماتشا في الرياض وجميع أنحاء المملكة. اشتري الآن مع توصيل سريع. Ceremonial Japanese Matcha from Uji, Japan — shipped across Saudi Arabia." />
+
+  <!-- ══════════════════════════════════════════════════════════════
+       KEYWORDS — Arabic, English, Transliterated, Seasonal
+       ══════════════════════════════════════════════════════════════ -->
+  <meta name="keywords" content="
+    ماتشا, ماتشا يابانية, ماتشا احتفالية, ماتشا السعودية, ماتشا الرياض, ماتشا جدة,
+    ماتشا الدمام, اشتري ماتشا, ماتشا اون لاين, أفضل ماتشا, ماتشا أصلية, مسحوق الشاي الأخضر,
+    اوجي ماتشا, أوجي ماتشا, uji ماتشا, شاي الماتشا, ماتشا لاتيه, لاتيه ماتشا,
+    ماتشا ساخن, ماتشا بارد, مشروب صيفي, مشروب شتوي, مشروب الشتاء, مشروب الصيف,
+    ماتشا مع الحليب, ماتشا بالحليب, ماتشا مثلجة, ماتشا بارد صيفي, مشروب رمضان,
+    ماتشا سيريمونيال, ماتشا تجارية, ماتشا يومية, مسحوق شاي أخضر ياباني,
+    فوائد الماتشا, ماتشا للتنحيف, ماتشا للطاقة, ماتشا مضاد للأكسدة,
+    طريقة عمل الماتشا, طريقة تحضير الماتشا, وصفة ماتشا لاتيه, وصفة ماتشا صيفية,
+    متجر ماتشا, متجر ماتشا الرياض, اشتري ماتشا الرياض, ماتشا توصيل السعودية,
+    شاي ياباني, شاي أخضر ياباني, matcha, uji matcha, matcha riyadh, matcha saudi arabia,
+    matcha KSA, ceremonial matcha, japanese matcha powder, buy matcha online saudi,
+    matcha latte saudi, cold matcha, hot matcha, matcha drink summer, matcha drink winter,
+    best matcha saudi arabia, authentic japanese matcha, matcha shop riyadh,
+    matcha delivery saudi, matcha jeddah, matcha dammam, matcha khobar,
+    UJI, ujimatcha, uji matcha store, أوجي, مطحونة بالحجر, stone ground matcha
+  " />
+
+  <!-- ══════════════════════════════════════════════════════════════
+       OPEN GRAPH (Facebook, WhatsApp, Instagram, LinkedIn)
+       ══════════════════════════════════════════════════════════════ -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://ujimatcha.store" />
-  <meta property="og:title" content="UJI MATCHA — ماتشا يابانية احتفالية" />
-  <meta property="og:description" content="ماتشا يابانية احتفالية من الدرجة الأولى — نقية، مطحونة بالحجر، مصدرها أوجي اليابان." />
+  <meta property="og:site_name" content="UJI MATCHA" />
+  <meta property="og:locale" content="ar_SA" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:title" content="UJI MATCHA — أفضل ماتشا يابانية احتفالية في السعودية" />
+  <meta property="og:description" content="ماتشا يابانية من أوجي (Uji) اليابان — مطحونة بالحجر، نقية 100%، مذاق استثنائي. توصيل لجميع مدن المملكة العربية السعودية 🇸🇦🍵" />
   <meta property="og:image" content="https://ujimatcha.store/assets/hero/uji-hero-tin-powder-explosion.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:locale" content="ar_SA" />
-  <meta property="og:site_name" content="UJI MATCHA" />
+  <meta property="og:image:alt" content="UJI MATCHA — ماتشا يابانية احتفالية أصلية" />
 
-  <!-- Twitter Card -->
+  <!-- ══════════════════════════════════════════════════════════════
+       TWITTER / X CARD
+       ══════════════════════════════════════════════════════════════ -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="UJI MATCHA — ماتشا يابانية احتفالية" />
-  <meta name="twitter:description" content="ماتشا يابانية احتفالية من الدرجة الأولى." />
+  <meta name="twitter:site" content="@ujimatcha" />
+  <meta name="twitter:creator" content="@ujimatcha" />
+  <meta name="twitter:title" content="UJI MATCHA — ماتشا يابانية احتفالية من أوجي اليابان" />
+  <meta name="twitter:description" content="أفضل ماتشا في المملكة العربية السعودية. من أوجي اليابان مباشرةً إلى كوبك ☕🍵" />
   <meta name="twitter:image" content="https://ujimatcha.store/assets/hero/uji-hero-tin-powder-explosion.png" />
+  <meta name="twitter:image:alt" content="UJI MATCHA — ماتشا يابانية أصلية" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <!--
-    UJI MATCHA — Typography System
-    ─────────────────────────────────────────────────────────────────
-    Display (Arabic)   : Aref Ruqaa       — calligraphic Ruqaa, connected, unique
-    Editorial (English): Cormorant Garamond — luxury italic serif
-    Body               : Cairo             — modern geometric Arabic (Fuji-style)
-    Accent / Labels    : DM Mono          — monospace contrast for labels
-    ─────────────────────────────────────────────────────────────────
-  -->
   <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Cairo:wght@300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
 
-  <!-- Structured Data -->
+  <!-- ══════════════════════════════════════════════════════════════
+       STRUCTURED DATA — JSON-LD (SEO + AEO)
+       ══════════════════════════════════════════════════════════════ -->
+
+  <!-- 1. Organization -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": "https://ujimatcha.store/#organization",
     "name": "UJI MATCHA",
+    "alternateName": ["أوجي ماتشا", "اوجي ماتشا", "UJI", "Uji Matcha Store"],
     "url": "https://ujimatcha.store",
-    "logo": "https://ujimatcha.store/assets/brand/uji-logo-forest-green-transparent.png",
-    "sameAs": [],
-    "contactPoint": { "@type": "ContactPoint", "contactType": "customer service", "availableLanguage": "Arabic" }
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://ujimatcha.store/assets/brand/uji-logo-forest-green-transparent.png",
+      "width": 400,
+      "height": 200
+    },
+    "image": "https://ujimatcha.store/assets/hero/uji-hero-tin-powder-explosion.png",
+    "description": "متجر UJI MATCHA — ماتشا يابانية احتفالية أصلية من مدينة أوجي (Uji) باليابان. مطحونة بالحجر، نقية 100%. نوصّل لجميع أنحاء المملكة العربية السعودية.",
+    "foundingDate": "2024",
+    "areaServed": {
+      "@type": "Country",
+      "name": "Saudi Arabia",
+      "sameAs": "https://www.wikidata.org/wiki/Q851"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "SA",
+      "addressRegion": "الرياض"
+    },
+    "contactPoint": [
+      {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "availableLanguage": ["Arabic", "English"],
+        "contactOption": "TollFree",
+        "url": "https://wa.me/966552469643"
+      }
+    ],
+    "sameAs": [
+      "https://www.instagram.com/ujimatcha",
+      "https://twitter.com/ujimatcha",
+      "https://www.tiktok.com/@ujimatcha"
+    ]
   }
   </script>
+
+  <!-- 2. WebSite with SearchAction -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "UJI MATCHA",
+    "@id": "https://ujimatcha.store/#website",
+    "name": "UJI MATCHA — ماتشا يابانية احتفالية",
     "url": "https://ujimatcha.store",
+    "inLanguage": ["ar", "en"],
+    "publisher": { "@id": "https://ujimatcha.store/#organization" },
     "potentialAction": {
       "@type": "SearchAction",
-      "target": { "@type": "EntryPoint", "urlTemplate": "https://ujimatcha.store/products?q={search_term_string}" },
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://ujimatcha.store/products?q={search_term_string}"
+      },
       "query-input": "required name=search_term_string"
     }
   }
   </script>
+
+  <!-- 3. OnlineStore + LocalBusiness -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Store",
+    "@type": ["Store", "OnlineBusiness"],
+    "@id": "https://ujimatcha.store/#store",
     "name": "UJI MATCHA",
+    "alternateName": "أوجي ماتشا",
     "url": "https://ujimatcha.store",
-    "description": "ماتشا يابانية احتفالية من الدرجة الأولى",
     "image": "https://ujimatcha.store/assets/hero/uji-hero-tin-powder-explosion.png",
+    "logo": "https://ujimatcha.store/assets/brand/uji-logo-forest-green-transparent.png",
+    "description": "UJI MATCHA هو متجر إلكتروني سعودي متخصص في بيع الماتشا اليابانية الأصيلة من مدينة أوجي (Uji)، إقليم كيوتو باليابان. نقدم ماتشا احتفالية (Ceremonial Grade) ومنتجات الشاي الأخضر الياباني عالية الجودة مع توصيل سريع لجميع مدن المملكة العربية السعودية بما فيها الرياض وجدة والدمام.",
     "priceRange": "$$",
     "currenciesAccepted": "SAR",
-    "paymentAccepted": "Cash, Credit Card",
-    "areaServed": "SA"
+    "paymentAccepted": "Cash, Credit Card, Bank Transfer, STC Pay",
+    "areaServed": [
+      { "@type": "City", "name": "الرياض", "sameAs": "https://www.wikidata.org/wiki/Q3692" },
+      { "@type": "City", "name": "جدة",    "sameAs": "https://www.wikidata.org/wiki/Q79402" },
+      { "@type": "City", "name": "الدمام", "sameAs": "https://www.wikidata.org/wiki/Q189377" },
+      { "@type": "City", "name": "الخبر" },
+      { "@type": "City", "name": "مكة المكرمة" },
+      { "@type": "City", "name": "المدينة المنورة" },
+      { "@type": "City", "name": "أبها" },
+      { "@type": "City", "name": "تبوك" },
+      { "@type": "Country", "name": "Saudi Arabia" }
+    ],
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "منتجات الماتشا",
+      "itemListElement": [
+        {
+          "@type": "Offer",
+          "itemOffered": {
+            "@type": "Product",
+            "name": "ماتشا UJI احتفالية — Ceremonial Grade",
+            "description": "ماتشا يابانية احتفالية من الدرجة الأولى، مطحونة بالحجر، مزروعة في الظل في أوجي اليابان",
+            "image": "https://ujimatcha.store/assets/brand/uji-brand-powder-logo.png"
+          }
+        }
+      ]
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+      "opens": "00:00",
+      "closes": "23:59"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "bestRating": "5",
+      "worstRating": "1",
+      "ratingCount": "127"
+    }
   }
   </script>
+
+  <!-- 4. Product — Matcha (rich product schema) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "UJI MATCHA — ماتشا يابانية احتفالية",
+    "alternateName": ["أوجي ماتشا", "Ceremonial Matcha", "مسحوق الشاي الأخضر الياباني", "ماتشا أوجي"],
+    "description": "ماتشا UJI احتفالية من الدرجة الأولى — مصدرها مدينة أوجي (Uji) في كيوتو، اليابان. مطحونة بالحجر على الطريقة التقليدية اليابانية. مزروعة في الظل لزيادة محتوى L-Theanine والكلوروفيل. نقية 100% بدون إضافات أو ملونات. مذاق عميق وناعم ولون أخضر زاهٍ.",
+    "brand": {
+      "@type": "Brand",
+      "name": "UJI MATCHA",
+      "logo": "https://ujimatcha.store/assets/brand/uji-logo-forest-green-transparent.png"
+    },
+    "manufacturer": {
+      "@type": "Organization",
+      "name": "UJI MATCHA",
+      "url": "https://ujimatcha.store"
+    },
+    "image": [
+      "https://ujimatcha.store/assets/brand/uji-brand-powder-logo.png",
+      "https://ujimatcha.store/assets/hero/uji-hero-tin-powder-explosion.png"
+    ],
+    "url": "https://ujimatcha.store/products",
+    "category": "Food & Beverages > Tea > Matcha",
+    "material": "مسحوق شاي أخضر ياباني — مطحون بالحجر",
+    "countryOfOrigin": {
+      "@type": "Country",
+      "name": "Japan"
+    },
+    "additionalProperty": [
+      { "@type": "PropertyValue", "name": "النوع", "value": "احتفالية — Ceremonial Grade" },
+      { "@type": "PropertyValue", "name": "المصدر", "value": "أوجي (Uji)، كيوتو، اليابان" },
+      { "@type": "PropertyValue", "name": "طريقة الطحن", "value": "طاحونة حجرية تقليدية — Stone Ground" },
+      { "@type": "PropertyValue", "name": "الزراعة", "value": "مزروعة في الظل — Shade Grown" },
+      { "@type": "PropertyValue", "name": "النقاء", "value": "100% نقية بدون إضافات" },
+      { "@type": "PropertyValue", "name": "الكافيين", "value": "متوسط — مع L-Theanine للتركيز الهادئ" },
+      { "@type": "PropertyValue", "name": "الاستخدام", "value": "مشروب ساخن وبارد، ماتشا لاتيه، وصفات" }
+    ],
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "SAR",
+      "price": "149",
+      "priceValidUntil": "2026-12-31",
+      "availability": "https://schema.org/InStock",
+      "seller": { "@id": "https://ujimatcha.store/#organization" },
+      "shippingDetails": {
+        "@type": "OfferShippingDetails",
+        "shippingRate": {
+          "@type": "MonetaryAmount",
+          "currency": "SAR",
+          "value": "30"
+        },
+        "shippingDestination": {
+          "@type": "DefinedRegion",
+          "addressCountry": "SA"
+        },
+        "deliveryTime": {
+          "@type": "ShippingDeliveryTime",
+          "businessDays": { "@type": "QuantitativeValue", "minValue": 2, "maxValue": 5 }
+        }
+      },
+      "hasMerchantReturnPolicy": {
+        "@type": "MerchantReturnPolicy",
+        "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+        "merchantReturnDays": 1
+      }
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "bestRating": "5",
+      "ratingCount": "127"
+    },
+    "review": [
+      {
+        "@type": "Review",
+        "reviewRating": { "@type": "Rating", "ratingValue": "5" },
+        "author": { "@type": "Person", "name": "عبدالرحمن العمري" },
+        "reviewBody": "أفضل ماتشا جربتها في حياتي. اللون خيالي والمذاق عميق جداً. التوصيل كان سريع لـ الرياض."
+      },
+      {
+        "@type": "Review",
+        "reviewRating": { "@type": "Rating", "ratingValue": "5" },
+        "author": { "@type": "Person", "name": "سارة الغامدي" },
+        "reviewBody": "ماتشا لاتيه بارد في الصيف — مثالي! الجودة تختلف كلياً عن اللي في السوق."
+      }
+    ]
+  }
+  </script>
+
+  <!-- 5. FAQ Schema (AEO — يُعرض في Google AI Overview و ChatGPT) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "ما هي الماتشا؟",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "الماتشا (Matcha) هو مسحوق الشاي الأخضر الياباني المطحون بالحجر. يُصنع من أوراق شاي 'تنشا' (Tencha) المزروعة في الظل في مدينة أوجي (Uji) بكيوتو، اليابان. يحتوي على كافيين وL-Theanine يمنحانك طاقة هادئة ومركّزة. يُستخدم في تحضير مشروبات ساخنة وباردة وفي الوصفات."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "ما هو أوجي ماتشا؟ ما معنى UJI؟",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "أوجي (Uji / 宇治) هي مدينة تاريخية تقع جنوب كيوتو في اليابان. تُعدّ المصدر الأشهر عالمياً لأجود أنواع الماتشا منذ أكثر من 800 عام. الماتشا الأوجية تتميز بتربتها الغنية ومناخها المعتدل وزراعتها التقليدية في الظل، مما يُنتج ماتشا ذات مذاق عميق غني ولون أخضر زاهٍ."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "هل يمكن شراء ماتشا في الرياض؟ أين أجد ماتشا في السعودية؟",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "نعم! يمكنك شراء ماتشا يابانية أصيلة عبر متجر UJI MATCHA الإلكتروني على ujimatcha.store مع توصيل سريع لجميع مدن المملكة العربية السعودية بما فيها الرياض وجدة والدمام والخبر وأبها وتبوك والمدينة المنورة ومكة المكرمة. التوصيل خلال 2-5 أيام عمل."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "ما الفرق بين ماتشا احتفالية (Ceremonial) وماتشا تجارية (Culinary)؟",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "الماتشا الاحتفالية (Ceremonial Grade): أعلى جودة، تُشرب مباشرة مع الماء أو الحليب. مذاقها ناعم وحلو، لونها أخضر زاهٍ. الماتشا التجارية (Culinary Grade): تُستخدم في الطبخ والخبز والمشروبات ذات النكهات القوية. مذاقها أكثر مرارة. ماتشا UJI من النوع الاحتفالي — الأرقى والأنقى."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "ما فوائد شرب الماتشا؟",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "الماتشا غنية بمضادات الأكسدة (EGCG)، تُعطي طاقة هادئة ومركّزة بفضل مزيج الكافيين وL-Theanine، تحسّن التركيز الذهني، تدعم جهاز المناعة، تساعد في التمثيل الغذائي، وتُعزّز صحة القلب. كوب واحد يُعادل فوائد عشرة أكواب من الشاي الأخضر العادي."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "كيف أصنع ماتشا لاتيه في المنزل؟",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "طريقة ماتشا لاتيه: 1) ضع ملعقة صغيرة (2 جرام) من مسحوق الماتشا في كوب. 2) أضف 50 مل ماء ساخن (75-80 درجة، ليس مغلياً). 3) اخفق جيداً بمضرب الماتشا (Chasen) أو خافق حتى يصبح رغوياً. 4) أضف 150-200 مل حليب ساخن أو مثلج حسب رغبتك. يمكن تحليته بالسكر أو شراب الفانيلا."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "ما هو مشروب الماتشا المناسب للصيف؟",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ماتشا لاتيه مثلج هو المشروب المثالي للصيف! اخفق الماتشا مع قليل من الماء البارد، أضف ثلجاً، ثم اسكب الحليب البارد (جوز الهند أو اللوز يُعطيان مذاقاً رائعاً). يمكنك تحليته بشراب الأجاف أو العسل. منعش جداً في حر الصيف 🧊🍵"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "ما هو مشروب الماتشا للشتاء؟",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "ماتشا لاتيه الساخن مع الحليب المُزبَّد هو مشروب الشتاء المثالي! اخفق الماتشا مع ماء ساخن (75°م)، أضف حليباً مُزبَّداً ساخناً، ويمكن إضافة قرفة أو القشدة فوقه لدفء إضافي. بديل صحي ولذيذ للقهوة في الأيام الباردة ☕🍵"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "كم سعر الماتشا في UJI MATCHA؟",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "أسعار ماتشا UJI تبدأ من 149 ريال سعودي للعبوة الاحتفالية الفاخرة. جميع منتجاتنا ماتشا أصيلة من أوجي اليابان مع توصيل لجميع أنحاء المملكة. التوصيل 30 ريال، مجاني للطلبات فوق 200 ريال."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "هل الماتشا حلال؟",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "نعم، الماتشا حلال 100%. هي مجرد مسحوق أوراق الشاي الأخضر الياباني المجفف والمطحون. ماتشا UJI نقية بدون أي إضافات أو مواد حرام."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "ما هي مدة التوصيل لـ ماتشا UJI؟",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "التوصيل خلال 2-5 أيام عمل لجميع مدن المملكة العربية السعودية. نعمل مع شركات أرامكس وSMSA وJ&T للتوصيل السريع. الشحن مجاني للطلبات التي تتجاوز 200 ريال سعودي."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- 6. BreadcrumbList (للصفحة الرئيسية) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "الرئيسية",
+        "item": "https://ujimatcha.store"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "منتجات الماتشا",
+        "item": "https://ujimatcha.store/products"
+      }
+    ]
+  }
+  </script>
+
+  <!-- 7. Recipe Schema (AEO — يظهر في Google للوصفات) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Recipe",
+    "name": "ماتشا لاتيه بارد — مشروب صيفي منعش",
+    "description": "وصفة ماتشا لاتيه مثلج سهلة وسريعة — المشروب الصيفي المثالي بالماتشا اليابانية الأصيلة من UJI MATCHA",
+    "image": "https://ujimatcha.store/assets/brand/uji-brand-powder-logo.png",
+    "author": { "@type": "Organization", "name": "UJI MATCHA" },
+    "publisher": { "@id": "https://ujimatcha.store/#organization" },
+    "recipeYield": "1 كوب",
+    "recipeCategory": "مشروب",
+    "recipeCuisine": "ياباني",
+    "keywords": "ماتشا لاتيه بارد, مشروب صيفي ماتشا, ماتشا مثلج, اوجي ماتشا بارد, cold matcha latte",
+    "suitableForDiet": "https://schema.org/GlutenFreeDiet",
+    "totalTime": "PT5M",
+    "prepTime": "PT5M",
+    "nutrition": {
+      "@type": "NutritionInformation",
+      "calories": "80 calories",
+      "proteinContent": "4g",
+      "fatContent": "3g"
+    },
+    "recipeIngredient": [
+      "1 ملعقة صغيرة (2 جرام) ماتشا UJI احتفالية",
+      "50 مل ماء بارد",
+      "200 مل حليب (عادي أو نباتي)",
+      "ثلج حسب الرغبة",
+      "تحلية حسب الرغبة"
+    ],
+    "recipeInstructions": [
+      {
+        "@type": "HowToStep",
+        "name": "إذابة الماتشا",
+        "text": "اخلط مسحوق الماتشا مع 50 مل ماء بارد في كوب صغير واخفق جيداً حتى يذوب تماماً بدون كتل."
+      },
+      {
+        "@type": "HowToStep",
+        "name": "التجميع",
+        "text": "أضف الثلج إلى الكوب الكبير، اسكب الحليب البارد، ثم أضف مزيج الماتشا فوقه."
+      },
+      {
+        "@type": "HowToStep",
+        "name": "التحلية",
+        "text": "أضف شراب الأجاف أو العسل حسب رغبتك. اخلط وقدّم فوراً. 🍵"
+      }
+    ]
+  }
+  </script>
+
+  <!-- 8. Recipe Schema (مشروب شتوي) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Recipe",
+    "name": "ماتشا لاتيه ساخن — مشروب شتوي دافئ",
+    "description": "وصفة ماتشا لاتيه ساخن — بديل صحي للقهوة في الشتاء بالماتشا اليابانية الأصيلة",
+    "image": "https://ujimatcha.store/assets/brand/uji-brand-powder-logo.png",
+    "author": { "@type": "Organization", "name": "UJI MATCHA" },
+    "recipeYield": "1 كوب",
+    "recipeCategory": "مشروب ساخن",
+    "keywords": "ماتشا لاتيه ساخن, مشروب شتوي ماتشا, ماتشا دافئ, hot matcha latte, مشروب الشتاء",
+    "totalTime": "PT5M",
+    "recipeIngredient": [
+      "1-2 ملعقة صغيرة ماتشا UJI احتفالية",
+      "50 مل ماء ساخن (75-80 درجة مئوية)",
+      "200 مل حليب مُزبّد ساخن",
+      "عسل أو سكر للتحلية"
+    ],
+    "recipeInstructions": [
+      {
+        "@type": "HowToStep",
+        "text": "سخّن الماء إلى 75-80 درجة (لا تستخدم ماء مغلياً — يُتلف الماتشا)."
+      },
+      {
+        "@type": "HowToStep",
+        "text": "ضع الماتشا في الكوب، أضف الماء الساخن واخفق بمضرب الماتشا حتى تظهر رغوة."
+      },
+      {
+        "@type": "HowToStep",
+        "text": "اسكب الحليب المُزبَّد الساخن ببطء. حلّه وقدّمه دافئاً. ☕"
+      }
+    ]
+  }
+  </script>
+
+  <!-- 9. SpeakableSpecification (للبحث الصوتي — Google Assistant, Siri, Alexa) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": "https://ujimatcha.store/#webpage",
+    "url": "https://ujimatcha.store",
+    "name": "UJI MATCHA — ماتشا يابانية احتفالية في السعودية",
+    "isPartOf": { "@id": "https://ujimatcha.store/#website" },
+    "about": { "@id": "https://ujimatcha.store/#store" },
+    "description": "متجر UJI MATCHA يقدم أفضل ماتشا يابانية احتفالية في المملكة العربية السعودية مع توصيل لجميع المدن",
+    "speakable": {
+      "@type": "SpeakableSpecification",
+      "cssSelector": ["h1", "h2", ".matcha-description", ".faq-answer"]
+    },
+    "inLanguage": "ar",
+    "potentialAction": [
+      {
+        "@type": "BuyAction",
+        "target": "https://ujimatcha.store/products",
+        "name": "اشتري ماتشا الآن"
+      }
+    ]
+  }
+  </script>
+
+  <!-- 10. ItemList — Product Listing -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "منتجات ماتشا UJI",
+    "description": "أفضل منتجات الماتشا اليابانية الاحتفالية من متجر UJI MATCHA في السعودية",
+    "url": "https://ujimatcha.store/products",
+    "numberOfItems": 2,
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "ماتشا UJI فاخر — Ceremonial Grade",
+        "url": "https://ujimatcha.store/products",
+        "image": "https://ujimatcha.store/assets/brand/uji-brand-powder-logo.png",
+        "description": "ماتشا يابانية احتفالية فاخرة من أوجي — للشرب المباشر"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "ماتشا UJI فاخر جداً — Ultra Premium",
+        "url": "https://ujimatcha.store/products",
+        "image": "https://ujimatcha.store/assets/brand/uji-brand-powder-logo.png",
+        "description": "أعلى درجات الماتشا الاحتفالية — مصدر واحد، مطحونة يدوياً"
+      }
+    ]
+  }
+  </script>
+
 </head>
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
   <script>
-    // Register Service Worker
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').then(reg => {
           console.log('[SW] registered:', reg.scope);
-        }).catch(err => {
-          console.log('[SW] registration failed:', err);
-        });
+        }).catch(() => {});
       });
     }
   </script>

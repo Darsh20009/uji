@@ -157,37 +157,8 @@ export default function CheckoutPage() {
   );
 
   // ── Success screen ──
-  if (order) return (
-    <div style={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#F2EADB", padding: "2rem" }}>
-      <div style={{ textAlign: "center", maxWidth: 480, width: "100%" }}>
-        <div style={{ width: 72, height: 72, borderRadius: "50%", background: "rgba(31,57,41,0.08)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.5rem" }}>
-          <CheckCircle size={40} color="#1F3929" strokeWidth={1} />
-        </div>
-        <h2 style={{ fontFamily: serif, fontSize: "2rem", fontWeight: 300, color: "#1C201B", marginBottom: "0.75rem" }}>
-          تم تأكيد طلبك
-        </h2>
-        <p style={{ fontFamily: font, fontSize: "0.9rem", color: "#9BA17B", marginBottom: "0.5rem" }}>
-          رقم الطلب: <strong style={{ color: "#1F3929" }}>{order.orderNumber}</strong>
-        </p>
-        {order.pointsEarned > 0 && user && (
-          <div style={{ display: "flex", alignItems: "center", gap: 8, justifyContent: "center", background: "#F2F7F3", padding: "10px 16px", margin: "0.75rem 0", border: "1px solid #A8C8B0" }}>
-            <Star size={16} color="#1F3929" strokeWidth={1.5} />
-            <span style={{ fontFamily: font, fontSize: "0.85rem", color: "#1F3929" }}>
-              ربحت {order.pointsEarned} نقطة ولاء
-            </span>
-          </div>
-        )}
-        <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center", flexWrap: "wrap", marginTop: "2rem" }}>
-          <a href={`https://wa.me/966552469643?text=رقم طلبي: ${order.orderNumber}`}
-            target="_blank" rel="noopener"
-            style={{ background: "#25D366", color: "#fff", padding: "0.75rem 1.5rem", fontSize: "0.85rem", fontFamily: font, textDecoration: "none", borderRadius: 4, display: "flex", alignItems: "center", gap: 6 }}>
-            تواصل عبر واتساب
-          </a>
-          <Link href="/" className="btn-outline">العودة للرئيسية</Link>
-        </div>
-      </div>
-    </div>
-  );
+  if (order) return <OrderSuccess order={order} user={user} font={font} serif={serif} mono={mono} />;
+
 
   // ── Main checkout ──
   return (

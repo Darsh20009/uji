@@ -1,31 +1,52 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import {
   X, Plus, Pencil, Trash2, Package, ShoppingBag,
   Settings2, Mail, LogOut, Upload, LayoutDashboard,
   TrendingUp, Users, ChevronDown, Check, Menu, Tag,
-  Star, CreditCard, MapPin, Banknote, Truck,
+  Star, CreditCard, MapPin, Banknote, Truck, Eye,
+  BarChart2, UserCheck, Shield, Receipt, CheckCircle2,
+  XCircle, Clock, AlertCircle, ExternalLink, RefreshCw,
 } from "lucide-react";
 import PhoneInput, { COUNTRIES, type Country } from "../components/PhoneInput";
 
-type Tab = "dashboard" | "products" | "orders" | "customers" | "coupons" | "reviews" | "settings";
+type Tab = "dashboard" | "analytics" | "products" | "orders" | "employees" | "customers" | "coupons" | "reviews" | "settings";
 const ADMIN_PHONE = "0552469643";
 
-/* ─── Status maps ─── */
 const STATUS_AR: Record<string, string> = {
-  pending: "معلق", confirmed: "مؤكد",
-  shipped: "جاري الشحن", delivered: "تم التسليم", cancelled: "ملغي",
+  pending: "معلق", pending_payment: "بانتظار الدفع",
+  confirmed: "مؤكد", shipped: "جاري الشحن",
+  delivered: "تم التسليم", cancelled: "ملغي",
 };
 const STATUS_COLOR: Record<string, string> = {
-  pending:   "bg-amber-50 text-amber-700 border-amber-200",
-  confirmed: "bg-blue-50 text-blue-700 border-blue-200",
-  shipped:   "bg-violet-50 text-violet-700 border-violet-200",
-  delivered: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  cancelled: "bg-red-50 text-red-700 border-red-200",
+  pending:         "bg-amber-50 text-amber-700 border-amber-200",
+  pending_payment: "bg-orange-50 text-orange-700 border-orange-200",
+  confirmed:       "bg-blue-50 text-blue-700 border-blue-200",
+  shipped:         "bg-violet-50 text-violet-700 border-violet-200",
+  delivered:       "bg-emerald-50 text-emerald-700 border-emerald-200",
+  cancelled:       "bg-red-50 text-red-700 border-red-200",
+};
+const RECEIPT_COLOR: Record<string, string> = {
+  none:     "bg-stone-50 text-stone-400 border-stone-200",
+  pending:  "bg-yellow-50 text-yellow-700 border-yellow-200",
+  approved: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  rejected: "bg-red-50 text-red-700 border-red-200",
+};
+const RECEIPT_AR: Record<string, string> = {
+  none: "—", pending: "إيصال بانتظار المراجعة",
+  approved: "إيصال مقبول", rejected: "إيصال مرفوض",
 };
 
-/* ─── Shared mini components ─── */
+const PERMISSIONS_LIST = [
+  { key: "manage_orders",    label: "إدارة الطلبات",    icon: <ShoppingBag size={13} /> },
+  { key: "manage_products",  label: "إدارة المنتجات",   icon: <Package size={13} /> },
+  { key: "manage_customers", label: "إدارة العملاء",    icon: <Users size={13} /> },
+  { key: "manage_coupons",   label: "إدارة الكوبونات",  icon: <Tag size={13} /> },
+  { key: "manage_reviews",   label: "مراجعة التقييمات", icon: <Star size={13} /> },
+  { key: "view_analytics",   label: "عرض التحليلات",    icon: <BarChart2 size={13} /> },
+];
+
 function Badge({ status }: { status: string }) {
   return (
     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${STATUS_COLOR[status] || "bg-gray-50 text-gray-700 border-gray-200"}`}>
@@ -34,11 +55,20 @@ function Badge({ status }: { status: string }) {
   );
 }
 
-function StatCard({ label, value, icon, sub }: { label: string; value: string | number; icon: React.ReactNode; sub?: string }) {
+function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <button type="button" onClick={() => onChange(!value)}
+      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${value ? "bg-[#1F3929]" : "bg-stone-200"}`}>
+      <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition-transform ${value ? "translate-x-4" : "translate-x-1"}`} />
+    </button>
+  );
+}
+
+function StatCard({ label, value, icon, sub, color }: { label: string; value: string | number; icon: React.ReactNode; sub?: string; color?: string }) {
   return (
     <div className="bg-white rounded-2xl border border-stone-100 p-5 flex items-start gap-4 shadow-sm">
-      <div className="w-10 h-10 rounded-xl bg-[#1F3929]/8 flex items-center justify-center text-[#1F3929] shrink-0"
-        style={{ background: "rgba(31,57,41,0.08)" }}>
+      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${color || "text-[#1F3929]"}`}
+        style={{ background: color ? undefined : "rgba(31,57,41,0.08)" }}>
         {icon}
       </div>
       <div>
@@ -63,10 +93,9 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
   const doLogin = async (e: React.FormEvent) => {
     e.preventDefault(); setLoading(true); setError("");
     try { await api.post("/auth/login", { phone, password: pass }); onLogin(); }
-    catch (e: any) { setError(e.message?.includes("401") ? "بيانات غير صحيحة" : e.message || "خطأ في تسجيل الدخول"); }
+    catch { setError("بيانات غير صحيحة"); }
     setLoading(false);
   };
-
   const doSetup = async (e: React.FormEvent) => {
     e.preventDefault(); setLoading(true); setError("");
     try { await api.post("/auth/admin-setup", { password: newPass }); setSetupMode(false); setPass(newPass); }
@@ -77,55 +106,36 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
   return (
     <div className="min-h-screen bg-[#F2EADB] flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
-        {/* Logo */}
         <div className="text-center mb-8">
           <img src="/assets/brand/uji-logo-forest-green-transparent.png" alt="UJI" className="h-14 mx-auto mb-3 object-contain" />
           <p className="text-xs tracking-[0.3em] text-[#9BA17B] uppercase font-light">Admin Panel</p>
         </div>
-
-        {/* Card */}
         <div className="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
           <div className="bg-[#1F3929] px-6 py-5">
             <h1 className="text-[#F2EADB] font-light text-lg" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
               {setupMode ? "إعداد حساب المدير" : "مرحباً بعودتك"}
             </h1>
-            <p className="text-[#9BA17B] text-xs mt-0.5">
-              {setupMode ? "أنشئ كلمة مرور للمرة الأولى" : "سجّل دخولك للوحة الإدارة"}
-            </p>
+            <p className="text-[#9BA17B] text-xs mt-0.5">{setupMode ? "أنشئ كلمة مرور للمرة الأولى" : "سجّل دخولك للوحة الإدارة"}</p>
           </div>
-
           <div className="p-6">
             {!setupMode ? (
               <form onSubmit={doLogin} className="flex flex-col gap-4">
                 <div>
                   <label className="block text-xs tracking-widest text-[#9BA17B] uppercase mb-2">رقم الجوال</label>
-                  <PhoneInput
-                    theme="light"
-                    value={phone}
-                    onChange={(num, c) => { setPhone(num); setCountry(c); }}
-                    countryCode={country.code}
-                    onCountryChange={setCountry}
-                    style={{ height: 44, border: "1px solid #e7e5e4", borderRadius: 8 }}
-                  />
+                  <PhoneInput theme="light" value={phone} onChange={(num, c) => { setPhone(num); setCountry(c); }}
+                    countryCode={country.code} onCountryChange={setCountry} style={{ height: 44, border: "1px solid #e7e5e4", borderRadius: 8 }} />
                 </div>
                 <div>
                   <label className="block text-xs tracking-widest text-[#9BA17B] uppercase mb-2">كلمة المرور</label>
-                  <input
-                    type="password"
-                    value={pass}
-                    onChange={e => setPass(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full h-11 px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none focus:border-[#9BA17B]"
-                    style={{ fontFamily: "inherit" }}
-                  />
+                  <input type="password" value={pass} onChange={e => setPass(e.target.value)} placeholder="••••••••"
+                    className="w-full h-11 px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none focus:border-[#9BA17B]" />
                 </div>
                 {error && <p className="text-red-500 text-sm">{error}</p>}
                 <button type="submit" disabled={loading}
-                  className="h-11 rounded-lg bg-[#1F3929] text-[#F2EADB] text-sm tracking-widest uppercase font-light transition-opacity hover:opacity-90 disabled:opacity-60">
+                  className="h-11 rounded-lg bg-[#1F3929] text-[#F2EADB] text-sm tracking-widest uppercase font-light hover:opacity-90 disabled:opacity-60">
                   {loading ? "جاري الدخول..." : "دخول"}
                 </button>
-                <button type="button" onClick={() => setSetupMode(true)}
-                  className="text-xs text-stone-400 hover:text-stone-600 underline text-center">
+                <button type="button" onClick={() => setSetupMode(true)} className="text-xs text-stone-400 hover:text-stone-600 underline text-center">
                   إعداد حساب المدير لأول مرة
                 </button>
               </form>
@@ -136,17 +146,14 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
                   <label className="block text-xs tracking-widest text-[#9BA17B] uppercase mb-2">كلمة المرور الجديدة</label>
                   <input type="password" value={newPass} onChange={e => setNewPass(e.target.value)}
                     placeholder="٦ أحرف على الأقل" minLength={6} required
-                    className="w-full h-11 px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none focus:border-[#9BA17B]"
-                    style={{ fontFamily: "inherit" }} />
+                    className="w-full h-11 px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none focus:border-[#9BA17B]" />
                 </div>
                 {error && <p className="text-red-500 text-sm">{error}</p>}
                 <button type="submit" disabled={loading}
                   className="h-11 rounded-lg bg-[#1F3929] text-[#F2EADB] text-sm tracking-widest uppercase font-light hover:opacity-90 disabled:opacity-60">
-                  {loading ? "جاري الحفظ..." : "حفظ وتسجيل الدخول"}
+                  {loading ? "جاري الحفظ..." : "حفظ"}
                 </button>
-                <button type="button" onClick={() => setSetupMode(false)} className="text-xs text-stone-400 hover:text-stone-600 text-center">
-                  ← رجوع
-                </button>
+                <button type="button" onClick={() => setSetupMode(false)} className="text-xs text-stone-400 text-center">← رجوع</button>
               </form>
             )}
           </div>
@@ -156,32 +163,45 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
   );
 }
 
-/* ─── Sidebar nav item ─── */
-function NavItem({ active, icon, label, onClick }: { active: boolean; icon: React.ReactNode; label: string; onClick: () => void }) {
+function NavItem({ active, icon, label, onClick, badge }: { active: boolean; icon: React.ReactNode; label: string; onClick: () => void; badge?: number }) {
   return (
     <button onClick={onClick}
-      className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-all ${
-        active
-          ? "bg-[#1F3929] text-[#F2EADB] shadow-sm"
-          : "text-stone-500 hover:bg-stone-100 hover:text-stone-700"
-      }`}>
+      className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-all ${active ? "bg-[#1F3929] text-[#F2EADB] shadow-sm" : "text-stone-500 hover:bg-stone-100 hover:text-stone-700"}`}>
       <span className="shrink-0">{icon}</span>
-      <span>{label}</span>
+      <span className="flex-1 text-right">{label}</span>
+      {badge ? <span className="bg-red-500 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center shrink-0">{badge > 9 ? "9+" : badge}</span> : null}
     </button>
   );
 }
 
-/* ─── Main Admin Shell ─── */
+/* ─── Main Shell ─── */
 export default function AdminPage() {
   const [tab, setTab] = useState<Tab>("dashboard");
   const [authed, setAuthed] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const qc = useQueryClient();
+
   const { data: me, isLoading } = useQuery({
     queryKey: ["me"],
     queryFn: () => api.get("/auth/me").catch(() => null),
     retry: false,
   });
+
+  const { data: visitorData } = useQuery({
+    queryKey: ["admin-visitors"],
+    queryFn: () => api.get("/admin/visitors"),
+    refetchInterval: 30_000,
+    enabled: !!(me || authed),
+  });
+
+  const { data: statsData } = useQuery({
+    queryKey: ["admin-stats"],
+    queryFn: () => api.get("/admin/stats"),
+    refetchInterval: 60_000,
+    enabled: !!(me || authed),
+  });
+
+  const pendingReceipts = (statsData as any)?.pendingReceipts || 0;
 
   if (isLoading) return (
     <div className="min-h-screen bg-[#F2EADB] flex items-center justify-center">
@@ -189,53 +209,49 @@ export default function AdminPage() {
     </div>
   );
   if (!me && !authed) return <LoginScreen onLogin={() => { setAuthed(true); qc.invalidateQueries({ queryKey: ["me"] }); }} />;
-  const isAdmin = (me as any)?.phone === ADMIN_PHONE || authed;
+  const isAdmin = (me as any)?.phone === ADMIN_PHONE || (me as any)?.role === "admin" || authed;
   if (!isAdmin) return <LoginScreen onLogin={() => { setAuthed(true); qc.invalidateQueries({ queryKey: ["me"] }); }} />;
 
   const NAV = [
-    { key: "dashboard" as Tab, label: "لوحة التحكم", icon: <LayoutDashboard size={16} /> },
-    { key: "products"  as Tab, label: "المنتجات",    icon: <Package size={16} /> },
-    { key: "orders"    as Tab, label: "الطلبات",     icon: <ShoppingBag size={16} /> },
-    { key: "customers" as Tab, label: "العملاء والموظفون", icon: <Users size={16} /> },
-    { key: "coupons"   as Tab, label: "كوبونات الخصم", icon: <Tag size={16} /> },
-    { key: "reviews"   as Tab, label: "التقييمات",   icon: <Star size={16} /> },
-    { key: "settings"  as Tab, label: "الإعدادات",   icon: <Settings2 size={16} /> },
+    { key: "dashboard"  as Tab, label: "لوحة التحكم",       icon: <LayoutDashboard size={16} /> },
+    { key: "analytics"  as Tab, label: "التحليلات",          icon: <BarChart2 size={16} /> },
+    { key: "products"   as Tab, label: "المنتجات",           icon: <Package size={16} /> },
+    { key: "orders"     as Tab, label: "الطلبات",            icon: <ShoppingBag size={16} />, badge: pendingReceipts },
+    { key: "employees"  as Tab, label: "الموظفون",           icon: <UserCheck size={16} /> },
+    { key: "customers"  as Tab, label: "العملاء",            icon: <Users size={16} /> },
+    { key: "coupons"    as Tab, label: "كوبونات الخصم",      icon: <Tag size={16} /> },
+    { key: "reviews"    as Tab, label: "التقييمات",          icon: <Star size={16} /> },
+    { key: "settings"   as Tab, label: "الإعدادات",          icon: <Settings2 size={16} /> },
   ];
 
   const logout = () => { api.post("/auth/logout", {}); window.location.href = "/"; };
+  const visitors = (visitorData as any)?.count ?? 0;
 
   return (
-    <div className="min-h-screen bg-stone-50 flex" dir="rtl" style={{ fontFamily: "'IBM Plex Sans Arabic', sans-serif" }}>
-
-      {/* ── Sidebar (desktop) ── */}
+    <div className="min-h-screen bg-stone-50 flex" dir="rtl" style={{ fontFamily: "'IBM Plex Sans Arabic', 'Cairo', sans-serif" }}>
+      {/* Desktop Sidebar */}
       <aside className="hidden lg:flex flex-col w-60 bg-white border-l border-stone-100 min-h-screen sticky top-0 h-screen shrink-0">
-        {/* Logo */}
         <div className="px-5 py-5 border-b border-stone-100">
           <img src="/assets/brand/uji-logo-forest-green-transparent.png" alt="UJI" className="h-9 object-contain" />
           <p className="text-[10px] tracking-[0.22em] text-[#9BA17B] uppercase mt-1.5">Admin Panel</p>
         </div>
-
-        {/* Nav */}
         <nav className="flex-1 p-3 flex flex-col gap-1 overflow-y-auto">
           {NAV.map(n => (
-            <NavItem key={n.key} active={tab === n.key} icon={n.icon} label={n.label} onClick={() => setTab(n.key)} />
+            <NavItem key={n.key} active={tab === n.key} icon={n.icon} label={n.label} badge={n.badge} onClick={() => setTab(n.key)} />
           ))}
         </nav>
-
-        {/* Footer */}
         <div className="p-3 border-t border-stone-100">
           <button onClick={logout}
             className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-stone-400 hover:bg-red-50 hover:text-red-500 transition-colors">
-            <LogOut size={16} />
-            <span>تسجيل الخروج</span>
+            <LogOut size={16} /><span>تسجيل الخروج</span>
           </button>
-          <a href="/" className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-stone-400 hover:bg-stone-100 hover:text-stone-700 transition-colors mt-1">
+          <a href="/" className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-stone-400 hover:bg-stone-100 hover:text-stone-700 mt-1">
             <span>← العودة للمتجر</span>
           </a>
         </div>
       </aside>
 
-      {/* ── Mobile sidebar overlay ── */}
+      {/* Mobile sidebar */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setSidebarOpen(false)} />
@@ -244,15 +260,14 @@ export default function AdminPage() {
               <img src="/assets/brand/uji-logo-forest-green-transparent.png" alt="UJI" className="h-8 object-contain" />
               <button onClick={() => setSidebarOpen(false)} className="text-stone-400"><X size={20} /></button>
             </div>
-            <nav className="flex-1 p-3 flex flex-col gap-1">
+            <nav className="flex-1 p-3 flex flex-col gap-1 overflow-y-auto">
               {NAV.map(n => (
-                <NavItem key={n.key} active={tab === n.key} icon={n.icon} label={n.label}
+                <NavItem key={n.key} active={tab === n.key} icon={n.icon} label={n.label} badge={n.badge}
                   onClick={() => { setTab(n.key); setSidebarOpen(false); }} />
               ))}
             </nav>
             <div className="p-3 border-t border-stone-100">
-              <button onClick={logout}
-                className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-stone-400 hover:bg-red-50 hover:text-red-500">
+              <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-stone-400 hover:bg-red-50 hover:text-red-500">
                 <LogOut size={16} /><span>تسجيل الخروج</span>
               </button>
             </div>
@@ -260,35 +275,45 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* ── Main content ── */}
+      {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Top bar */}
         <header className="bg-white border-b border-stone-100 px-5 py-3 flex items-center justify-between sticky top-0 z-30">
           <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-lg hover:bg-stone-100">
             <Menu size={20} className="text-stone-500" />
           </button>
           <div className="hidden lg:block">
-            <h2 className="text-sm font-semibold text-stone-700">
-              {NAV.find(n => n.key === tab)?.label}
-            </h2>
+            <h2 className="text-sm font-semibold text-stone-700">{NAV.find(n => n.key === tab)?.label}</h2>
           </div>
           <div className="flex items-center gap-3 lg:mr-auto">
+            {/* Live visitors */}
+            <div className="flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-100">
+              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+              {visitors} زائر الآن
+            </div>
+            {pendingReceipts > 0 && (
+              <button onClick={() => setTab("orders")}
+                className="flex items-center gap-1.5 text-xs text-amber-700 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200 hover:bg-amber-100 transition-colors">
+                <Receipt size={12} />
+                {pendingReceipts} إيصال بانتظار المراجعة
+              </button>
+            )}
             <div className="flex items-center gap-2 text-xs text-stone-500 bg-stone-50 px-3 py-1.5 rounded-full border border-stone-100">
-              <div className="w-2 h-2 bg-emerald-400 rounded-full" />
+              <Shield size={12} />
               مدير
             </div>
           </div>
         </header>
 
-        {/* Page content */}
         <main className="flex-1 p-4 lg:p-6 overflow-auto">
-          {tab === "dashboard" && <AdminDashboard onNavigate={setTab} />}
-          {tab === "products"  && <AdminProducts />}
-          {tab === "orders"    && <AdminOrders />}
-          {tab === "customers" && <AdminCustomers />}
-          {tab === "coupons"   && <AdminCoupons />}
-          {tab === "reviews"   && <AdminReviews />}
-          {tab === "settings"  && <AdminSettings />}
+          {tab === "dashboard"  && <AdminDashboard onNavigate={setTab} stats={statsData} visitors={visitors} />}
+          {tab === "analytics"  && <AdminAnalytics stats={statsData} />}
+          {tab === "products"   && <AdminProducts />}
+          {tab === "orders"     && <AdminOrders />}
+          {tab === "employees"  && <AdminEmployees />}
+          {tab === "customers"  && <AdminCustomers />}
+          {tab === "coupons"    && <AdminCoupons />}
+          {tab === "reviews"    && <AdminReviews />}
+          {tab === "settings"   && <AdminSettings />}
         </main>
       </div>
     </div>
@@ -296,70 +321,206 @@ export default function AdminPage() {
 }
 
 /* ─── Dashboard ─── */
-function AdminDashboard({ onNavigate }: { onNavigate: (t: Tab) => void }) {
+function AdminDashboard({ onNavigate, stats, visitors }: { onNavigate: (t: Tab) => void; stats: any; visitors: number }) {
   const { data: products = [] } = useQuery({ queryKey: ["admin-products"], queryFn: () => api.get("/admin/products") });
   const { data: orders = [] } = useQuery({ queryKey: ["admin-orders"], queryFn: () => api.get("/admin/orders") });
 
-  const revenue = orders.filter((o: any) => o.status !== "cancelled").reduce((s: number, o: any) => s + (o.total || 0), 0);
-  const pending = orders.filter((o: any) => o.status === "pending").length;
-  const recentOrders = [...orders].sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 5);
+  const pending = (orders as any[]).filter((o: any) => o.status === "pending").length;
+  const pendingReceipts = (orders as any[]).filter((o: any) => (o as any).receiptStatus === "pending").length;
+  const recentOrders = [...(orders as any[])].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 6);
+  const revenue = stats?.totalRevenue || 0;
 
   return (
     <div className="space-y-6">
-      {/* Welcome */}
       <div className="bg-gradient-to-l from-[#1F3929] to-[#16281D] rounded-2xl p-6 text-white">
         <p className="text-[#9BA17B] text-xs tracking-widest uppercase mb-1">UJI MATCHA — ADMIN</p>
         <h1 className="text-2xl font-light" style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif" }}>مرحباً بك في لوحة التحكم</h1>
         <p className="text-[#9BA17B] text-sm mt-1">إدارة متجرك من مكان واحد.</p>
       </div>
 
-      {/* Stats grid */}
+      {/* Alerts */}
+      {pendingReceipts > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl px-5 py-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <Receipt size={18} className="text-amber-600" />
+            <p className="text-sm text-amber-800 font-medium">{pendingReceipts} إيصال دفع بانتظار مراجعتك</p>
+          </div>
+          <button onClick={() => onNavigate("orders")} className="text-xs text-amber-700 font-semibold hover:text-amber-900">مراجعة الآن ←</button>
+        </div>
+      )}
+
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="إجمالي الطلبات" value={orders.length} icon={<ShoppingBag size={18} />} />
-        <StatCard label="طلبات معلقة" value={pending} icon={<TrendingUp size={18} />} sub="تحتاج مراجعة" />
-        <StatCard label="الإيرادات" value={revenue.toFixed(0) + " ر.س"} icon={<TrendingUp size={18} />} />
-        <StatCard label="المنتجات" value={products.length} icon={<Package size={18} />} />
+        <StatCard label="إجمالي الطلبات" value={(orders as any[]).length} icon={<ShoppingBag size={18} />} />
+        <StatCard label="طلبات معلقة" value={pending} icon={<Clock size={18} />} sub="تحتاج مراجعة" />
+        <StatCard label="الإيرادات الكلية" value={revenue.toFixed(0) + " ر.س"} icon={<TrendingUp size={18} />} />
+        <StatCard label="زوار الآن" value={visitors} icon={<Eye size={18} />} sub="آخر 5 دقائق" />
       </div>
 
-      {/* Recent orders */}
-      <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-stone-50 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-stone-700">آخر الطلبات</h3>
-          <button onClick={() => onNavigate("orders")} className="text-xs text-[#9BA17B] hover:text-[#1F3929]">عرض الكل →</button>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent orders */}
+        <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+          <div className="px-5 py-4 border-b border-stone-50 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-stone-700">آخر الطلبات</h3>
+            <button onClick={() => onNavigate("orders")} className="text-xs text-[#9BA17B] hover:text-[#1F3929]">عرض الكل →</button>
+          </div>
+          <div className="divide-y divide-stone-50">
+            {recentOrders.length === 0 && <p className="text-center text-stone-400 py-8 text-sm">لا توجد طلبات بعد</p>}
+            {recentOrders.map((o: any) => (
+              <div key={o._id} className="px-5 py-3 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-xs font-medium text-stone-700 truncate">{o.orderNumber}</p>
+                  <p className="text-xs text-stone-400 truncate">{o.customer?.name}</p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  {o.receiptStatus === "pending" && (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                      <Receipt size={9} /> إيصال
+                    </span>
+                  )}
+                  <span className="text-sm font-semibold text-[#1F3929]">{o.total?.toFixed(0)} ر.س</span>
+                  <Badge status={o.status} />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="divide-y divide-stone-50">
-          {recentOrders.length === 0 && (
-            <p className="text-center text-stone-400 py-8 text-sm">لا توجد طلبات بعد</p>
-          )}
-          {recentOrders.map((o: any) => (
-            <div key={o._id} className="px-5 py-3 flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-sm font-medium text-stone-700 truncate">{o.orderNumber}</p>
-                <p className="text-xs text-stone-400 truncate">{o.customer?.name} — {o.customer?.phone}</p>
+
+        {/* Quick actions */}
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-stone-700 mb-4">إجراءات سريعة</h3>
+          {[
+            { tab: "products" as Tab,  icon: <Package size={18} />,     label: "إدارة المنتجات",   sub: `${(products as any[]).length} منتج` },
+            { tab: "analytics" as Tab, icon: <BarChart2 size={18} />,   label: "عرض التحليلات",    sub: `${stats?.thisMonthRev?.toFixed(0) || 0} ر.س هذا الشهر` },
+            { tab: "employees" as Tab, icon: <UserCheck size={18} />,   label: "إدارة الموظفين",   sub: `${stats?.totalEmployees || 0} موظف` },
+            { tab: "coupons" as Tab,   icon: <Tag size={18} />,         label: "كوبونات الخصم",    sub: "إضافة وإدارة الكوبونات" },
+          ].map(({ tab: t, icon, label, sub }) => (
+            <button key={t} onClick={() => onNavigate(t)}
+              className="w-full bg-white rounded-xl border border-stone-100 px-4 py-3 text-right hover:border-[#9BA17B] transition-colors flex items-center gap-4">
+              <span className="text-[#1F3929]">{icon}</span>
+              <div>
+                <p className="text-sm font-semibold text-stone-700">{label}</p>
+                <p className="text-xs text-stone-400 mt-0.5">{sub}</p>
               </div>
-              <div className="flex items-center gap-3 shrink-0">
-                <span className="text-sm font-semibold text-[#1F3929]">{o.total?.toFixed(0)} ر.س</span>
-                <Badge status={o.status} />
-              </div>
-            </div>
+            </button>
           ))}
         </div>
       </div>
+    </div>
+  );
+}
 
-      {/* Quick actions */}
-      <div className="grid grid-cols-2 gap-4">
-        <button onClick={() => onNavigate("products")}
-          className="bg-white rounded-2xl border border-stone-100 p-5 text-right hover:border-[#9BA17B] transition-colors">
-          <Package size={20} className="text-[#1F3929] mb-3" />
-          <p className="text-sm font-semibold text-stone-700">إدارة المنتجات</p>
-          <p className="text-xs text-stone-400 mt-1">{products.length} منتج</p>
-        </button>
-        <button onClick={() => onNavigate("orders")}
-          className="bg-white rounded-2xl border border-stone-100 p-5 text-right hover:border-[#9BA17B] transition-colors">
-          <ShoppingBag size={20} className="text-[#1F3929] mb-3" />
-          <p className="text-sm font-semibold text-stone-700">الطلبات</p>
-          <p className="text-xs text-stone-400 mt-1">{pending} معلق من أصل {orders.length}</p>
-        </button>
+/* ─── Analytics ─── */
+function AdminAnalytics({ stats }: { stats: any }) {
+  const { data: orders = [] } = useQuery({ queryKey: ["admin-orders"], queryFn: () => api.get("/admin/orders") });
+
+  const dailyRevenue: Record<string, number> = stats?.dailyRevenue || {};
+  const byStatus: Record<string, number> = stats?.byStatus || {};
+  const thisMonth = stats?.thisMonthRev || 0;
+  const lastMonth = stats?.lastMonthRev || 0;
+  const growth = lastMonth > 0 ? (((thisMonth - lastMonth) / lastMonth) * 100).toFixed(1) : "—";
+
+  // Last 7 days from dailyRevenue
+  const last7: { date: string; rev: number }[] = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 86400000).toISOString().split("T")[0];
+    last7.push({ date: d, rev: dailyRevenue[d] || 0 });
+  }
+  const maxRev = Math.max(...last7.map(d => d.rev), 1);
+
+  // Top payment methods
+  const pmCounts: Record<string, number> = {};
+  (orders as any[]).forEach((o: any) => { pmCounts[o.paymentMethod] = (pmCounts[o.paymentMethod] || 0) + 1; });
+
+  const PM_AR: Record<string, string> = { cod: "الدفع عند الاستلام", bank: "تحويل بنكي", stcpay: "STC Pay", geidea: "بطاقة ائتمانية" };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-lg font-semibold text-stone-800">التحليلات</h2>
+        <p className="text-xs text-stone-400 mt-0.5">نظرة شاملة على أداء المتجر</p>
+      </div>
+
+      {/* KPIs */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard label="إيرادات هذا الشهر" value={thisMonth.toFixed(0) + " ر.س"} icon={<TrendingUp size={18} />}
+          sub={lastMonth > 0 ? `${growth}% مقارنة بالشهر الماضي` : undefined} />
+        <StatCard label="إيرادات الشهر الماضي" value={lastMonth.toFixed(0) + " ر.س"} icon={<BarChart2 size={18} />} />
+        <StatCard label="إجمالي الطلبات" value={stats?.totalOrders || 0} icon={<ShoppingBag size={18} />} />
+        <StatCard label="إجمالي العملاء" value={stats?.totalCustomers || 0} icon={<Users size={18} />} />
+      </div>
+
+      {/* 7-day revenue chart */}
+      <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-5">
+        <h3 className="text-sm font-semibold text-stone-700 mb-5">الإيرادات — آخر 7 أيام</h3>
+        <div className="flex items-end gap-2 h-40">
+          {last7.map(d => {
+            const pct = maxRev > 0 ? (d.rev / maxRev) * 100 : 0;
+            const shortDate = d.date.slice(5); // MM-DD
+            return (
+              <div key={d.date} className="flex-1 flex flex-col items-center gap-1">
+                <p className="text-[10px] text-stone-400 font-mono">{d.rev > 0 ? d.rev.toFixed(0) : ""}</p>
+                <div className="w-full flex items-end justify-center" style={{ height: 100 }}>
+                  <div
+                    className="w-full rounded-t-lg transition-all duration-500"
+                    style={{
+                      height: `${Math.max(pct, d.rev > 0 ? 4 : 2)}%`,
+                      background: d.rev > 0 ? "#1F3929" : "#e7e5e4",
+                    }}
+                  />
+                </div>
+                <p className="text-[10px] text-stone-400">{shortDate}</p>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Orders by status */}
+        <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-5">
+          <h3 className="text-sm font-semibold text-stone-700 mb-4">الطلبات حسب الحالة</h3>
+          <div className="space-y-3">
+            {Object.entries(byStatus).sort((a, b) => b[1] - a[1]).map(([status, count]) => {
+              const total = Object.values(byStatus).reduce((s, v) => s + v, 0) || 1;
+              const pct = ((count / total) * 100).toFixed(0);
+              return (
+                <div key={status} className="space-y-1">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-stone-600">{STATUS_AR[status] || status}</span>
+                    <span className="font-semibold text-stone-700">{count} ({pct}%)</span>
+                  </div>
+                  <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-[#1F3929] rounded-full transition-all" style={{ width: `${pct}%` }} />
+                  </div>
+                </div>
+              );
+            })}
+            {Object.keys(byStatus).length === 0 && <p className="text-sm text-stone-400 text-center py-4">لا توجد طلبات بعد</p>}
+          </div>
+        </div>
+
+        {/* Payment methods */}
+        <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-5">
+          <h3 className="text-sm font-semibold text-stone-700 mb-4">طرق الدفع الأكثر استخداماً</h3>
+          <div className="space-y-3">
+            {Object.entries(pmCounts).sort((a, b) => b[1] - a[1]).map(([pm, count]) => {
+              const total = Object.values(pmCounts).reduce((s, v) => s + v, 0) || 1;
+              const pct = ((count / total) * 100).toFixed(0);
+              return (
+                <div key={pm} className="space-y-1">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-stone-600">{PM_AR[pm] || pm}</span>
+                    <span className="font-semibold text-stone-700">{count} ({pct}%)</span>
+                  </div>
+                  <div className="h-2 bg-stone-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-[#9BA17B] rounded-full" style={{ width: `${pct}%` }} />
+                  </div>
+                </div>
+              );
+            })}
+            {Object.keys(pmCounts).length === 0 && <p className="text-sm text-stone-400 text-center py-4">لا توجد بيانات</p>}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -378,49 +539,35 @@ function AdminProducts() {
 
   return (
     <div className="space-y-5">
-      {/* Header */}
       <div className="flex items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold text-stone-800">المنتجات</h2>
-          <p className="text-xs text-stone-400 mt-0.5">{products.length} منتج في المتجر</p>
+          <p className="text-xs text-stone-400 mt-0.5">{(products as any[]).length} منتج في المتجر</p>
         </div>
-        <button
-          onClick={() => { setEditing(null); setModal("add"); }}
+        <button onClick={() => { setEditing(null); setModal("add"); }}
           className="flex items-center gap-2 h-10 px-4 rounded-xl bg-[#1F3929] text-[#F2EADB] text-sm hover:bg-[#16281D] transition-colors">
           <Plus size={15} /> منتج جديد
         </button>
       </div>
-
-      {/* Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        {products.map((p: any) => (
+        {(products as any[]).map((p: any) => (
           <div key={p._id} className="bg-white rounded-2xl border border-stone-100 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
             <div className="relative aspect-square bg-stone-50">
-              <img
-                src={p.images?.[0] || "https://via.placeholder.com/240"}
-                className="w-full h-full object-cover"
-                alt={p.name}
-                onError={e => { (e.target as any).src = "https://via.placeholder.com/240"; }}
-              />
-              {!p.isActive && (
-                <span className="absolute top-2 right-2 bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full">مخفي</span>
-              )}
-              {p.featured && (
-                <span className="absolute top-2 left-2 bg-[#1F3929] text-[#9BA17B] text-[10px] px-2 py-0.5 rounded-full">مميز</span>
-              )}
+              <img src={p.images?.[0] || "https://via.placeholder.com/240"} className="w-full h-full object-cover" alt={p.name}
+                onError={e => { (e.target as any).src = "https://via.placeholder.com/240"; }} />
+              {!p.isActive && <span className="absolute top-2 right-2 bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full">مخفي</span>}
+              {p.featured && <span className="absolute top-2 left-2 bg-[#1F3929] text-[#9BA17B] text-[10px] px-2 py-0.5 rounded-full">مميز</span>}
             </div>
             <div className="p-3">
               <p className="text-sm font-medium text-stone-800 truncate">{p.name}</p>
               <p className="text-sm font-bold text-[#1F3929] mt-1">{p.price?.toFixed(2)} ر.س</p>
               <p className="text-xs text-stone-400 mt-0.5">المخزون: {p.stock}</p>
               <div className="flex gap-2 mt-3">
-                <button
-                  onClick={() => { setEditing(p); setModal("edit"); }}
+                <button onClick={() => { setEditing(p); setModal("edit"); }}
                   className="flex-1 flex items-center justify-center gap-1.5 h-8 rounded-lg border border-stone-200 text-xs text-stone-600 hover:bg-stone-50 transition-colors">
                   <Pencil size={11} /> تعديل
                 </button>
-                <button
-                  onClick={() => { if (confirm("حذف المنتج؟")) del.mutate(p._id); }}
+                <button onClick={() => { if (confirm("حذف المنتج؟")) del.mutate(p._id); }}
                   className="flex items-center justify-center w-8 h-8 rounded-lg border border-red-100 text-red-400 hover:bg-red-50 transition-colors">
                   <Trash2 size={13} />
                 </button>
@@ -428,22 +575,16 @@ function AdminProducts() {
             </div>
           </div>
         ))}
-
-        {products.length === 0 && (
+        {(products as any[]).length === 0 && (
           <div className="col-span-full py-16 text-center text-stone-400">
             <Package size={32} className="mx-auto mb-3 opacity-30" />
             <p className="text-sm">لا توجد منتجات بعد</p>
           </div>
         )}
       </div>
-
       {modal && (
-        <ProductModal
-          mode={modal}
-          product={editing}
-          onClose={() => setModal(null)}
-          onSaved={() => { setModal(null); qc.invalidateQueries({ queryKey: ["admin-products"] }); }}
-        />
+        <ProductModal mode={modal} product={editing} onClose={() => setModal(null)}
+          onSaved={() => { setModal(null); qc.invalidateQueries({ queryKey: ["admin-products"] }); }} />
       )}
     </div>
   );
@@ -452,18 +593,12 @@ function AdminProducts() {
 /* ─── Product Modal ─── */
 function ProductModal({ mode, product, onClose, onSaved }: { mode: "add" | "edit"; product: any; onClose: () => void; onSaved: () => void }) {
   const [form, setForm] = useState({
-    name: product?.name || "",
-    nameEn: product?.nameEn || "",
-    description: product?.description || "",
-    price: product?.price || "",
-    comparePrice: product?.comparePrice || "",
-    stock: product?.stock ?? 0,
-    category: product?.category || "matcha",
-    matchaType: product?.matchaType || "",
-    isActive: product?.isActive ?? true,
-    featured: product?.featured ?? false,
-    sortOrder: product?.sortOrder ?? 0,
-    existingImages: product?.images || [] as string[],
+    name: product?.name || "", nameEn: product?.nameEn || "",
+    description: product?.description || "", price: product?.price || "",
+    comparePrice: product?.comparePrice || "", stock: product?.stock ?? 0,
+    category: product?.category || "matcha", matchaType: product?.matchaType || "",
+    isActive: product?.isActive ?? true, featured: product?.featured ?? false,
+    sortOrder: product?.sortOrder ?? 0, existingImages: product?.images || [] as string[],
   });
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
@@ -483,119 +618,64 @@ function ProductModal({ mode, product, onClose, onSaved }: { mode: "add" | "edit
     setLoading(false);
   };
 
-  const inputCls = "w-full h-10 px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none focus:border-[#9BA17B] transition-colors";
-  const labelCls = "block text-xs text-stone-500 mb-1.5";
+  const inp = "w-full h-10 px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none focus:border-[#9BA17B] transition-colors";
+  const lbl = "block text-xs text-stone-500 mb-1.5";
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={e => e.target === e.currentTarget && onClose()}>
       <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl">
-        {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-stone-100 sticky top-0 bg-white rounded-t-2xl">
           <h3 className="text-sm font-semibold text-stone-800">{mode === "add" ? "إضافة منتج جديد" : "تعديل المنتج"}</h3>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-stone-100 text-stone-400"><X size={17} /></button>
         </div>
-
         <form onSubmit={save} className="p-5 space-y-4">
-          {/* Names */}
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className={labelCls}>الاسم بالعربي *</label>
-              <input className={inputCls} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required style={{ fontFamily: "inherit" }} />
-            </div>
-            <div>
-              <label className={labelCls}>الاسم بالإنجليزي</label>
-              <input className={inputCls} value={form.nameEn} onChange={e => setForm({ ...form, nameEn: e.target.value })} style={{ fontFamily: "inherit" }} />
-            </div>
+            <div><label className={lbl}>الاسم بالعربي *</label><input className={inp} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} required /></div>
+            <div><label className={lbl}>الاسم بالإنجليزي</label><input className={inp} value={form.nameEn} onChange={e => setForm({ ...form, nameEn: e.target.value })} /></div>
           </div>
-
-          {/* Description */}
-          <div>
-            <label className={labelCls}>الوصف</label>
-            <textarea className={inputCls + " !h-20 resize-none py-2"} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} style={{ fontFamily: "inherit" }} />
-          </div>
-
-          {/* Price + stock */}
+          <div><label className={lbl}>الوصف</label><textarea className={inp + " !h-20 resize-none py-2"} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} /></div>
           <div className="grid grid-cols-3 gap-3">
-            <div>
-              <label className={labelCls}>السعر (ر.س) *</label>
-              <input type="number" className={inputCls} value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} required min={0} step="0.01" style={{ fontFamily: "inherit" }} />
-            </div>
-            <div>
-              <label className={labelCls}>السعر الأصلي</label>
-              <input type="number" className={inputCls} value={form.comparePrice} onChange={e => setForm({ ...form, comparePrice: e.target.value })} min={0} step="0.01" style={{ fontFamily: "inherit" }} />
-            </div>
-            <div>
-              <label className={labelCls}>المخزون</label>
-              <input type="number" className={inputCls} value={form.stock} onChange={e => setForm({ ...form, stock: Number(e.target.value) })} min={0} style={{ fontFamily: "inherit" }} />
-            </div>
+            <div><label className={lbl}>السعر (ر.س) *</label><input type="number" className={inp} value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} required min={0} step="0.01" /></div>
+            <div><label className={lbl}>السعر الأصلي</label><input type="number" className={inp} value={form.comparePrice} onChange={e => setForm({ ...form, comparePrice: e.target.value })} min={0} step="0.01" /></div>
+            <div><label className={lbl}>المخزون</label><input type="number" className={inp} value={form.stock} onChange={e => setForm({ ...form, stock: Number(e.target.value) })} min={0} /></div>
           </div>
-
-          {/* Category + toggles */}
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className={labelCls}>الفئة</label>
-              <select className={inputCls} value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} style={{ fontFamily: "inherit" }}>
-                <option value="matcha">ماتشا</option>
-                <option value="tools">أدوات</option>
-                <option value="sets">طقم</option>
-                <option value="accessories">إكسسوار</option>
+              <label className={lbl}>الفئة</label>
+              <select className={inp} value={form.category} onChange={e => setForm({ ...form, category: e.target.value })}>
+                <option value="matcha">ماتشا</option><option value="tools">أدوات</option>
+                <option value="sets">طقم</option><option value="accessories">إكسسوار</option>
               </select>
             </div>
-            <div>
-              <label className={labelCls}>الترتيب</label>
-              <input type="number" className={inputCls} value={form.sortOrder} onChange={e => setForm({ ...form, sortOrder: Number(e.target.value) })} min={0} style={{ fontFamily: "inherit" }} />
-            </div>
+            <div><label className={lbl}>الترتيب</label><input type="number" className={inp} value={form.sortOrder} onChange={e => setForm({ ...form, sortOrder: Number(e.target.value) })} min={0} /></div>
           </div>
-
-          {/* Matcha type */}
           <div>
-            <label className={labelCls}>نوع الماتشا — يظهر كشارة على بطاقة المنتج</label>
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                { v: "",           label: "— بدون —",               sub: "" },
-                { v: "ceremonial", label: "✦ فاخر جداً",           sub: "احتفالي — للريتشوال الأصيل" },
-                { v: "everyday",   label: "☕ استخدام يومي",        sub: "متوازن — للاستخدام اليومي" },
-                { v: "culinary",   label: "🧃 تجاري",               sub: "للمشروبات والوصفات" },
-              ].map(opt => (
-                <button
-                  key={opt.v}
-                  type="button"
-                  onClick={() => setForm({ ...form, matchaType: opt.v })}
-                  className={`p-3 rounded-xl border text-right transition-colors ${form.matchaType === opt.v ? "border-[#1F3929] bg-[#F0EBE1]" : "border-stone-200 hover:border-stone-300"}`}>
-                  <p className="text-xs font-semibold text-stone-700">{opt.label}</p>
-                  {opt.sub && <p className="text-[10px] text-stone-400 mt-0.5">{opt.sub}</p>}
+            <label className={lbl}>نوع الماتشا</label>
+            <div className="grid grid-cols-2 gap-2">
+              {[{ v: "", label: "— بدون —" }, { v: "ceremonial", label: "✦ احتفالي" }, { v: "everyday", label: "☕ يومي" }, { v: "culinary", label: "🧃 تجاري" }].map(opt => (
+                <button key={opt.v} type="button" onClick={() => setForm({ ...form, matchaType: opt.v })}
+                  className={`p-2.5 rounded-xl border text-right text-xs transition-colors ${form.matchaType === opt.v ? "border-[#1F3929] bg-[#F0EBE1] font-semibold" : "border-stone-200 hover:border-stone-300"}`}>
+                  {opt.label}
                 </button>
               ))}
             </div>
           </div>
-
-          {/* Checkboxes */}
           <div className="flex gap-6">
-            {[
-              { k: "isActive", label: "نشط" },
-              { k: "featured", label: "مميز" },
-            ].map(({ k, label }) => (
+            {[{ k: "isActive", label: "نشط" }, { k: "featured", label: "مميز" }].map(({ k, label }) => (
               <label key={k} className="flex items-center gap-2 cursor-pointer text-sm text-stone-600">
-                <div
-                  onClick={() => setForm({ ...form, [k]: !(form as any)[k] })}
-                  className={`w-9 h-5 rounded-full transition-colors ${(form as any)[k] ? "bg-[#1F3929]" : "bg-stone-200"} relative`}>
-                  <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${(form as any)[k] ? "translate-x-0.5" : "translate-x-4"}`} />
-                </div>
+                <Toggle value={(form as any)[k]} onChange={v => setForm({ ...form, [k]: v })} />
                 {label}
               </label>
             ))}
           </div>
-
-          {/* Images */}
           <div>
-            <label className={labelCls}>الصور</label>
+            <label className={lbl}>الصور</label>
             {form.existingImages.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-3">
                 {form.existingImages.map((url: string) => (
                   <div key={url} className="relative w-16 h-16">
-                    <img src={url} className="w-full h-full object-cover rounded-lg border border-stone-100" alt="" onError={e => { (e.target as any).style.display = "none"; }} />
-                    <button type="button"
-                      onClick={() => setForm(f => ({ ...f, existingImages: f.existingImages.filter((i: string) => i !== url) }))}
+                    <img src={url} className="w-full h-full object-cover rounded-lg border border-stone-100" alt="" />
+                    <button type="button" onClick={() => setForm(f => ({ ...f, existingImages: f.existingImages.filter((i: string) => i !== url) }))}
                       className="absolute -top-1.5 -left-1.5 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center">×</button>
                   </div>
                 ))}
@@ -608,15 +688,11 @@ function ProductModal({ mode, product, onClose, onSaved }: { mode: "add" | "edit
             </button>
             <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" onChange={e => setFiles(Array.from(e.target.files || []))} />
           </div>
-
           {error && <p className="text-red-500 text-sm">{error}</p>}
-
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose}
-              className="flex-1 h-10 rounded-xl border border-stone-200 text-sm text-stone-600 hover:bg-stone-50">إلغاء</button>
-            <button type="submit" disabled={loading}
-              className="flex-1 h-10 rounded-xl bg-[#1F3929] text-[#F2EADB] text-sm hover:bg-[#16281D] disabled:opacity-60">
-              {loading ? "جاري الحفظ..." : mode === "add" ? "إضافة المنتج" : "حفظ التعديلات"}
+            <button type="button" onClick={onClose} className="flex-1 h-10 rounded-xl border border-stone-200 text-sm text-stone-600 hover:bg-stone-50">إلغاء</button>
+            <button type="submit" disabled={loading} className="flex-1 h-10 rounded-xl bg-[#1F3929] text-[#F2EADB] text-sm hover:bg-[#16281D] disabled:opacity-60">
+              {loading ? "جاري الحفظ..." : mode === "add" ? "إضافة" : "حفظ"}
             </button>
           </div>
         </form>
@@ -630,59 +706,78 @@ function AdminOrders() {
   const { data: orders = [] } = useQuery({ queryKey: ["admin-orders"], queryFn: () => api.get("/admin/orders") });
   const qc = useQueryClient();
   const [selected, setSelected] = useState<any>(null);
+  const [filter, setFilter] = useState<"all" | "pending_receipt">("all");
 
   const upd = useMutation({
     mutationFn: ({ id, status }: any) => api.put(`/admin/orders/${id}`, { status }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-orders"] }),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-orders"] }); qc.invalidateQueries({ queryKey: ["admin-stats"] }); },
+  });
+  const updReceipt = useMutation({
+    mutationFn: ({ id, receiptStatus }: any) => api.put(`/admin/orders/${id}/receipt-status`, { receiptStatus }),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-orders"] }); qc.invalidateQueries({ queryKey: ["admin-stats"] }); setSelected(null); },
   });
   const del = useMutation({
     mutationFn: (id: string) => api.delete(`/admin/orders/${id}`),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-orders"] }); setSelected(null); },
   });
 
-  const revenue = orders.filter((o: any) => o.status !== "cancelled").reduce((s: number, o: any) => s + (o.total || 0), 0);
-  const pending = orders.filter((o: any) => o.status === "pending").length;
+  const displayed = filter === "pending_receipt"
+    ? (orders as any[]).filter((o: any) => o.receiptStatus === "pending")
+    : (orders as any[]);
+
+  const pendingCount = (orders as any[]).filter((o: any) => o.receiptStatus === "pending").length;
+  const revenue = (orders as any[]).filter((o: any) => o.status !== "cancelled").reduce((s: number, o: any) => s + (o.total || 0), 0);
+  const pending = (orders as any[]).filter((o: any) => o.status === "pending").length;
 
   return (
     <div className="space-y-5">
-      {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
-        <StatCard label="إجمالي الطلبات" value={orders.length} icon={<ShoppingBag size={18} />} />
-        <StatCard label="معلقة" value={pending} icon={<TrendingUp size={18} />} />
+        <StatCard label="إجمالي الطلبات" value={(orders as any[]).length} icon={<ShoppingBag size={18} />} />
+        <StatCard label="معلقة" value={pending} icon={<Clock size={18} />} />
         <StatCard label="الإيرادات" value={revenue.toFixed(0) + " ر.س"} icon={<TrendingUp size={18} />} />
       </div>
 
-      {/* List */}
       <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-stone-50">
-          <h3 className="text-sm font-semibold text-stone-700">الطلبات ({orders.length})</h3>
+        <div className="px-5 py-4 border-b border-stone-50 flex items-center justify-between gap-3 flex-wrap">
+          <h3 className="text-sm font-semibold text-stone-700">الطلبات ({(orders as any[]).length})</h3>
+          <div className="flex gap-2">
+            {[
+              { key: "all", label: "الكل" },
+              { key: "pending_receipt", label: `إيصالات بانتظار المراجعة ${pendingCount > 0 ? `(${pendingCount})` : ""}` },
+            ].map(f => (
+              <button key={f.key} onClick={() => setFilter(f.key as any)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${filter === f.key ? "bg-[#1F3929] text-[#F2EADB]" : "bg-stone-50 border border-stone-200 text-stone-600 hover:bg-stone-100"}`}>
+                {f.label}
+              </button>
+            ))}
+          </div>
         </div>
         <div className="divide-y divide-stone-50">
-          {orders.map((o: any) => (
-            <div key={o._id}
-              onClick={() => setSelected(o)}
+          {displayed.map((o: any) => (
+            <div key={o._id} onClick={() => setSelected(o)}
               className={`px-5 py-4 flex items-center justify-between gap-3 cursor-pointer hover:bg-stone-50 transition-colors ${selected?._id === o._id ? "bg-stone-50" : ""}`}>
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-stone-800">{o.orderNumber}</p>
                 <p className="text-xs text-stone-400 truncate mt-0.5">{o.customer?.name} — {o.customer?.phone}</p>
               </div>
-              <div className="flex items-center gap-3 shrink-0">
+              <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
+                {o.receiptStatus === "pending" && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                    <Receipt size={9} /> إيصال معلق
+                  </span>
+                )}
                 <span className="text-sm font-bold text-[#1F3929]">{o.total?.toFixed(0)} ر.س</span>
-                <select
-                  value={o.status}
-                  onClick={e => e.stopPropagation()}
-                  onChange={e => upd.mutate({ id: o._id, status: e.target.value })}
-                  className="text-xs border border-stone-200 rounded-lg px-2 py-1.5 bg-white outline-none cursor-pointer"
-                  style={{ fontFamily: "inherit" }}>
+                <select value={o.status} onClick={e => e.stopPropagation()} onChange={e => upd.mutate({ id: o._id, status: e.target.value })}
+                  className="text-xs border border-stone-200 rounded-lg px-2 py-1.5 bg-white outline-none cursor-pointer">
                   {Object.entries(STATUS_AR).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
                 </select>
               </div>
             </div>
           ))}
-          {orders.length === 0 && (
+          {displayed.length === 0 && (
             <div className="py-16 text-center text-stone-400">
               <ShoppingBag size={32} className="mx-auto mb-3 opacity-30" />
-              <p className="text-sm">لا توجد طلبات بعد</p>
+              <p className="text-sm">{filter === "pending_receipt" ? "لا توجد إيصالات بانتظار المراجعة" : "لا توجد طلبات بعد"}</p>
             </div>
           )}
         </div>
@@ -691,7 +786,7 @@ function AdminOrders() {
       {/* Order detail modal */}
       {selected && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={e => e.target === e.currentTarget && setSelected(null)}>
-          <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl">
+          <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="flex items-center justify-between px-5 py-4 border-b border-stone-100 sticky top-0 bg-white rounded-t-2xl">
               <div>
                 <h3 className="text-sm font-bold text-stone-800">{selected.orderNumber}</h3>
@@ -710,7 +805,7 @@ function AdminOrders() {
 
               {/* Address */}
               <div>
-                <p className="text-xs text-stone-400 mb-2 uppercase tracking-wider">عنوان التوصيل</p>
+                <p className="text-xs text-stone-400 mb-2 uppercase tracking-wider">العنوان</p>
                 <p className="text-sm text-stone-600 leading-relaxed">
                   {selected.address?.city} — {selected.address?.district}<br />
                   {selected.address?.street}
@@ -718,8 +813,8 @@ function AdminOrders() {
                 </p>
                 {selected.address?.mapLink && (
                   <a href={selected.address.mapLink} target="_blank" rel="noopener"
-                    className="inline-flex items-center gap-1.5 mt-2 text-xs text-[#9BA17B] hover:text-[#1F3929] transition-colors">
-                    <MapPin size={12} /> عرض الموقع على الخريطة ←
+                    className="inline-flex items-center gap-1.5 mt-2 text-xs text-[#9BA17B] hover:text-[#1F3929]">
+                    <MapPin size={12} /> عرض على الخريطة <ExternalLink size={11} />
                   </a>
                 )}
               </div>
@@ -727,7 +822,7 @@ function AdminOrders() {
               {/* Items */}
               <div>
                 <p className="text-xs text-stone-400 mb-2 uppercase tracking-wider">المنتجات</p>
-                <div className="space-y-0 divide-y divide-stone-50 rounded-xl border border-stone-100 overflow-hidden">
+                <div className="divide-y divide-stone-50 rounded-xl border border-stone-100 overflow-hidden">
                   {selected.items?.map((item: any, i: number) => (
                     <div key={i} className="flex justify-between items-center px-4 py-3">
                       <span className="text-sm text-stone-700">{item.name} × {item.qty}</span>
@@ -741,14 +836,49 @@ function AdminOrders() {
                 </div>
               </div>
 
-              {/* Payment */}
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-stone-400 mb-1 uppercase tracking-wider">طريقة الدفع</p>
-                  <p className="text-sm text-stone-700">{selected.paymentMethod === "cod" ? "الدفع عند الاستلام" : selected.paymentMethod}</p>
+              {/* Payment + Receipt */}
+              <div>
+                <p className="text-xs text-stone-400 mb-2 uppercase tracking-wider">الدفع</p>
+                <div className="bg-stone-50 rounded-xl p-4 space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-stone-500">طريقة الدفع</span>
+                    <span className="font-medium text-stone-700">
+                      {{ cod: "الدفع عند الاستلام", bank: "تحويل بنكي", stcpay: "STC Pay", geidea: "بطاقة ائتمانية" }[selected.paymentMethod] || selected.paymentMethod}
+                    </span>
+                  </div>
+                  {selected.receiptUrl && (
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-stone-500">الإيصال المرفق</span>
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${RECEIPT_COLOR[selected.receiptStatus]}`}>
+                          {RECEIPT_AR[selected.receiptStatus]}
+                        </span>
+                      </div>
+                      <a href={selected.receiptUrl} target="_blank" rel="noopener"
+                        className="block overflow-hidden rounded-lg border border-stone-200 hover:opacity-90 transition-opacity">
+                        <img src={selected.receiptUrl} alt="إيصال الدفع" className="w-full max-h-48 object-contain bg-stone-100" />
+                      </a>
+                      {selected.receiptStatus === "pending" && (
+                        <div className="flex gap-2 pt-1">
+                          <button onClick={() => updReceipt.mutate({ id: selected._id, receiptStatus: "approved" })}
+                            disabled={updReceipt.isPending}
+                            className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-lg bg-emerald-600 text-white text-sm hover:bg-emerald-700 disabled:opacity-60 transition-colors">
+                            <CheckCircle2 size={14} /> قبول الإيصال وتأكيد الطلب
+                          </button>
+                          <button onClick={() => updReceipt.mutate({ id: selected._id, receiptStatus: "rejected" })}
+                            disabled={updReceipt.isPending}
+                            className="flex-1 flex items-center justify-center gap-1.5 h-9 rounded-lg bg-red-50 text-red-600 border border-red-100 text-sm hover:bg-red-100 disabled:opacity-60 transition-colors">
+                            <XCircle size={14} /> رفض الإيصال
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-                <button
-                  onClick={() => { if (confirm("حذف الطلب نهائياً؟")) del.mutate(selected._id); }}
+              </div>
+
+              <div className="flex justify-end">
+                <button onClick={() => { if (confirm("حذف الطلب نهائياً؟")) del.mutate(selected._id); }}
                   className="flex items-center gap-1.5 h-9 px-3 rounded-lg bg-red-50 text-red-500 text-xs hover:bg-red-100 transition-colors">
                   <Trash2 size={13} /> حذف الطلب
                 </button>
@@ -761,12 +891,156 @@ function AdminOrders() {
   );
 }
 
-/* ─── Customers & Employees ─── */
+/* ─── Employees ─── */
+function AdminEmployees() {
+  const qc = useQueryClient();
+  const { data: employees = [] } = useQuery({
+    queryKey: ["admin-employees"],
+    queryFn: () => api.get("/admin/customers?role=employee"),
+  });
+  const [selected, setSelected] = useState<any>(null);
+  const [editPerms, setEditPerms] = useState<string[]>([]);
+
+  const upd = useMutation({
+    mutationFn: ({ id, ...data }: any) => api.put(`/admin/customers/${id}`, data),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-employees"] }); setSelected(null); },
+  });
+  const del = useMutation({
+    mutationFn: (id: string) => api.delete(`/admin/customers/${id}`),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-employees"] }); setSelected(null); },
+  });
+
+  const openEmployee = (emp: any) => {
+    setSelected(emp);
+    setEditPerms(emp.permissions || []);
+  };
+
+  const togglePerm = (key: string) => {
+    setEditPerms(prev => prev.includes(key) ? prev.filter(p => p !== key) : [...prev, key]);
+  };
+
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-stone-800">الموظفون</h2>
+          <p className="text-xs text-stone-400 mt-0.5">{(employees as any[]).length} موظف — الصلاحيات تُحدد ما يمكنهم الوصول إليه</p>
+        </div>
+      </div>
+
+      {/* Permissions legend */}
+      <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+        <div className="flex items-start gap-3">
+          <Shield size={16} className="text-blue-600 mt-0.5 shrink-0" />
+          <div>
+            <p className="text-sm font-medium text-blue-800 mb-1">نظام الصلاحيات</p>
+            <p className="text-xs text-blue-600">الموظفون يمكنهم الوصول فقط للأقسام التي تُمنح لهم صلاحيتها. المدير يملك صلاحيات كاملة دائماً.</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <div className="divide-y divide-stone-50">
+          {(employees as any[]).length === 0 && (
+            <div className="py-16 text-center text-stone-400">
+              <UserCheck size={32} className="mx-auto mb-3 opacity-30" />
+              <p className="text-sm">لا يوجد موظفون بعد</p>
+              <p className="text-xs mt-1">يمكن ترقية عميل لموظف من قسم العملاء</p>
+            </div>
+          )}
+          {(employees as any[]).map((emp: any) => (
+            <div key={emp._id} onClick={() => openEmployee(emp)}
+              className="px-5 py-4 flex items-center justify-between gap-3 cursor-pointer hover:bg-stone-50 transition-colors">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-semibold text-stone-800">{emp.name}</p>
+                  {emp.isActive === false && (
+                    <span className="text-[10px] bg-red-50 text-red-500 border border-red-100 px-2 py-0.5 rounded-full">معطّل</span>
+                  )}
+                </div>
+                <p className="text-xs text-stone-400 mt-0.5">{emp.phone}{emp.jobTitle ? ` · ${emp.jobTitle}` : ""}</p>
+                {/* Permissions chips */}
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {(emp.permissions || []).length === 0 ? (
+                    <span className="text-[10px] text-stone-300 border border-stone-100 px-2 py-0.5 rounded-full">بدون صلاحيات</span>
+                  ) : (emp.permissions as string[]).map((p: string) => {
+                    const pInfo = PERMISSIONS_LIST.find(x => x.key === p);
+                    return pInfo ? (
+                      <span key={p} className="inline-flex items-center gap-1 text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded-full">
+                        {pInfo.icon} {pInfo.label}
+                      </span>
+                    ) : null;
+                  })}
+                </div>
+              </div>
+              <Pencil size={14} className="text-stone-300 shrink-0" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {selected && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={e => e.target === e.currentTarget && setSelected(null)}>
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-stone-100">
+              <div>
+                <h3 className="text-sm font-bold text-stone-800">{selected.name}</h3>
+                <p className="text-xs text-stone-400">{selected.phone}{selected.jobTitle ? ` · ${selected.jobTitle}` : ""}</p>
+              </div>
+              <button onClick={() => setSelected(null)} className="text-stone-400"><X size={17} /></button>
+            </div>
+            <div className="p-5 space-y-4">
+              <div>
+                <p className="text-xs text-stone-500 mb-3 font-medium">الصلاحيات الممنوحة</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {PERMISSIONS_LIST.map(perm => {
+                    const has = editPerms.includes(perm.key);
+                    return (
+                      <button key={perm.key} type="button" onClick={() => togglePerm(perm.key)}
+                        className={`flex items-center gap-2 p-3 rounded-xl border text-right text-xs transition-colors ${has ? "border-[#1F3929] bg-[#F0EBE1] text-[#1F3929] font-semibold" : "border-stone-200 text-stone-500 hover:border-stone-300"}`}>
+                        <div className={`w-4 h-4 rounded flex items-center justify-center shrink-0 ${has ? "bg-[#1F3929] text-white" : "bg-stone-100"}`}>
+                          {has ? <Check size={10} /> : null}
+                        </div>
+                        <span className="flex-1">{perm.label}</span>
+                        <span className="shrink-0 opacity-50">{perm.icon}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs text-stone-500 mb-1.5">حالة الحساب</label>
+                <label className="flex items-center gap-3 cursor-pointer">
+                  <Toggle value={selected.isActive !== false} onChange={v => setSelected({ ...selected, isActive: v })} />
+                  <span className="text-sm text-stone-600">{selected.isActive !== false ? "حساب نشط" : "حساب معطّل"}</span>
+                </label>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button onClick={() => upd.mutate({ id: selected._id, permissions: editPerms, isActive: selected.isActive !== false })}
+                  disabled={upd.isPending}
+                  className="flex-1 h-10 rounded-xl bg-[#1F3929] text-[#F2EADB] text-sm hover:bg-[#16281D] disabled:opacity-60">
+                  {upd.isPending ? "جاري..." : "حفظ الصلاحيات"}
+                </button>
+                <button onClick={() => { if (confirm(`حذف ${selected.name}؟`)) del.mutate(selected._id); }}
+                  className="h-10 px-4 rounded-xl bg-red-50 text-red-500 text-sm hover:bg-red-100">
+                  حذف
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Customers ─── */
 function AdminCustomers() {
   const qc = useQueryClient();
-  const [roleFilter, setRoleFilter] = useState<"all" | "customer" | "employee">("all");
+  const [roleFilter, setRoleFilter] = useState<"all" | "customer" | "employee">("customer");
   const [selected, setSelected] = useState<any>(null);
-  const [saving, setSaving] = useState(false);
 
   const { data: customers = [] } = useQuery({
     queryKey: ["admin-customers", roleFilter],
@@ -782,12 +1056,6 @@ function AdminCustomers() {
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-customers"] }); setSelected(null); },
   });
 
-  const counts = {
-    all: (customers as any[]).length,
-    customer: (customers as any[]).filter((c: any) => c.role === "customer").length,
-    employee: (customers as any[]).filter((c: any) => c.role === "employee").length,
-  };
-
   const ROLE_AR: Record<string, string> = { customer: "عميل", employee: "موظف", admin: "مدير" };
   const ROLE_COLOR: Record<string, string> = {
     customer: "bg-blue-50 text-blue-700 border-blue-200",
@@ -800,41 +1068,34 @@ function AdminCustomers() {
     <div className="space-y-5">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h2 className="text-lg font-semibold text-stone-800">العملاء والموظفون</h2>
-          <p className="text-xs text-stone-400 mt-0.5">{counts.customer} عميل · {counts.employee} موظف</p>
+          <h2 className="text-lg font-semibold text-stone-800">العملاء</h2>
+          <p className="text-xs text-stone-400 mt-0.5">{(customers as any[]).length} في القائمة الحالية</p>
         </div>
         <div className="flex gap-2">
           {(["all", "customer", "employee"] as const).map(r => (
-            <button key={r}
-              onClick={() => setRoleFilter(r)}
+            <button key={r} onClick={() => setRoleFilter(r)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${roleFilter === r ? "bg-[#1F3929] text-[#F2EADB]" : "bg-white border border-stone-200 text-stone-600 hover:bg-stone-50"}`}>
               {r === "all" ? "الكل" : r === "customer" ? "العملاء" : "الموظفون"}
             </button>
           ))}
         </div>
       </div>
-
       <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
         <div className="divide-y divide-stone-50">
           {(customers as any[]).length === 0 && (
-            <div className="py-16 text-center text-stone-400">
-              <Users size={32} className="mx-auto mb-3 opacity-30" />
-              <p className="text-sm">لا يوجد مستخدمون</p>
-            </div>
+            <div className="py-16 text-center text-stone-400"><Users size={32} className="mx-auto mb-3 opacity-30" /><p className="text-sm">لا يوجد مستخدمون</p></div>
           )}
           {(customers as any[]).map((c: any) => (
-            <div key={c._id}
-              onClick={() => setSelected(c)}
+            <div key={c._id} onClick={() => setSelected(c)}
               className="px-5 py-4 flex items-center justify-between gap-3 cursor-pointer hover:bg-stone-50 transition-colors">
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-semibold text-stone-800 truncate">{c.name}</p>
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${ROLE_COLOR[c.role] || "bg-gray-50 text-gray-600 border-gray-200"}`}>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${ROLE_COLOR[c.role] || ""}`}>
                     {ROLE_AR[c.role] || c.role}
                   </span>
                 </div>
                 <p className="text-xs text-stone-400 truncate mt-0.5" dir="ltr">{c.phone}{c.email ? ` · ${c.email}` : ""}</p>
-                {c.jobTitle && <p className="text-xs text-stone-400">{c.jobTitle}</p>}
               </div>
               <div className="shrink-0 text-left">
                 <p className="text-xs text-[#9BA17B]">{c.loyaltyPoints || 0} نقطة</p>
@@ -849,19 +1110,14 @@ function AdminCustomers() {
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={e => e.target === e.currentTarget && setSelected(null)}>
           <div className="bg-white rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="flex items-center justify-between px-5 py-4 border-b border-stone-100 sticky top-0 bg-white rounded-t-2xl">
-              <div>
-                <h3 className="text-sm font-bold text-stone-800">{selected.name}</h3>
-                <p className="text-xs text-stone-400 mt-0.5">{selected.phone}</p>
-              </div>
-              <button onClick={() => setSelected(null)} className="p-1.5 rounded-lg hover:bg-stone-100 text-stone-400"><X size={17} /></button>
+              <h3 className="text-sm font-bold text-stone-800">{selected.name}</h3>
+              <button onClick={() => setSelected(null)} className="text-stone-400"><X size={17} /></button>
             </div>
             <div className="p-5 space-y-4">
               <div className="grid grid-cols-2 gap-3 text-sm">
                 {[
-                  ["البريد", selected.email || "—"],
-                  ["نقاط الولاء", selected.loyaltyPoints || 0],
-                  ["المستوى", TIER_AR[selected.loyaltyTier] || "—"],
-                  ["إجمالي المشتريات", `${selected.totalSpent?.toFixed(0) || 0} ر.س`],
+                  ["الجوال", selected.phone], ["البريد", selected.email || "—"],
+                  ["نقاط الولاء", selected.loyaltyPoints || 0], ["إجمالي المشتريات", `${selected.totalSpent?.toFixed(0) || 0} ر.س`],
                 ].map(([k, v]) => (
                   <div key={k as string} className="bg-stone-50 rounded-lg p-3">
                     <p className="text-xs text-stone-400">{k}</p>
@@ -870,32 +1126,24 @@ function AdminCustomers() {
                 ))}
               </div>
               <div>
-                <label className="block text-xs text-stone-500 mb-1.5">الدور الوظيفي</label>
-                <select
-                  defaultValue={selected.role}
-                  id={`role-${selected._id}`}
-                  className="w-full h-10 px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none"
-                  style={{ fontFamily: "inherit" }}>
+                <label className="block text-xs text-stone-500 mb-1.5">الدور</label>
+                <select defaultValue={selected.role} id={`role-${selected._id}`}
+                  className="w-full h-10 px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none">
                   <option value="customer">عميل</option>
                   <option value="employee">موظف</option>
                   <option value="admin">مدير</option>
                 </select>
               </div>
               <div className="flex gap-3 pt-2">
-                <button
-                  onClick={() => {
-                    const sel = document.getElementById(`role-${selected._id}`) as HTMLSelectElement;
-                    upd.mutate({ id: selected._id, role: sel?.value || selected.role });
-                  }}
-                  disabled={upd.isPending}
+                <button onClick={() => {
+                  const sel = document.getElementById(`role-${selected._id}`) as HTMLSelectElement;
+                  upd.mutate({ id: selected._id, role: sel?.value || selected.role });
+                }} disabled={upd.isPending}
                   className="flex-1 h-10 rounded-xl bg-[#1F3929] text-[#F2EADB] text-sm hover:bg-[#16281D] disabled:opacity-60">
-                  {upd.isPending ? "جاري..." : "حفظ التعديلات"}
+                  {upd.isPending ? "جاري..." : "حفظ"}
                 </button>
-                <button
-                  onClick={() => { if (confirm(`حذف ${selected.name}؟`)) del.mutate(selected._id); }}
-                  className="h-10 px-4 rounded-xl bg-red-50 text-red-500 text-sm hover:bg-red-100">
-                  حذف
-                </button>
+                <button onClick={() => { if (confirm(`حذف ${selected.name}؟`)) del.mutate(selected._id); }}
+                  className="h-10 px-4 rounded-xl bg-red-50 text-red-500 text-sm hover:bg-red-100">حذف</button>
               </div>
             </div>
           </div>
@@ -914,50 +1162,30 @@ function AdminCoupons() {
   const [form, setForm] = useState({ code: "", type: "percent", value: "", minOrder: "", maxUses: "", expiresAt: "", isActive: true });
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
-
-  const del = useMutation({
-    mutationFn: (id: string) => api.delete(`/admin/coupons/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-coupons"] }),
-  });
-
+  const del = useMutation({ mutationFn: (id: string) => api.delete(`/admin/coupons/${id}`), onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-coupons"] }) });
   const openAdd = () => { setEditing(null); setForm({ code: "", type: "percent", value: "", minOrder: "", maxUses: "", expiresAt: "", isActive: true }); setErr(""); setModal(true); };
   const openEdit = (c: any) => { setEditing(c); setForm({ code: c.code, type: c.type, value: String(c.value), minOrder: String(c.minOrder || ""), maxUses: String(c.maxUses || ""), expiresAt: c.expiresAt ? new Date(c.expiresAt).toISOString().split("T")[0] : "", isActive: c.isActive }); setErr(""); setModal(true); };
-
   const save = async (e: React.FormEvent) => {
     e.preventDefault(); setLoading(true); setErr("");
     try {
       const body = { ...form, value: Number(form.value), minOrder: Number(form.minOrder) || 0, maxUses: Number(form.maxUses) || 0, expiresAt: form.expiresAt || undefined };
       if (editing) await api.put(`/admin/coupons/${editing._id}`, body);
       else await api.post("/admin/coupons", body);
-      qc.invalidateQueries({ queryKey: ["admin-coupons"] });
-      setModal(false);
+      qc.invalidateQueries({ queryKey: ["admin-coupons"] }); setModal(false);
     } catch (e: any) { setErr(e.message); }
     setLoading(false);
   };
-
-  const inputCls = "w-full h-10 px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none focus:border-[#9BA17B]";
-  const labelCls = "block text-xs text-stone-500 mb-1.5";
-
+  const inp = "w-full h-10 px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none focus:border-[#9BA17B]";
+  const lbl = "block text-xs text-stone-500 mb-1.5";
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-stone-800">كوبونات الخصم</h2>
-          <p className="text-xs text-stone-400 mt-0.5">{coupons.length} كوبون</p>
-        </div>
-        <button onClick={openAdd} className="flex items-center gap-2 h-10 px-4 rounded-xl bg-[#1F3929] text-[#F2EADB] text-sm hover:bg-[#16281D] transition-colors">
-          <Plus size={15} /> كوبون جديد
-        </button>
+        <div><h2 className="text-lg font-semibold text-stone-800">كوبونات الخصم</h2><p className="text-xs text-stone-400 mt-0.5">{(coupons as any[]).length} كوبون</p></div>
+        <button onClick={openAdd} className="flex items-center gap-2 h-10 px-4 rounded-xl bg-[#1F3929] text-[#F2EADB] text-sm hover:bg-[#16281D]"><Plus size={15} /> كوبون جديد</button>
       </div>
-
       <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
         <div className="divide-y divide-stone-50">
-          {(coupons as any[]).length === 0 && (
-            <div className="py-16 text-center text-stone-400">
-              <Tag size={32} className="mx-auto mb-3 opacity-30" />
-              <p className="text-sm">لا توجد كوبونات بعد</p>
-            </div>
-          )}
+          {(coupons as any[]).length === 0 && <div className="py-16 text-center text-stone-400"><Tag size={32} className="mx-auto mb-3 opacity-30" /><p className="text-sm">لا توجد كوبونات بعد</p></div>}
           {(coupons as any[]).map((c: any) => (
             <div key={c._id} className="px-5 py-4 flex items-center justify-between gap-3">
               <div className="min-w-0">
@@ -968,23 +1196,17 @@ function AdminCoupons() {
                 <p className="text-xs text-stone-400 mt-0.5">
                   خصم {c.type === "percent" ? `${c.value}%` : `${c.value} ر.س`}
                   {c.minOrder ? ` · حد أدنى ${c.minOrder} ر.س` : ""}
-                  {c.maxUses ? ` · يُستخدم ${c.usedCount || 0}/${c.maxUses} مرة` : ""}
-                  {c.expiresAt ? ` · ينتهي ${new Date(c.expiresAt).toLocaleDateString("ar-SA")}` : ""}
+                  {c.maxUses ? ` · ${c.usedCount || 0}/${c.maxUses} استخدام` : ""}
                 </p>
               </div>
               <div className="flex gap-2 shrink-0">
-                <button onClick={() => openEdit(c)} className="flex items-center gap-1 h-8 px-3 rounded-lg border border-stone-200 text-xs text-stone-600 hover:bg-stone-50">
-                  <Pencil size={11} /> تعديل
-                </button>
-                <button onClick={() => { if (confirm("حذف الكوبون؟")) del.mutate(c._id); }} className="w-8 h-8 rounded-lg border border-red-100 text-red-400 hover:bg-red-50 flex items-center justify-center">
-                  <Trash2 size={13} />
-                </button>
+                <button onClick={() => openEdit(c)} className="flex items-center gap-1 h-8 px-3 rounded-lg border border-stone-200 text-xs text-stone-600 hover:bg-stone-50"><Pencil size={11} /> تعديل</button>
+                <button onClick={() => { if (confirm("حذف الكوبون؟")) del.mutate(c._id); }} className="w-8 h-8 rounded-lg border border-red-100 text-red-400 hover:bg-red-50 flex items-center justify-center"><Trash2 size={13} /></button>
               </div>
             </div>
           ))}
         </div>
       </div>
-
       {modal && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4" onClick={e => e.target === e.currentTarget && setModal(false)}>
           <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
@@ -994,49 +1216,26 @@ function AdminCoupons() {
             </div>
             <form onSubmit={save} className="p-5 space-y-4">
               <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className={labelCls}>رمز الكوبون *</label>
-                  <input className={inputCls + " uppercase font-mono tracking-wider"} value={form.code} onChange={e => setForm({ ...form, code: e.target.value.toUpperCase() })} required style={{ fontFamily: "monospace" }} />
-                </div>
-                <div>
-                  <label className={labelCls}>نوع الخصم</label>
-                  <select className={inputCls} value={form.type} onChange={e => setForm({ ...form, type: e.target.value })} style={{ fontFamily: "inherit" }}>
-                    <option value="percent">نسبة مئوية (%)</option>
-                    <option value="fixed">مبلغ ثابت (ر.س)</option>
+                <div><label className={lbl}>رمز الكوبون *</label><input className={inp + " uppercase font-mono tracking-wider"} value={form.code} onChange={e => setForm({ ...form, code: e.target.value.toUpperCase() })} required /></div>
+                <div><label className={lbl}>نوع الخصم</label>
+                  <select className={inp} value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}>
+                    <option value="percent">نسبة مئوية (%)</option><option value="fixed">مبلغ ثابت (ر.س)</option>
                   </select>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className={labelCls}>قيمة الخصم *</label>
-                  <input type="number" className={inputCls} value={form.value} onChange={e => setForm({ ...form, value: e.target.value })} required min={0} style={{ fontFamily: "inherit" }} />
-                </div>
-                <div>
-                  <label className={labelCls}>حد أدنى للطلب</label>
-                  <input type="number" className={inputCls} value={form.minOrder} onChange={e => setForm({ ...form, minOrder: e.target.value })} min={0} placeholder="0" style={{ fontFamily: "inherit" }} />
-                </div>
-                <div>
-                  <label className={labelCls}>حد أقصى استخدام</label>
-                  <input type="number" className={inputCls} value={form.maxUses} onChange={e => setForm({ ...form, maxUses: e.target.value })} min={0} placeholder="∞" style={{ fontFamily: "inherit" }} />
-                </div>
+                <div><label className={lbl}>قيمة الخصم *</label><input type="number" className={inp} value={form.value} onChange={e => setForm({ ...form, value: e.target.value })} required min={0} /></div>
+                <div><label className={lbl}>حد أدنى</label><input type="number" className={inp} value={form.minOrder} onChange={e => setForm({ ...form, minOrder: e.target.value })} min={0} placeholder="0" /></div>
+                <div><label className={lbl}>حد أقصى استخدام</label><input type="number" className={inp} value={form.maxUses} onChange={e => setForm({ ...form, maxUses: e.target.value })} min={0} placeholder="∞" /></div>
               </div>
-              <div>
-                <label className={labelCls}>تاريخ الانتهاء (اختياري)</label>
-                <input type="date" className={inputCls} value={form.expiresAt} onChange={e => setForm({ ...form, expiresAt: e.target.value })} style={{ fontFamily: "inherit" }} />
-              </div>
+              <div><label className={lbl}>تاريخ الانتهاء</label><input type="date" className={inp} value={form.expiresAt} onChange={e => setForm({ ...form, expiresAt: e.target.value })} /></div>
               <label className="flex items-center gap-2 cursor-pointer text-sm text-stone-600">
-                <div onClick={() => setForm({ ...form, isActive: !form.isActive })}
-                  className={`w-9 h-5 rounded-full transition-colors ${form.isActive ? "bg-[#1F3929]" : "bg-stone-200"} relative`}>
-                  <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.isActive ? "translate-x-0.5" : "translate-x-4"}`} />
-                </div>
-                الكوبون نشط
+                <Toggle value={form.isActive} onChange={v => setForm({ ...form, isActive: v })} /> الكوبون نشط
               </label>
               {err && <p className="text-red-500 text-sm">{err}</p>}
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setModal(false)} className="flex-1 h-10 rounded-xl border border-stone-200 text-sm text-stone-600">إلغاء</button>
-                <button type="submit" disabled={loading} className="flex-1 h-10 rounded-xl bg-[#1F3929] text-[#F2EADB] text-sm disabled:opacity-60">
-                  {loading ? "جاري..." : editing ? "حفظ" : "إضافة"}
-                </button>
+                <button type="submit" disabled={loading} className="flex-1 h-10 rounded-xl bg-[#1F3929] text-[#F2EADB] text-sm disabled:opacity-60">{loading ? "جاري..." : editing ? "حفظ" : "إضافة"}</button>
               </div>
             </form>
           </div>
@@ -1050,37 +1249,21 @@ function AdminCoupons() {
 function AdminReviews() {
   const qc = useQueryClient();
   const { data: reviews = [] } = useQuery({ queryKey: ["admin-reviews"], queryFn: () => api.get("/admin/reviews") });
-  const approve = useMutation({
-    mutationFn: ({ id, v }: any) => api.put(`/admin/reviews/${id}`, { isApproved: v }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-reviews"] }),
-  });
-  const del = useMutation({
-    mutationFn: (id: string) => api.delete(`/admin/reviews/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-reviews"] }),
-  });
+  const approve = useMutation({ mutationFn: ({ id, v }: any) => api.put(`/admin/reviews/${id}`, { isApproved: v }), onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-reviews"] }) });
+  const del = useMutation({ mutationFn: (id: string) => api.delete(`/admin/reviews/${id}`), onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-reviews"] }) });
   const pending = (reviews as any[]).filter((r: any) => !r.isApproved).length;
   return (
     <div className="space-y-5">
-      <div>
-        <h2 className="text-lg font-semibold text-stone-800">التقييمات</h2>
-        <p className="text-xs text-stone-400 mt-0.5">{(reviews as any[]).length} تقييم · {pending} بانتظار الموافقة</p>
-      </div>
+      <div><h2 className="text-lg font-semibold text-stone-800">التقييمات</h2><p className="text-xs text-stone-400 mt-0.5">{(reviews as any[]).length} تقييم · {pending} بانتظار الموافقة</p></div>
       <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
         <div className="divide-y divide-stone-50">
-          {(reviews as any[]).length === 0 && (
-            <div className="py-16 text-center text-stone-400">
-              <Star size={32} className="mx-auto mb-3 opacity-30" />
-              <p className="text-sm">لا توجد تقييمات بعد</p>
-            </div>
-          )}
+          {(reviews as any[]).length === 0 && <div className="py-16 text-center text-stone-400"><Star size={32} className="mx-auto mb-3 opacity-30" /><p className="text-sm">لا توجد تقييمات بعد</p></div>}
           {(reviews as any[]).map((r: any) => (
             <div key={r._id} className="px-5 py-4 flex items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-sm font-medium text-stone-700">{r.customerName || "مجهول"}</span>
-                  <span className="flex gap-0.5">{Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} size={11} fill={i < r.rating ? "#C89B5A" : "none"} color={i < r.rating ? "#C89B5A" : "#C8BBA4"} />
-                  ))}</span>
+                  <span className="flex gap-0.5">{Array.from({ length: 5 }).map((_, i) => <Star key={i} size={11} fill={i < r.rating ? "#C89B5A" : "none"} color={i < r.rating ? "#C89B5A" : "#C8BBA4"} />)}</span>
                   {!r.isApproved && <span className="text-[10px] bg-amber-50 text-amber-600 border border-amber-100 px-2 py-0.5 rounded-full">بانتظار الموافقة</span>}
                 </div>
                 <p className="text-xs text-stone-500 mb-0.5">{(r.productId as any)?.name || "منتج محذوف"}</p>
@@ -1092,10 +1275,7 @@ function AdminReviews() {
                   className={`h-8 px-3 rounded-lg text-xs transition-colors ${r.isApproved ? "border border-stone-200 text-stone-500 hover:bg-stone-50" : "bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-100"}`}>
                   {r.isApproved ? "إخفاء" : "موافقة"}
                 </button>
-                <button onClick={() => { if (confirm("حذف التقييم؟")) del.mutate(r._id); }}
-                  className="w-8 h-8 rounded-lg border border-red-100 text-red-400 hover:bg-red-50 flex items-center justify-center">
-                  <Trash2 size={13} />
-                </button>
+                <button onClick={() => { if (confirm("حذف التقييم؟")) del.mutate(r._id); }} className="w-8 h-8 rounded-lg border border-red-100 text-red-400 hover:bg-red-50 flex items-center justify-center"><Trash2 size={13} /></button>
               </div>
             </div>
           ))}
@@ -1112,53 +1292,43 @@ function AdminSettings() {
   const { data: newsletter } = useQuery({ queryKey: ["admin-newsletter"], queryFn: () => api.get("/admin/newsletter") });
   const [form, setForm] = useState<any>(null);
   const [saved, setSaved] = useState(false);
+  const [testEmail, setTestEmail] = useState("");
+  const [testSending, setTestSending] = useState(false);
 
   const DEFAULT_BADGES = [
     { icon: "🚚", title: "يوصلك خلال", value: "١–٣ أيام",   enabled: true },
     { icon: "🔒", title: "الدفع",       value: "آمن ومشفّر", enabled: true },
     { icon: "↩️",  title: "الاسترجاع",  value: "يوم واحد",   enabled: true },
   ];
-
   const defaults = {
-    storeName: "UJI MATCHA",
-    storePhone: "0552469643",
-    storeEmail: "info@qirox.online",
-    whatsapp: "966552469643",
-    shippingFee: 30,
-    shippingFreeThreshold: 200,
-    maintenanceMode: false,
-    trustBadges: DEFAULT_BADGES,
-    trustBadgesPosition: "above" as "above" | "below" | "both",
-    _codEnabled: true,
-    _bankEnabled: true,
-    _stcEnabled: true,
-    bankIban: "",
-    bankName: "مصرف الراجحي",
-    stcPayNumber: "0552469643",
+    storeName: "UJI MATCHA", storePhone: "0552469643", storeEmail: "info@qirox.online",
+    whatsapp: "966552469643", shippingFee: 30, shippingFreeThreshold: 200,
+    maintenanceMode: false, trustBadges: DEFAULT_BADGES, trustBadgesPosition: "above" as const,
+    _codEnabled: true, _bankEnabled: true, _stcEnabled: true,
+    bankIban: "", bankName: "مصرف الراجحي", stcPayNumber: "0552469643",
   };
-
   const current = form || (settings ? { ...defaults, ...settings } : defaults);
 
   const save = useMutation({
     mutationFn: (data: any) => api.put("/admin/settings", data),
-    onSuccess: () => {
-      setSaved(true);
-      qc.invalidateQueries({ queryKey: ["admin-settings"] });
-      setTimeout(() => setSaved(false), 2500);
-    },
+    onSuccess: () => { setSaved(true); qc.invalidateQueries({ queryKey: ["admin-settings"] }); setTimeout(() => setSaved(false), 2500); },
   });
 
-  const inputCls = "w-full h-10 px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none focus:border-[#9BA17B] transition-colors";
-  const labelCls = "block text-xs text-stone-500 mb-1.5";
+  const sendTest = async () => {
+    if (!testEmail) return; setTestSending(true);
+    try { await api.post("/admin/send-test-email", { to: testEmail }); alert("✅ تم إرسال البريد التجريبي"); }
+    catch (e: any) { alert("خطأ: " + e.message); }
+    setTestSending(false);
+  };
+
+  const inp = "w-full h-10 px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none focus:border-[#9BA17B] transition-colors";
+  const lbl = "block text-xs text-stone-500 mb-1.5";
 
   if (isLoading) return <div className="text-center py-12 text-stone-400 text-sm">جاري التحميل...</div>;
 
   return (
     <div className="max-w-2xl space-y-5">
-      <div>
-        <h2 className="text-lg font-semibold text-stone-800">إعدادات المتجر</h2>
-        <p className="text-xs text-stone-400 mt-0.5">تحكم في معلومات وإعدادات المتجر</p>
-      </div>
+      <div><h2 className="text-lg font-semibold text-stone-800">إعدادات المتجر</h2></div>
 
       {/* Store info */}
       <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
@@ -1167,16 +1337,8 @@ function AdminSettings() {
           <p className="text-sm font-semibold text-stone-700">معلومات المتجر</p>
         </div>
         <div className="p-5 grid grid-cols-2 gap-4">
-          {[
-            { label: "اسم المتجر", k: "storeName" },
-            { label: "رقم التواصل", k: "storePhone" },
-            { label: "البريد الإلكتروني", k: "storeEmail" },
-            { label: "واتساب (مع رمز الدولة)", k: "whatsapp" },
-          ].map(({ label, k }) => (
-            <div key={k}>
-              <label className={labelCls}>{label}</label>
-              <input className={inputCls} value={current[k] ?? ""} onChange={e => setForm({ ...current, [k]: e.target.value })} style={{ fontFamily: "inherit" }} />
-            </div>
+          {[{ label: "اسم المتجر", k: "storeName" }, { label: "رقم التواصل", k: "storePhone" }, { label: "البريد الإلكتروني", k: "storeEmail" }, { label: "واتساب (مع رمز الدولة)", k: "whatsapp" }].map(({ label, k }) => (
+            <div key={k}><label className={lbl}>{label}</label><input className={inp} value={current[k] ?? ""} onChange={e => setForm({ ...current, [k]: e.target.value })} /></div>
           ))}
         </div>
       </div>
@@ -1184,95 +1346,62 @@ function AdminSettings() {
       {/* Shipping */}
       <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-stone-50 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center"><ShoppingBag size={15} className="text-stone-500" /></div>
+          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center"><Truck size={15} className="text-stone-500" /></div>
           <p className="text-sm font-semibold text-stone-700">إعدادات الشحن</p>
         </div>
         <div className="p-5 grid grid-cols-2 gap-4">
-          <div>
-            <label className={labelCls}>رسوم الشحن (ر.س)</label>
-            <input type="number" className={inputCls} value={current.shippingFee} onChange={e => setForm({ ...current, shippingFee: Number(e.target.value) })} min={0} style={{ fontFamily: "inherit" }} />
-          </div>
-          <div>
-            <label className={labelCls}>حد الشحن المجاني (ر.س)</label>
-            <input type="number" className={inputCls} value={current.shippingFreeThreshold} onChange={e => setForm({ ...current, shippingFreeThreshold: Number(e.target.value) })} min={0} style={{ fontFamily: "inherit" }} />
-          </div>
+          <div><label className={lbl}>رسوم الشحن (ر.س)</label><input type="number" className={inp} value={current.shippingFee} onChange={e => setForm({ ...current, shippingFee: Number(e.target.value) })} min={0} /></div>
+          <div><label className={lbl}>حد الشحن المجاني (ر.س)</label><input type="number" className={inp} value={current.shippingFreeThreshold} onChange={e => setForm({ ...current, shippingFreeThreshold: Number(e.target.value) })} min={0} /></div>
         </div>
-        <p className="px-5 pb-4 text-xs text-stone-400">الطلبات التي تتجاوز {current.shippingFreeThreshold} ر.س تحصل على شحن مجاني</p>
       </div>
 
       {/* Payment Methods */}
       <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-stone-50 flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center"><CreditCard size={15} className="text-stone-500" /></div>
-          <div>
-            <p className="text-sm font-semibold text-stone-700">طرق الدفع</p>
-            <p className="text-xs text-stone-400 mt-0.5">فعّل أو عطّل طرق الدفع المتاحة للعملاء</p>
-          </div>
+          <div><p className="text-sm font-semibold text-stone-700">طرق الدفع</p><p className="text-xs text-stone-400 mt-0.5">فعّل أو عطّل طرق الدفع</p></div>
         </div>
         <div className="p-5 space-y-4">
           {/* COD */}
           <div className="flex items-center justify-between p-3 rounded-xl border border-stone-100">
-            <div className="flex items-center gap-3">
-              <Banknote size={18} className="text-emerald-600" />
-              <div>
-                <p className="text-sm font-medium text-stone-700">الدفع عند الاستلام</p>
-                <p className="text-xs text-stone-400">Cash on Delivery (COD)</p>
-              </div>
-            </div>
-            <button onClick={() => setForm({ ...current, _codEnabled: !current._codEnabled })}
-              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${current._codEnabled ? "bg-[#1F3929]" : "bg-stone-200"}`}>
-              <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${current._codEnabled ? "translate-x-4" : "translate-x-1"}`} />
-            </button>
+            <div className="flex items-center gap-3"><Banknote size={18} className="text-emerald-600" /><div><p className="text-sm font-medium text-stone-700">الدفع عند الاستلام</p><p className="text-xs text-stone-400">Cash on Delivery</p></div></div>
+            <Toggle value={current._codEnabled} onChange={v => setForm({ ...current, _codEnabled: v })} />
           </div>
-          {/* Bank Transfer */}
+          {/* Bank */}
           <div className="border border-stone-100 rounded-xl">
             <div className="flex items-center justify-between p-3">
-              <div className="flex items-center gap-3">
-                <div className="text-lg">🏦</div>
-                <div>
-                  <p className="text-sm font-medium text-stone-700">التحويل البنكي</p>
-                  <p className="text-xs text-stone-400">Bank Transfer</p>
-                </div>
-              </div>
-              <button onClick={() => setForm({ ...current, _bankEnabled: !current._bankEnabled })}
-                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${current._bankEnabled ? "bg-[#1F3929]" : "bg-stone-200"}`}>
-                <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${current._bankEnabled ? "translate-x-4" : "translate-x-1"}`} />
-              </button>
+              <div className="flex items-center gap-3"><div className="text-lg">🏦</div><div><p className="text-sm font-medium text-stone-700">التحويل البنكي</p><p className="text-xs text-stone-400">مع رفع إيصال الدفع</p></div></div>
+              <Toggle value={current._bankEnabled} onChange={v => setForm({ ...current, _bankEnabled: v })} />
             </div>
             {current._bankEnabled && (
               <div className="px-3 pb-3 grid grid-cols-2 gap-2 border-t border-stone-50 pt-3">
-                <div>
-                  <label className={labelCls}>اسم البنك</label>
-                  <input className={inputCls} value={current.bankName ?? ""} onChange={e => setForm({ ...current, bankName: e.target.value })} placeholder="مصرف الراجحي" style={{ fontFamily: "inherit" }} />
-                </div>
-                <div>
-                  <label className={labelCls}>رقم الآيبان (IBAN)</label>
-                  <input className={inputCls} value={current.bankIban ?? ""} onChange={e => setForm({ ...current, bankIban: e.target.value })} placeholder="SA..." style={{ fontFamily: "monospace", direction: "ltr" }} />
-                </div>
+                <div><label className={lbl}>اسم البنك</label><input className={inp} value={current.bankName ?? ""} onChange={e => setForm({ ...current, bankName: e.target.value })} placeholder="مصرف الراجحي" /></div>
+                <div><label className={lbl}>رقم الآيبان</label><input className={inp} value={current.bankIban ?? ""} onChange={e => setForm({ ...current, bankIban: e.target.value })} placeholder="SA..." style={{ direction: "ltr" }} /></div>
               </div>
             )}
           </div>
-          {/* STC Pay */}
+          {/* STC */}
           <div className="border border-stone-100 rounded-xl">
             <div className="flex items-center justify-between p-3">
-              <div className="flex items-center gap-3">
-                <div className="text-lg">📱</div>
-                <div>
-                  <p className="text-sm font-medium text-stone-700">STC Pay</p>
-                  <p className="text-xs text-stone-400">تحويل STC</p>
-                </div>
-              </div>
-              <button onClick={() => setForm({ ...current, _stcEnabled: !current._stcEnabled })}
-                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${current._stcEnabled ? "bg-[#1F3929]" : "bg-stone-200"}`}>
-                <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${current._stcEnabled ? "translate-x-4" : "translate-x-1"}`} />
-              </button>
+              <div className="flex items-center gap-3"><div className="text-lg">📱</div><div><p className="text-sm font-medium text-stone-700">STC Pay</p><p className="text-xs text-stone-400">مع رفع إيصال الدفع</p></div></div>
+              <Toggle value={current._stcEnabled} onChange={v => setForm({ ...current, _stcEnabled: v })} />
             </div>
             {current._stcEnabled && (
               <div className="px-3 pb-3 border-t border-stone-50 pt-3">
-                <label className={labelCls}>رقم STC Pay</label>
-                <input className={inputCls} value={current.stcPayNumber ?? ""} onChange={e => setForm({ ...current, stcPayNumber: e.target.value })} placeholder="05xxxxxxxx" style={{ fontFamily: "monospace", direction: "ltr" }} />
+                <label className={lbl}>رقم STC Pay</label>
+                <input className={inp} value={current.stcPayNumber ?? ""} onChange={e => setForm({ ...current, stcPayNumber: e.target.value })} placeholder="05xxxxxxxx" style={{ direction: "ltr" }} />
               </div>
             )}
+          </div>
+          {/* Geidea */}
+          <div className="border border-stone-100 rounded-xl p-3">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="text-lg">💳</div>
+              <div>
+                <p className="text-sm font-medium text-stone-700">Geidea — بوابة الدفع</p>
+                <p className="text-xs text-stone-400">{(settings as any)?._geideaEnabled ? "✅ مفعّلة" : "⚠️ غير مفعّلة — أضف GEIDEA_MERCHANT_KEY في Secrets"}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1281,17 +1410,14 @@ function AdminSettings() {
       <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-stone-50 flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center"><Truck size={15} className="text-stone-500" /></div>
-          <div>
-            <p className="text-sm font-semibold text-stone-700">شركات التوصيل</p>
-            <p className="text-xs text-stone-400 mt-0.5">فعّل الشركات وحدد سعر كل واحدة — تظهر للعميل عند الطلب</p>
-          </div>
+          <div><p className="text-sm font-semibold text-stone-700">شركات التوصيل</p><p className="text-xs text-stone-400 mt-0.5">فعّل الشركات وحدد أسعارها — تظهر للعميل عند الطلب</p></div>
         </div>
         <div className="p-5 space-y-3">
           {(() => {
             const DEFAULT_PROVIDERS = [
+              { id: "smsa",   name: "SMSA Express", nameEn: "SMSA Express", price: 30, days: "3-5 أيام عمل", enabled: true, logo: "/assets/brand/logo-smsa.svg" },
               { id: "aramex", name: "أرامكس",       nameEn: "Aramex",       price: 35, days: "2-3 أيام عمل", enabled: true, logo: "/assets/brand/logo-aramex.svg" },
-              { id: "smsa",   name: "SMSA Express", nameEn: "SMSA Express", price: 30, days: "3-5 أيام عمل", enabled: true, logo: "/assets/brand/logo-smsa.svg"   },
-              { id: "jt",     name: "J&T Express",  nameEn: "J&T Express",  price: 25, days: "3-5 أيام عمل", enabled: true, logo: "/assets/brand/logo-jt.svg"     },
+              { id: "jt",     name: "J&T Express",  nameEn: "J&T Express",  price: 25, days: "3-5 أيام عمل", enabled: false, logo: "/assets/brand/logo-jt.svg" },
             ];
             const providers: any[] = current.deliveryProviders ?? DEFAULT_PROVIDERS;
             const update = (idx: number, field: string, val: any) => {
@@ -1301,35 +1427,20 @@ function AdminSettings() {
             return providers.map((p: any, i: number) => (
               <div key={p.id} className="border border-stone-100 rounded-xl overflow-hidden">
                 <div className="flex items-center gap-3 p-3">
-                  {/* Logo preview */}
-                  <div className="w-16 h-10 bg-stone-50 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                  <div className="w-20 h-10 bg-stone-50 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden border border-stone-100">
                     <img src={p.logo} alt={p.nameEn} className="max-h-8 max-w-full object-contain"
-                      onError={(e) => { (e.target as HTMLImageElement).src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%23f5f5f5'/%3E%3C/svg%3E"; }} />
+                      onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-stone-700">{p.name}</p>
                     <p className="text-xs text-stone-400">{p.days}</p>
                   </div>
-                  {/* Toggle */}
-                  <button onClick={() => update(i, "enabled", !p.enabled)}
-                    className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors flex-shrink-0 ${p.enabled ? "bg-[#1F3929]" : "bg-stone-200"}`}>
-                    <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${p.enabled ? "translate-x-4" : "translate-x-1"}`} />
-                  </button>
+                  <Toggle value={p.enabled} onChange={v => update(i, "enabled", v)} />
                 </div>
                 {p.enabled && (
                   <div className="px-3 pb-3 border-t border-stone-50 pt-3 grid grid-cols-2 gap-2">
-                    <div>
-                      <label className={labelCls}>سعر الشحن (ر.س)</label>
-                      <input type="number" className={inputCls} min={0} value={p.price}
-                        onChange={e => update(i, "price", Number(e.target.value))}
-                        style={{ fontFamily: "monospace" }} />
-                    </div>
-                    <div>
-                      <label className={labelCls}>مدة التوصيل</label>
-                      <input className={inputCls} value={p.days}
-                        onChange={e => update(i, "days", e.target.value)}
-                        style={{ fontFamily: "inherit" }} />
-                    </div>
+                    <div><label className={lbl}>سعر الشحن (ر.س)</label><input type="number" className={inp} min={0} value={p.price} onChange={e => update(i, "price", Number(e.target.value))} /></div>
+                    <div><label className={lbl}>مدة التوصيل</label><input className={inp} value={p.days} onChange={e => update(i, "days", e.target.value)} /></div>
                   </div>
                 )}
               </div>
@@ -1342,70 +1453,67 @@ function AdminSettings() {
       <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-stone-50 flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center text-base">✦</div>
-          <div>
-            <p className="text-sm font-semibold text-stone-700">شريط الثقة</p>
-            <p className="text-xs text-stone-400 mt-0.5">الأيقونات التي تظهر للعملاء (التوصيل · الدفع · الاسترجاع)</p>
-          </div>
+          <div><p className="text-sm font-semibold text-stone-700">شريط الثقة</p><p className="text-xs text-stone-400 mt-0.5">بطاقات التوصيل والدفع والاسترجاع</p></div>
         </div>
         <div className="p-5 space-y-4">
-          {/* Position */}
           <div>
-            <label className={labelCls}>موضع الشريط في الصفحة الرئيسية</label>
-            <select
-              className={inputCls}
-              value={current.trustBadgesPosition ?? "above"}
-              onChange={e => setForm({ ...current, trustBadgesPosition: e.target.value })}
-              style={{ fontFamily: "inherit" }}>
+            <label className={lbl}>موضع الشريط</label>
+            <select className={inp} value={current.trustBadgesPosition ?? "above"} onChange={e => setForm({ ...current, trustBadgesPosition: e.target.value })}>
               <option value="above">فوق المنتجات</option>
               <option value="below">تحت المنتجات</option>
-              <option value="both">فوق وتحت المنتجات</option>
+              <option value="both">فوق وتحت</option>
             </select>
           </div>
-          {/* Badges */}
           <div className="space-y-3">
             {(current.trustBadges ?? DEFAULT_BADGES).map((b: any, i: number) => {
               const badges: any[] = current.trustBadges ?? DEFAULT_BADGES;
-              const upd = (field: string, val: any) => {
-                const next = badges.map((x, j) => j === i ? { ...x, [field]: val } : x);
-                setForm({ ...current, trustBadges: next });
-              };
+              const upd = (field: string, val: any) => setForm({ ...current, trustBadges: badges.map((x, j) => j === i ? { ...x, [field]: val } : x) });
               return (
                 <div key={i} className="border border-stone-100 rounded-xl p-4 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-stone-700">بطاقة {i + 1}</span>
-                    <button
-                      onClick={() => upd("enabled", !b.enabled)}
-                      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${b.enabled ? "bg-[#1F3929]" : "bg-stone-200"}`}>
-                      <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${b.enabled ? "translate-x-4" : "translate-x-1"}`} />
-                    </button>
+                    <Toggle value={b.enabled} onChange={v => upd("enabled", v)} />
                   </div>
                   <div className="grid grid-cols-3 gap-2">
-                    <div>
-                      <label className={labelCls}>الأيقونة (إيموجي)</label>
-                      <input className={inputCls + " text-center text-xl"} value={b.icon} onChange={e => upd("icon", e.target.value)} maxLength={4} />
-                    </div>
-                    <div>
-                      <label className={labelCls}>العنوان</label>
-                      <input className={inputCls} value={b.title} onChange={e => upd("title", e.target.value)} style={{ fontFamily: "inherit" }} />
-                    </div>
-                    <div>
-                      <label className={labelCls}>القيمة</label>
-                      <input className={inputCls} value={b.value} onChange={e => upd("value", e.target.value)} style={{ fontFamily: "inherit" }} />
-                    </div>
+                    <div><label className={lbl}>الأيقونة</label><input className={inp + " text-center text-xl"} value={b.icon} onChange={e => upd("icon", e.target.value)} maxLength={4} /></div>
+                    <div><label className={lbl}>العنوان</label><input className={inp} value={b.title} onChange={e => upd("title", e.target.value)} /></div>
+                    <div><label className={lbl}>القيمة</label><input className={inp} value={b.value} onChange={e => upd("value", e.target.value)} /></div>
                   </div>
                 </div>
               );
             })}
           </div>
-          {/* Add badge */}
-          <button
-            onClick={() => {
-              const badges: any[] = current.trustBadges ?? DEFAULT_BADGES;
-              setForm({ ...current, trustBadges: [...badges, { icon: "⭐", title: "عنوان", value: "قيمة", enabled: true }] });
-            }}
+          <button onClick={() => { const badges: any[] = current.trustBadges ?? DEFAULT_BADGES; setForm({ ...current, trustBadges: [...badges, { icon: "⭐", title: "عنوان", value: "قيمة", enabled: true }] }); }}
             className="w-full h-10 rounded-xl border border-dashed border-stone-200 text-stone-400 text-sm hover:border-[#9BA17B] hover:text-[#9BA17B] transition-colors">
             + إضافة بطاقة
           </button>
+        </div>
+      </div>
+
+      {/* Saudi Licenses / Trust Logos */}
+      <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-stone-50 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center text-base">🇸🇦</div>
+          <div><p className="text-sm font-semibold text-stone-700">التراخيص والجهات المعتمدة</p><p className="text-xs text-stone-400 mt-0.5">شعارات الجهات الحكومية السعودية المعتمدة</p></div>
+        </div>
+        <div className="p-5">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="border border-stone-100 rounded-xl p-4 flex flex-col items-center gap-3">
+              <div className="h-16 flex items-center justify-center">
+                <img src="/assets/brand/logo-moc-ar.png" alt="وزارة التجارة" className="max-h-14 object-contain" />
+              </div>
+              <p className="text-xs text-stone-500 text-center">وزارة التجارة</p>
+              <p className="text-[10px] text-stone-300 text-center">Ministry of Commerce</p>
+            </div>
+            <div className="border border-stone-100 rounded-xl p-4 flex flex-col items-center gap-3">
+              <div className="h-16 flex items-center justify-center">
+                <img src="/assets/brand/logo-sbc-ar.png" alt="المركز السعودي للأعمال" className="max-h-14 object-contain" />
+              </div>
+              <p className="text-xs text-stone-500 text-center">المركز السعودي للأعمال</p>
+              <p className="text-[10px] text-stone-300 text-center">Saudi Business Center</p>
+            </div>
+          </div>
+          <p className="text-xs text-stone-400 mt-4">هذه الشعارات تُظهر احترافية المتجر وتعزز ثقة العملاء. تظهر في الفوتر.</p>
         </div>
       </div>
 
@@ -1415,61 +1523,33 @@ function AdminSettings() {
           <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center"><Mail size={15} className="text-stone-500" /></div>
           <p className="text-sm font-semibold text-stone-700">النشرة البريدية</p>
         </div>
-        <div className="p-5 flex items-center gap-4">
-          <div className="text-3xl font-bold text-[#1F3929]">{newsletter?.count || 0}</div>
-          <div>
-            <p className="text-sm text-stone-600">مشترك</p>
-            <p className="text-xs text-stone-400">في النشرة البريدية</p>
+        <div className="p-5 space-y-4">
+          <div className="flex items-center gap-4">
+            <div className="text-3xl font-bold text-[#1F3929]">{newsletter?.count || 0}</div>
+            <p className="text-sm text-stone-500">مشترك في النشرة البريدية</p>
+          </div>
+          <div className="flex gap-3">
+            <input className={inp + " flex-1"} value={testEmail} onChange={e => setTestEmail(e.target.value)} placeholder="أرسل بريد تجريبي إلى..." type="email" />
+            <button onClick={sendTest} disabled={testSending || !testEmail}
+              className="h-10 px-4 rounded-xl border border-stone-200 text-sm text-stone-600 hover:bg-stone-50 disabled:opacity-60 whitespace-nowrap">
+              {testSending ? "إرسال..." : "إرسال تجريبي"}
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Geidea */}
-      <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-stone-50 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center">💳</div>
-          <div>
-            <p className="text-sm font-semibold text-stone-700">بوابة الدفع — Geidea</p>
-            <p className="text-xs text-stone-400 mt-0.5">
-              {(settings as any)?._geideaEnabled ? "✅ مفعّلة" : "⚠️ غير مفعّلة — أضف GEIDEA_MERCHANT_KEY و GEIDEA_API_PASSWORD في متغيرات البيئة"}
-            </p>
-          </div>
-        </div>
-        <div className="p-5 grid grid-cols-2 gap-4">
-          {[
-            { label: "Merchant Key", k: "geideaMerchantKey", placeholder: "xxxxxxxx-xxxx-xxxx-xxxx" },
-            { label: "API Base URL (اختياري)", k: "geideaApiBase", placeholder: "https://api.geidea.net" },
-          ].map(({ label, k, placeholder }) => (
-            <div key={k}>
-              <label className={labelCls}>{label}</label>
-              <input className={inputCls} value={(current as any)[k] ?? ""} onChange={e => setForm({ ...current, [k]: e.target.value })} placeholder={placeholder} style={{ fontFamily: "monospace" }} />
-            </div>
-          ))}
-        </div>
-        <p className="px-5 pb-4 text-xs text-stone-400">
-          API Password يُضاف كـ Secret في Replit باسم <code>GEIDEA_API_PASSWORD</code> — لا تُدخله هنا.
-        </p>
-      </div>
-
-      {/* Seed Product */}
+      {/* Seed */}
       <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-stone-50 flex items-center gap-3">
           <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center">🍵</div>
-          <div>
-            <p className="text-sm font-semibold text-stone-700">تهيئة المنتجات</p>
-            <p className="text-xs text-stone-400 mt-0.5">حذف جميع المنتجات وإضافة كيس الماتشا</p>
-          </div>
+          <div><p className="text-sm font-semibold text-stone-700">تهيئة المنتجات</p><p className="text-xs text-stone-400 mt-0.5">حذف جميع المنتجات وإضافة كيس الماتشا</p></div>
         </div>
         <div className="p-5">
-          <button
-            onClick={async () => {
-              if (!confirm("سيتم حذف جميع المنتجات الحالية وإضافة كيس الماتشا فقط. هل تريد المتابعة؟")) return;
-              try {
-                await api.post("/admin/seed-matcha-bag", {});
-                alert("✅ تم إضافة كيس الماتشا بنجاح");
-              } catch (e: any) { alert("خطأ: " + e.message); }
-            }}
-            className="h-10 px-5 rounded-xl bg-amber-600 text-white text-sm hover:bg-amber-700 transition-colors">
+          <button onClick={async () => {
+            if (!confirm("سيتم حذف جميع المنتجات الحالية. هل تريد المتابعة؟")) return;
+            try { await api.post("/admin/seed-matcha-bag", {}); alert("✅ تم تهيئة المنتجات بنجاح"); }
+            catch (e: any) { alert("خطأ: " + e.message); }
+          }} className="h-10 px-5 rounded-xl bg-amber-600 text-white text-sm hover:bg-amber-700 transition-colors">
             🍃 تهيئة كيس الماتشا
           </button>
         </div>
@@ -1478,26 +1558,20 @@ function AdminSettings() {
       {/* Maintenance */}
       <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-stone-50 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center"><Settings2 size={15} className="text-stone-500" /></div>
+          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center"><AlertCircle size={15} className="text-stone-500" /></div>
           <p className="text-sm font-semibold text-stone-700">وضع الصيانة</p>
         </div>
         <div className="p-5 flex items-center justify-between">
           <div>
             <p className="text-sm text-stone-700">تعطيل المتجر مؤقتاً</p>
-            <p className="text-xs text-stone-400 mt-0.5">عند التفعيل، يرى الزوار صفحة "تحت الصيانة"</p>
+            <p className="text-xs text-stone-400 mt-0.5">الزوار يرون صفحة "تحت الصيانة"</p>
           </div>
-          <div
-            onClick={() => setForm({ ...current, maintenanceMode: !current.maintenanceMode })}
-            className={`w-12 h-6 rounded-full cursor-pointer transition-colors relative ${current.maintenanceMode ? "bg-[#1F3929]" : "bg-stone-200"}`}>
-            <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${current.maintenanceMode ? "translate-x-1" : "translate-x-7"}`} />
-          </div>
+          <Toggle value={!!current.maintenanceMode} onChange={v => setForm({ ...current, maintenanceMode: v })} />
         </div>
       </div>
 
       {/* Save */}
-      <button
-        onClick={() => save.mutate(current)}
-        disabled={save.isPending}
+      <button onClick={() => save.mutate(current)} disabled={save.isPending}
         className="w-full h-11 rounded-xl bg-[#1F3929] text-[#F2EADB] text-sm flex items-center justify-center gap-2 hover:bg-[#16281D] transition-colors disabled:opacity-60">
         {save.isPending ? "جاري الحفظ..." : saved ? <><Check size={16} /> تم الحفظ بنجاح</> : "حفظ الإعدادات"}
       </button>
