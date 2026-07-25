@@ -13,7 +13,7 @@ function SectionLabel({ num, en }: { num: string; en: string }) {
       <span style={{
         fontFamily: "'Inter', sans-serif", fontSize: "0.6rem",
         letterSpacing: "0.28em", textTransform: "uppercase", color: "#9BA17B",
-      }}>{num} — {en}</span>
+      }}>{en}</span>
       <div style={{ flex: 1, height: 1, background: "rgba(155,161,123,0.25)", maxWidth: 80 }} />
     </div>
   );
@@ -67,7 +67,7 @@ function Newsletter() {
       textAlign: "center",
     }}>
       <div className="container" style={{ maxWidth: 640 }}>
-        <p className="label-eyebrow" style={{ marginBottom: "1.5rem" }}>JOURNAL — نشرة بريدية</p>
+        <p className="label-eyebrow" style={{ marginBottom: "1.5rem" }}>نشرة بريدية</p>
         <h2 style={{
           fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
           fontSize: "clamp(2rem, 3.5vw, 3rem)",
@@ -86,7 +86,7 @@ function Newsletter() {
 
         {status === "done" ? (
           <p style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.3rem", fontWeight: 300, color: "#1F3929" }}>
-            ✦ أهلاً بك في عائلة UJI
+            أهلاً بك في عائلة UJI
           </p>
         ) : (
           <form onSubmit={submit} style={{ display: "flex", gap: "0", maxWidth: 480, margin: "0 auto" }}>
@@ -230,11 +230,15 @@ export default function HomePage() {
           backgroundImage: `url(/assets/hero/uji-banner-matcha-powder.jpg)`,
           backgroundSize: "cover", backgroundPosition: "center center",
         }} />
-        {/* Gradient overlay */}
+        {/* Gradient overlay — desktop: side fade; mobile: bottom-up dark for legibility */}
         <div style={{
           position: "absolute", inset: 0,
-          background: "linear-gradient(270deg, rgba(22,40,29,0.78) 0%, rgba(22,40,29,0.45) 45%, rgba(22,40,29,0.1) 75%, transparent 100%)",
-        }} />
+          background: "linear-gradient(270deg, rgba(16,30,22,0.82) 0%, rgba(16,30,22,0.5) 50%, rgba(16,30,22,0.15) 100%)",
+        }} className="hero-overlay-desktop" />
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(to top, rgba(16,30,22,0.92) 0%, rgba(16,30,22,0.65) 50%, rgba(16,30,22,0.25) 100%)",
+        }} className="hero-overlay-mobile" />
 
         {/* Content */}
         <div className="container" style={{ position: "relative", zIndex: 2, paddingTop: 120, paddingBottom: 80 }}>
@@ -270,7 +274,7 @@ export default function HomePage() {
               ماتشا احتفالية من مستوى الدرجة الأولى، مصنوعة في أوجي<br />ومصممة لريتشوالك اليومي.
             </p>
 
-            <div style={{
+            <div className="hero-buttons" style={{
               display: "flex", gap: "1rem", flexWrap: "wrap",
               animation: "heroFadeUp 1s ease 0.55s both",
             }}>
@@ -305,6 +309,69 @@ export default function HomePage() {
 
       {/* ══ TRUST BAR — above position ══ */}
       {(badgesPosition === "above" || badgesPosition === "both") && <TrustBar badges={trustBadges} />}
+
+      {/* ══════════════════════════════════════════════
+          THE COLLECTION — moved up so products are immediately visible
+      ══════════════════════════════════════════════ */}
+      <section className="section" style={{ background: "#F2EADB" }}>
+        <div className="container">
+          <SectionLabel num="01" en="THE COLLECTION" />
+
+          <div style={{
+            display: "flex", alignItems: "flex-end", justifyContent: "space-between",
+            marginBottom: "4rem", flexWrap: "wrap", gap: "1.5rem",
+          }}>
+            <div>
+              <h2 style={{
+                fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
+                fontSize: "clamp(2rem, 3.5vw, 3rem)",
+                fontWeight: 300, color: "#1C201B", lineHeight: 1.2,
+                marginBottom: "0.75rem",
+              }}>المجموعة</h2>
+              <p style={{ fontFamily: "'IBM Plex Sans Arabic', sans-serif", fontSize: "0.85rem", color: "#9BA17B" }}>
+                كل ما تحتاجه لبدء ريتشوال الماتشا الخاص بك.
+              </p>
+            </div>
+            <Link href="/products" style={{
+              display: "flex", alignItems: "center", gap: "0.6rem",
+              fontFamily: "'Cairo', sans-serif",
+              fontSize: "0.75rem", letterSpacing: "0.04em",
+              color: "#1F3929",
+            }}>
+              عرض الكل <ArrowLeft size={14} strokeWidth={1.5} />
+            </Link>
+          </div>
+
+          {products?.length > 0 ? (
+            <div className="grid-products">
+              {products.slice(0, 4).map((p: any) => <ProductCard key={p._id} product={p} />)}
+            </div>
+          ) : (
+            <div className="grid-3col" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1.5rem" }}>
+              {[
+                { name: "ماتشا احتفالية", sub: "Ceremonial Matcha Tin", price: "89", img: "/assets/packaging/uji-tin-front-transparent.png" },
+                { name: "مخفقة الخيزران", sub: "Bamboo Whisk", price: "45", img: "/assets/products/uji-product-bamboo-whisk-transparent.png" },
+                { name: "طقم البداية", sub: "Starter Set", price: "149", img: "/assets/packaging/uji-tin-open-transparent.png" },
+              ].map(({ name, sub, price, img }) => (
+                <div key={name} style={{ background: "#F7F2E8", border: "1px solid rgba(200,187,164,0.25)" }}>
+                  <div style={{ aspectRatio: "3/4", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", background: "#F2EADB" }}>
+                    <img src={img} alt={name} style={{ width: "70%", height: "70%", objectFit: "contain" }} />
+                  </div>
+                  <div style={{ padding: "1.25rem 1.5rem 1.75rem" }}>
+                    <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#9BA17B", textTransform: "uppercase", marginBottom: "0.5rem" }}>MATCHA</p>
+                    <h3 style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.95rem", fontWeight: 400, color: "#1C201B", marginBottom: "0.25rem" }}>{name}</h3>
+                    <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "0.65rem", color: "#C8BBA4", letterSpacing: "0.08em", marginBottom: "1rem" }}>{sub}</p>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1rem", borderTop: "1px solid rgba(200,187,164,0.25)" }}>
+                      <span style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.1rem", color: "#1F3929" }}>{price} <span style={{ fontSize: "0.7rem", fontFamily: "'Inter',sans-serif" }}>ر.س</span></span>
+                      <Link href="/products" className="btn-outline" style={{ height: 36, padding: "0 1rem", fontSize: "0.75rem" }}>أضف</Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* ══════════════════════════════════════════════
           TAGLINE BREAK
@@ -498,68 +565,6 @@ export default function HomePage() {
       ══════════════════════════════════════════════ */}
       <MatchaFinder />
 
-      {/* ══════════════════════════════════════════════
-          05 — THE COLLECTION
-      ══════════════════════════════════════════════ */}
-      <section className="section" style={{ background: "#F2EADB" }}>
-        <div className="container">
-          <SectionLabel num="04" en="THE COLLECTION" />
-
-          <div style={{
-            display: "flex", alignItems: "flex-end", justifyContent: "space-between",
-            marginBottom: "4rem", flexWrap: "wrap", gap: "1.5rem",
-          }}>
-            <div>
-              <h2 style={{
-                fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
-                fontSize: "clamp(2rem, 3.5vw, 3rem)",
-                fontWeight: 300, color: "#1C201B", lineHeight: 1.2,
-                marginBottom: "0.75rem",
-              }}>المجموعة</h2>
-              <p style={{ fontFamily: "'IBM Plex Sans Arabic', sans-serif", fontSize: "0.85rem", color: "#9BA17B" }}>
-                كل ما تحتاجه لبدء ريتشوال الماتشا الخاص بك.
-              </p>
-            </div>
-            <Link href="/products" style={{
-              display: "flex", alignItems: "center", gap: "0.6rem",
-              fontFamily: "'Inter', sans-serif",
-              fontSize: "0.65rem", letterSpacing: "0.2em", textTransform: "uppercase",
-              color: "#1F3929",
-            }}>
-              عرض الكل <ArrowLeft size={14} strokeWidth={1.5} />
-            </Link>
-          </div>
-
-          {products?.length > 0 ? (
-            <div className="grid-products">
-              {products.slice(0, 4).map((p: any) => <ProductCard key={p._id} product={p} />)}
-            </div>
-          ) : (
-            <div className="grid-3col" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1.5rem" }}>
-              {[
-                { name: "ماتشا احتفالية", sub: "Ceremonial Matcha Tin", price: "89", img: "/assets/packaging/uji-tin-front-transparent.png" },
-                { name: "مخفقة الخيزران", sub: "Bamboo Whisk", price: "45", img: "/assets/products/uji-product-bamboo-whisk-transparent.png" },
-                { name: "طقم البداية", sub: "Starter Set", price: "149", img: "/assets/packaging/uji-tin-open-transparent.png" },
-              ].map(({ name, sub, price, img }) => (
-                <div key={name} style={{ background: "#F7F2E8", border: "1px solid rgba(200,187,164,0.25)" }}>
-                  <div style={{ aspectRatio: "3/4", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", background: "#F2EADB" }}>
-                    <img src={img} alt={name} style={{ width: "70%", height: "70%", objectFit: "contain" }} />
-                  </div>
-                  <div style={{ padding: "1.25rem 1.5rem 1.75rem" }}>
-                    <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#9BA17B", textTransform: "uppercase", marginBottom: "0.5rem" }}>MATCHA</p>
-                    <h3 style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.95rem", fontWeight: 400, color: "#1C201B", marginBottom: "0.25rem" }}>{name}</h3>
-                    <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "0.65rem", color: "#C8BBA4", letterSpacing: "0.08em", marginBottom: "1rem" }}>{sub}</p>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1rem", borderTop: "1px solid rgba(200,187,164,0.25)" }}>
-                      <span style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.1rem", color: "#1F3929" }}>{price} <span style={{ fontSize: "0.7rem", fontFamily: "'Inter',sans-serif" }}>ر.س</span></span>
-                      <Link href="/products" className="btn-outline" style={{ height: 36, padding: "0 1rem", fontSize: "0.6rem" }}>أضف</Link>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
 
       {/* ══════════════════════════════════════════════
           05 — THE RITUAL
@@ -576,7 +581,7 @@ export default function HomePage() {
                 fontWeight: 300,
                 color: "#4C5734", lineHeight: 1.3, marginBottom: "2rem",
               }}>
-                "تباطأ.<br />تذوّق الماتشا."
+                تباطأ. تذوّق الماتشا.
               </p>
               <p style={{
                 fontFamily: "'IBM Plex Sans Arabic', sans-serif",

@@ -3,29 +3,29 @@ export default function OurStoryPage() {
     {
       ar: "الأصالة",
       en: "AUTHENTICITY",
-      desc: "كل كيس ماتشا UJI مصدره مزارع أوجي اليابانية مباشرةً — لا وسطاء، لا تنازلات.",
+      desc: "كل كيس ماتشا UJI مصدره مزارع أوجي اليابانية مباشرة. لا وسطاء ولا تنازلات.",
     },
     {
       ar: "الريتشوال",
       en: "RITUAL",
-      desc: "الماتشا ليست مشروباً فحسب — إنها لحظة تقطعها من يومك لنفسك. نصنع المنتجات التي تجعل هذه اللحظة أجمل.",
+      desc: "الماتشا ليست مشروباً فحسب. إنها لحظة تقطعها من يومك لنفسك. نصنع المنتجات التي تجعل هذه اللحظة أجمل.",
     },
     {
       ar: "الجودة",
       en: "QUALITY",
-      desc: "الدرجة الاحتفالية فقط. لا نقدّم ماتشا الطهي في أكياس فاخرة — الفرق حقيقي ويُحسّ.",
+      desc: "الدرجة الاحتفالية فقط. لا نقدّم ماتشا الطهي في أكياس فاخرة. الفرق حقيقي ويُحسّ.",
     },
     {
       ar: "المجتمع",
       en: "COMMUNITY",
-      desc: "نبني مجتمعاً من عشّاق الماتشا في المنطقة العربية — مجتمع يتعلم ويتشارك ويرتقي معاً.",
+      desc: "نبني مجتمعاً من عشّاق الماتشا في المنطقة العربية. مجتمع يتعلم ويتشارك ويرتقي معاً.",
     },
   ];
 
   const timeline = [
-    { year: "٢٠٢٣", event: "بدأت الفكرة — مؤسسو UJI يبحثون عن ماتشا يابانية أصيلة في السوق السعودي ولا يجدونها." },
+    { year: "٢٠٢٣", event: "بدأت الفكرة. مؤسسو UJI يبحثون عن ماتشا يابانية أصيلة في السوق السعودي ولا يجدونها." },
     { year: "٢٠٢٤", event: "أول شحنة مباشرة من مزارع أوجي. التجربة تتجاوز كل التوقعات." },
-    { year: "٢٠٢٤", event: "إطلاق UJI MATCHA — أول متجر سعودي متخصص في الماتشا الاحتفالية اليابانية." },
+    { year: "٢٠٢٤", event: "إطلاق UJI MATCHA. أول متجر سعودي متخصص في الماتشا الاحتفالية اليابانية." },
     { year: "٢٠٢٥", event: "انضمام آلاف العملاء. بدء خدمة B2B للكافيهات والمطاعم." },
     { year: "٢٠٢٦", event: "التوسع في المنطقة العربية. استمرار الرحلة نحو تجربة ماتشا لا مثيل لها." },
   ];
@@ -51,7 +51,7 @@ export default function OurStoryPage() {
           <p style={{
             fontFamily: "'DM Mono',monospace", fontSize: "0.58rem",
             letterSpacing: "0.4em", color: "#9BA17B", marginBottom: "1.5rem",
-          }}>OUR STORY — قصتنا</p>
+          }}>قصتنا</p>
           <h1 style={{
             fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
             fontSize: "clamp(2.8rem,6vw,4.5rem)",
@@ -67,6 +67,113 @@ export default function OurStoryPage() {
           }}>
             بدأ الأمر بسؤال بسيط: لماذا لا تتوفر ماتشا يابانية حقيقية في المنطقة العربية؟ كل ما في الأسواق كان إما ماتشا طهي في أكياس فاخرة، أو مساحيق مجهولة المصدر. قررنا أن نغيّر ذلك.
           </p>
+        </div>
+      </div>
+
+      {/* ── WHY — المشكلة والحل ── */}
+      <div style={{ background: "#F7F2E8", padding: "5rem 1.5rem", borderBottom: "1px solid rgba(200,187,164,0.3)" }}>
+        <div style={{ maxWidth: 820, margin: "0 auto" }}>
+          <p style={{
+            fontFamily: "'DM Mono',monospace", fontSize: "0.58rem",
+            letterSpacing: "0.4em", color: "#9BA17B",
+            marginBottom: "1rem", textAlign: "center",
+          }}>لماذا وُجدنا</p>
+          <h2 style={{
+            fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+            fontSize: "clamp(2rem,4vw,3rem)", fontWeight: 700,
+            color: "#1C201B", textAlign: "center",
+            lineHeight: 1.25, marginBottom: "1rem",
+          }}>
+            لماذا لا تتوفر ماتشا<br />حقيقية في السوق السعودي؟
+          </h2>
+          <p style={{
+            fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+            fontSize: "0.9rem", color: "#9BA17B",
+            lineHeight: 1.9, textAlign: "center",
+            maxWidth: 580, margin: "0 auto 3.5rem",
+          }}>
+            هذا السؤال هو سبب وجودنا. جلسنا نفكر فيه طويلاً — ووجدنا ثلاثة أسباب حقيقية.
+          </p>
+
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: "1px",
+            background: "rgba(200,187,164,0.3)",
+          }}>
+            {[
+              {
+                num: "١",
+                title: "الماتشا الموجودة ليست ماتشا",
+                body: "معظم ما يُباع في الأسواق السعودية هو مسحوق طهي مجهول المصدر أو ماتشا من درجات دنيا تُعبّأ في أكياس فاخرة. الطعم مرّ، اللون باهت، والفائدة محدودة — لأنها ليست ماتشا احتفالية أصلاً.",
+              },
+              {
+                num: "٢",
+                title: "سلسلة التوريد طويلة ومشوِّهة",
+                body: "بين المزرعة اليابانية والمستهلك السعودي عادةً ثلاثة وسطاء أو أكثر. كل وسيط يقلل التكلفة بتخفيض الجودة. بحلول وصولها إليك، لا تشبه ما خرج من المزرعة.",
+              },
+              {
+                num: "٣",
+                title: "لا توعية بالفرق الحقيقي",
+                body: "لم يكن هناك من يشرح الفرق بين Ceremonial Grade وCulinary Grade، أو لماذا مزارع أوجي تحديداً تنتج أجود الماتشا. بدون توعية، الزبون يشتري على الشكل لا على الجوهر.",
+              },
+            ].map(item => (
+              <div key={item.num} style={{
+                background: "#FDFAF5", padding: "2.5rem 2rem",
+              }}>
+                <div style={{
+                  fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+                  fontSize: "2.5rem", fontWeight: 300,
+                  color: "rgba(155,161,123,0.4)",
+                  lineHeight: 1, marginBottom: "1rem",
+                }}>{item.num}</div>
+                <h3 style={{
+                  fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+                  fontSize: "1.25rem", fontWeight: 700,
+                  color: "#1F3929", marginBottom: "0.75rem",
+                  lineHeight: 1.35,
+                }}>{item.title}</h3>
+                <p style={{
+                  fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+                  fontSize: "0.83rem", color: "#6B7280",
+                  lineHeight: 1.9, margin: 0,
+                }}>{item.body}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Resolution statement */}
+          <div style={{
+            marginTop: "3rem",
+            padding: "2.5rem",
+            background: "#16281D",
+            display: "flex", alignItems: "flex-start", gap: "2rem",
+            flexWrap: "wrap",
+          }}>
+            <div style={{ flex: "0 0 auto" }}>
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="#9BA17B" strokeWidth="1.2">
+                <path d="M18 4C10 4 4 10 4 18s6 14 14 14 14-6 14-14"/>
+                <path d="M18 4v8M26 7l-6 7"/>
+              </svg>
+            </div>
+            <div style={{ flex: 1, minWidth: 220 }}>
+              <p style={{
+                fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+                fontSize: "1.35rem", fontWeight: 400,
+                color: "#F2EADB", lineHeight: 1.55,
+                marginBottom: "0.75rem",
+              }}>
+                قررنا أن نحلّ المشكلة من جذرها — شراء مباشر من مزارع أوجي، توصيل مباشر إليك، وشفافية كاملة عن كل ما في العلبة.
+              </p>
+              <p style={{
+                fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+                fontSize: "0.83rem", color: "rgba(155,161,123,0.85)",
+                lineHeight: 1.85,
+              }}>
+                لهذا كل منتج UJI مرفق بشهادة المصدر. لهذا نذكر اسم المزرعة. لهذا نشرح الفرق بين كل صنف. لأن الشفافية ليست خياراً — هي أساس الثقة.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -130,28 +237,22 @@ export default function OurStoryPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
             {timeline.map((t, i) => (
               <div key={i} style={{
-                display: "grid", gridTemplateColumns: "80px 1px 1fr",
+                display: "grid", gridTemplateColumns: "auto 1fr",
                 gap: "1.5rem", alignItems: "start",
                 paddingBottom: i < timeline.length - 1 ? "2rem" : 0,
+                borderBottom: i < timeline.length - 1 ? "1px solid rgba(155,161,123,0.15)" : "none",
+                paddingTop: i > 0 ? "2rem" : 0,
               }}>
                 <div style={{
-                  fontFamily: "'DM Mono',monospace",
-                  fontSize: "0.75rem", color: "#9BA17B",
-                  letterSpacing: "0.1em", paddingTop: "0.15rem",
-                  textAlign: "left",
+                  fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+                  fontSize: "1.5rem", fontWeight: 400, color: "#9BA17B",
+                  letterSpacing: "0.05em", lineHeight: 1,
+                  minWidth: 70, textAlign: "center",
                 }}>{t.year}</div>
-                <div style={{ background: "#9BA17B", position: "relative" }}>
-                  <div style={{
-                    position: "absolute", top: 6, left: "50%",
-                    transform: "translateX(-50%)",
-                    width: 8, height: 8, borderRadius: "50%",
-                    background: "#F2EADB",
-                  }} />
-                </div>
                 <p style={{
                   fontFamily: "'IBM Plex Sans Arabic',sans-serif",
                   fontSize: "0.88rem", color: "rgba(242,234,219,0.8)",
-                  lineHeight: 1.8, margin: 0,
+                  lineHeight: 1.8, margin: 0, paddingTop: "0.2rem",
                 }}>{t.event}</p>
               </div>
             ))}

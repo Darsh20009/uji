@@ -96,8 +96,8 @@ button { font-family: inherit; cursor: pointer; }
   padding: 0 2rem; height: 48px;
   background: var(--forest); color: var(--ivory);
   border: 1px solid var(--forest); border-radius: 0;
-  font-family: var(--font-mono); font-size: 0.7rem; font-weight: 400;
-  letter-spacing: 0.16em; text-transform: uppercase;
+  font-family: var(--font-arabic); font-size: 0.85rem; font-weight: 500;
+  letter-spacing: 0.03em;
   transition: background 0.25s, color 0.25s;
   white-space: nowrap;
 }
@@ -106,22 +106,23 @@ button { font-family: inherit; cursor: pointer; }
 .btn-ghost {
   display: inline-flex; align-items: center; justify-content: center;
   padding: 0 2rem; height: 48px;
-  background: transparent; color: var(--ivory);
-  border: 1px solid rgba(242, 234, 219, 0.5); border-radius: 0;
-  font-family: var(--font-mono); font-size: 0.7rem; font-weight: 400;
-  letter-spacing: 0.16em; text-transform: uppercase;
+  background: rgba(242, 234, 219, 0.12); color: #FFFFFF;
+  border: 1.5px solid rgba(242, 234, 219, 0.9); border-radius: 0;
+  font-family: var(--font-arabic); font-size: 0.85rem; font-weight: 600;
+  letter-spacing: 0.03em;
   transition: background 0.25s, border-color 0.25s;
   white-space: nowrap;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.35);
 }
-.btn-ghost:hover { background: rgba(242, 234, 219, 0.08); border-color: var(--ivory); }
+.btn-ghost:hover { background: rgba(242, 234, 219, 0.22); border-color: #FFFFFF; }
 
 .btn-outline {
   display: inline-flex; align-items: center; justify-content: center;
   padding: 0 2rem; height: 48px;
   background: transparent; color: var(--forest);
   border: 1px solid var(--forest); border-radius: 0;
-  font-family: var(--font-mono); font-size: 0.7rem; font-weight: 400;
-  letter-spacing: 0.16em; text-transform: uppercase;
+  font-family: var(--font-arabic); font-size: 0.85rem; font-weight: 500;
+  letter-spacing: 0.03em;
   transition: background 0.25s, color 0.25s;
   white-space: nowrap;
 }
@@ -202,7 +203,14 @@ input::placeholder { color: var(--stone); opacity: 0.8; }
 
   /* Hero text */
   .hero-buttons { flex-direction: column !important; gap: 0.75rem !important; }
-  .hero-buttons a { width: 100% !important; }
+  .hero-buttons a { width: 100% !important; text-align: center !important; }
+
+  /* Hero overlays: hide side-gradient on mobile, show bottom-up gradient */
+  .hero-overlay-desktop { display: none !important; }
+  .hero-overlay-mobile { display: block !important; }
+
+  /* Buttons: slightly smaller padding on mobile */
+  .btn-primary, .btn-ghost, .btn-outline { padding: 0 1.5rem; }
 
   /* Newsletter form */
   .newsletter-form { flex-direction: column !important; }
@@ -211,6 +219,12 @@ input::placeholder { color: var(--stone); opacity: 0.8; }
   /* Products search */
   .products-header { flex-direction: column !important; align-items: flex-start !important; }
   .products-search input { width: 100% !important; }
+}
+
+@media (min-width: 769px) {
+  /* Hide mobile overlay on desktop */
+  .hero-overlay-mobile { display: none !important; }
+  .hero-overlay-desktop { display: block !important; }
 }
 
 @media (max-width: 480px) {

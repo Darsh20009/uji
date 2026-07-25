@@ -1,6 +1,23 @@
 import { Link } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "../lib/api";
+
+const DEFAULT_SOCIAL = {
+  instagram: "https://instagram.com/uji__sa",
+  tiktok:    "https://tiktok.com/@uji__sa",
+  snapchat:  "https://snapchat.com/add/uji__sa",
+  twitter:   "https://x.com/uji__sa",
+  linktree:  "https://linktr.ee/uji_sa",
+};
 
 export default function Footer() {
+  const { data: settings } = useQuery({
+    queryKey: ["settings"],
+    queryFn: () => api.get("/settings"),
+    staleTime: 5 * 60 * 1000,
+  });
+  const social = { ...DEFAULT_SOCIAL, ...(settings as any)?.social };
+
   return (
     <footer style={{ background: "#16281D", color: "#F2EADB", position: "relative", overflow: "hidden", paddingBottom: 80 }} className="lg:pb-0">
       {/* Big watermark wordmark */}
@@ -35,31 +52,39 @@ export default function Footer() {
             }}>
               ماتشا يابانية احتفالية<br />من قلب زراعة الشاي الياباني
             </p>
-            <div style={{ display: "flex", gap: "1.1rem", alignItems: "center" }}>
+            <div style={{ display: "flex", gap: "1.1rem", alignItems: "center", flexWrap: "wrap" }}>
               {/* Instagram */}
-              <a href="https://instagram.com/ujimatcha" target="_blank" rel="noopener" style={{ color: "#9BA17B", display: "flex" }}>
+              <a href={social.instagram} target="_blank" rel="noopener" style={{ color: "#9BA17B", display: "flex" }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                   <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
                 </svg>
               </a>
               {/* TikTok */}
-              <a href="https://tiktok.com/@ujimatcha" target="_blank" rel="noopener" style={{ color: "#9BA17B", display: "flex" }}>
+              <a href={social.tiktok} target="_blank" rel="noopener" style={{ color: "#9BA17B", display: "flex" }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.32 6.32 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/>
                 </svg>
               </a>
               {/* Snapchat */}
-              <a href="https://snapchat.com/add/ujimatcha" target="_blank" rel="noopener" style={{ color: "#9BA17B", display: "flex" }}>
+              <a href={social.snapchat} target="_blank" rel="noopener" style={{ color: "#9BA17B", display: "flex" }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M12 2C8.56 2 6 4.56 6 8v.5c-.8.2-1.5.8-1.5 1.5 0 .6.4 1.1 1 1.4-.3.9-.9 1.6-1.7 2.1-.3.2-.3.6 0 .8.8.5 2.2.7 3.2.8.3.6 1 1 1.8 1h.2c.3.4.8.7 1.5 1 .7.3 1.3.5 1.5.5s.8-.2 1.5-.5c.7-.3 1.2-.6 1.5-1h.2c.8 0 1.5-.4 1.8-1 1-.1 2.4-.3 3.2-.8.3-.2.3-.6 0-.8-.8-.5-1.4-1.2-1.7-2.1.6-.3 1-.8 1-1.4 0-.7-.7-1.3-1.5-1.5V8C18 4.56 15.44 2 12 2z"/>
                 </svg>
               </a>
               {/* X (Twitter) */}
-              <a href="https://x.com/ujimatcha" target="_blank" rel="noopener" style={{ color: "#9BA17B", display: "flex" }}>
+              <a href={social.twitter} target="_blank" rel="noopener" style={{ color: "#9BA17B", display: "flex" }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.253 5.622L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/>
                 </svg>
               </a>
+              {/* Linktree */}
+              {social.linktree && (
+                <a href={social.linktree} target="_blank" rel="noopener" style={{ color: "#9BA17B", display: "flex" }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M13.51 5.11l4.74-4.74 2.12 2.12-4.74 4.74h6.74v3h-6.74l4.74 4.74-2.12 2.12-4.74-4.74V24h-3V12.35l-4.74 4.74-2.12-2.12 4.74-4.74H.37v-3h6.74L2.37 2.49 4.49.37l4.74 4.74V0h3v5.11z"/>
+                  </svg>
+                </a>
+              )}
             </div>
           </div>
 
@@ -117,7 +142,7 @@ export default function Footer() {
             fontFamily: "'DM Mono', monospace", fontSize: "0.65rem",
             letterSpacing: "0.1em", color: "rgba(155,161,123,0.5)",
           }}>
-            © 2026 UJI MATCHA — ريتشوالك اليومي
+            © 2026 UJI MATCHA. ريتشوالك اليومي
           </p>
           <div style={{ display: "flex", gap: "2rem" }}>
             {[

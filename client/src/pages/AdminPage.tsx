@@ -1330,6 +1330,13 @@ function AdminSettings() {
     maintenanceMode: false, trustBadges: DEFAULT_BADGES, trustBadgesPosition: "above" as const,
     _codEnabled: true, _bankEnabled: true, _stcEnabled: true,
     bankIban: "", bankName: "مصرف الراجحي", stcPayNumber: "0552469643",
+    social: {
+      instagram: "https://instagram.com/uji__sa",
+      tiktok:    "https://tiktok.com/@uji__sa",
+      snapchat:  "https://snapchat.com/add/uji__sa",
+      twitter:   "https://x.com/uji__sa",
+      linktree:  "https://linktr.ee/uji_sa",
+    },
   };
   const current = form || (settings ? { ...defaults, ...settings } : defaults);
 
@@ -1511,6 +1518,34 @@ function AdminSettings() {
             className="w-full h-10 rounded-xl border border-dashed border-stone-200 text-stone-400 text-sm hover:border-[#9BA17B] hover:text-[#9BA17B] transition-colors">
             + إضافة بطاقة
           </button>
+        </div>
+      </div>
+
+      {/* Social Media Links */}
+      <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
+        <div className="px-5 py-4 border-b border-stone-50 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center text-base">📲</div>
+          <div><p className="text-sm font-semibold text-stone-700">حسابات السوشيل ميديا</p><p className="text-xs text-stone-400 mt-0.5">تظهر في الفوتر — عدّلها متى تغيّرت</p></div>
+        </div>
+        <div className="p-5 space-y-3">
+          {[
+            { label: "Instagram", key: "instagram", placeholder: "https://instagram.com/uji__sa" },
+            { label: "TikTok",    key: "tiktok",    placeholder: "https://tiktok.com/@uji__sa" },
+            { label: "Snapchat",  key: "snapchat",  placeholder: "https://snapchat.com/add/uji__sa" },
+            { label: "X (Twitter)", key: "twitter", placeholder: "https://x.com/uji__sa" },
+            { label: "Linktree",  key: "linktree",  placeholder: "https://linktr.ee/uji_sa" },
+          ].map(({ label, key, placeholder }) => (
+            <div key={key}>
+              <label className={lbl}>{label}</label>
+              <input
+                className={inp}
+                style={{ direction: "ltr", textAlign: "left" }}
+                value={(current.social ?? {})[key] ?? ""}
+                placeholder={placeholder}
+                onChange={e => setForm({ ...current, social: { ...(current.social ?? {}), [key]: e.target.value } })}
+              />
+            </div>
+          ))}
         </div>
       </div>
 
@@ -1788,8 +1823,36 @@ function AdminInvoices() {
 function AdminQuotes() {
   const qc = useQueryClient();
   const { data: quotes = [] } = useQuery({ queryKey: ["admin-quotes"], queryFn: () => api.get("/admin/quotes") });
+  const { data: allCustomers = [] } = useQuery({ queryKey: ["admin-customers-q"], queryFn: () => api.get("/admin/customers?limit=200") });
+  const { data: allProducts = [] } = useQuery({ queryKey: ["admin-products-q"], queryFn: () => api.get("/admin/products") });
+
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ name: "", phone: "", email: "", item: "منتج ماتشا", qty: "1", price: "", notes: "", validUntil: "" });
+  const [custSearch, setCustSearch] = useState("");
+  const [prodSearch, setProdSearch] = useState("");
+  const [form, setForm] = useState({ name: "", phone: "", email: "", item: "", qty: "1", price: "", notes: "", validUntil: "" });
+
+  const emptyForm = { name: "", phone: "", email: "", item: "", qty: "1", price: "", notes: "", validUntil: "" };
+
+  // Filter helpers
+  const custMatches = custSearch.length > 0
+    ? (allCustomers as any[]).filter((c: any) =>
+        c.name?.includes(custSearch) || c.phone?.includes(custSearch) || c.email?.includes(custSearch)
+      ).slice(0, 6)
+    : [];
+
+  const prodMatches = prodSearch.length > 0
+    ? (allProducts as any[]).filter((p: any) => p.name?.includes(prodSearch)).slice(0, 6)
+    : [];
+
+  function pickCustomer(c: any) {
+    setForm(f => ({ ...f, name: c.name || "", phone: c.phone || "", email: c.email || "" }));
+    setCustSearch("");
+  }
+
+  function pickProduct(p: any) {
+    setForm(f => ({ ...f, item: p.name || "", price: String(p.price || "") }));
+    setProdSearch("");
+  }
 
   const create = useMutation({
     mutationFn: () => api.post("/admin/quotes", {
@@ -1797,7 +1860,12 @@ function AdminQuotes() {
       items: [{ name: form.item, qty: Number(form.qty), price: Number(form.price) }],
       notes: form.notes, validUntil: form.validUntil || undefined,
     }),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-quotes"] }); setOpen(false); setForm({ name: "", phone: "", email: "", item: "منتج ماتشا", qty: "1", price: "", notes: "", validUntil: "" }); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-quotes"] });
+      setOpen(false);
+      setForm(emptyForm);
+      setCustSearch(""); setProdSearch("");
+    },
   });
 
   const sendQ = useMutation({
@@ -1832,23 +1900,108 @@ function AdminQuotes() {
       </div>
 
       {open && (
-        <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-5 space-y-3">
+        <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-5 space-y-4">
           <h3 className="text-sm font-semibold text-stone-700">بيانات العرض</h3>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-            <input placeholder="اسم العميل *" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
-            <input placeholder="جوال العميل" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
-            <input placeholder="البريد الإلكتروني *" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
-            <input placeholder="اسم المنتج *" value={form.item} onChange={e => setForm({ ...form, item: e.target.value })} />
+
+          {/* ── Customer quick-pick ── */}
+          <div>
+            <p className="text-xs text-stone-400 mb-1.5">العميل</p>
+            <div className="relative">
+              <input
+                placeholder="ابحث باسم العميل أو الجوال أو البريد..."
+                value={custSearch}
+                onChange={e => setCustSearch(e.target.value)}
+                className="!mb-0"
+              />
+              {custMatches.length > 0 && (
+                <div className="absolute z-20 top-full right-0 left-0 bg-white border border-stone-200 rounded-xl shadow-md mt-1 overflow-hidden">
+                  {custMatches.map((c: any) => (
+                    <button key={c._id} onClick={() => pickCustomer(c)}
+                      className="w-full text-right px-4 py-2.5 text-sm hover:bg-stone-50 flex justify-between items-center border-b border-stone-50 last:border-0">
+                      <span className="text-stone-700 font-medium">{c.name}</span>
+                      <span className="text-xs text-stone-400">{c.phone || c.email}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            {/* Selected customer preview */}
+            {form.name && (
+              <div className="mt-2 flex items-center gap-2 flex-wrap">
+                <span className="inline-flex items-center gap-1.5 bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs rounded-full px-3 py-1">
+                  {form.name}
+                  {form.phone && <span className="opacity-60">· {form.phone}</span>}
+                  {form.email && <span className="opacity-60">· {form.email}</span>}
+                  <button onClick={() => setForm(f => ({ ...f, name: "", phone: "", email: "" }))} className="text-emerald-400 hover:text-red-400 mr-1">✕</button>
+                </span>
+              </div>
+            )}
+            {/* Manual fields if no customer selected */}
+            {!form.name && (
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 mt-2">
+                <input placeholder="الاسم *" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
+                <input placeholder="الجوال" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
+                <input placeholder="البريد الإلكتروني" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+              </div>
+            )}
+          </div>
+
+          {/* ── Product quick-pick ── */}
+          <div>
+            <p className="text-xs text-stone-400 mb-1.5">المنتج</p>
+            <div className="relative">
+              <input
+                placeholder="ابحث باسم المنتج..."
+                value={prodSearch}
+                onChange={e => setProdSearch(e.target.value)}
+                className="!mb-0"
+              />
+              {prodMatches.length > 0 && (
+                <div className="absolute z-20 top-full right-0 left-0 bg-white border border-stone-200 rounded-xl shadow-md mt-1 overflow-hidden">
+                  {prodMatches.map((p: any) => (
+                    <button key={p._id} onClick={() => pickProduct(p)}
+                      className="w-full text-right px-4 py-2.5 text-sm hover:bg-stone-50 flex justify-between items-center border-b border-stone-50 last:border-0">
+                      <span className="text-stone-700 font-medium">{p.name}</span>
+                      <span className="text-xs text-stone-400">{p.price} ر.س</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            {/* Selected product preview */}
+            {form.item && (
+              <div className="mt-2 flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-100 text-blue-700 text-xs rounded-full px-3 py-1">
+                  {form.item}
+                  <button onClick={() => setForm(f => ({ ...f, item: "", price: "" }))} className="text-blue-400 hover:text-red-400 mr-1">✕</button>
+                </span>
+              </div>
+            )}
+            {!form.item && (
+              <input placeholder="اسم المنتج *" value={form.item} onChange={e => setForm({ ...form, item: e.target.value })} className="mt-2" />
+            )}
+          </div>
+
+          {/* ── Qty / Price / Date / Notes ── */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <input type="number" placeholder="الكمية" value={form.qty} onChange={e => setForm({ ...form, qty: e.target.value })} />
             <input type="number" placeholder="السعر (ر.س) *" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} />
             <input type="date" title="صالح حتى" value={form.validUntil} onChange={e => setForm({ ...form, validUntil: e.target.value })} className="col-span-1" />
-            <textarea placeholder="ملاحظات (اختياري)" value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} className="col-span-2 lg:col-span-2 !h-20 resize-none" />
+            <div className="col-span-2 lg:col-span-1 text-xs text-stone-400 flex items-center">
+              {form.qty && form.price ? (
+                <span className="text-emerald-700 font-semibold text-sm">
+                  الإجمالي: {(Number(form.qty) * Number(form.price)).toFixed(2)} ر.س
+                </span>
+              ) : "أدخل الكمية والسعر"}
+            </div>
           </div>
+          <textarea placeholder="ملاحظات (اختياري)" value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} className="!h-20 resize-none" />
+
           <div className="flex gap-2">
-            <button disabled={!form.name || !form.price || create.isPending} onClick={() => create.mutate()} className="h-10 px-5 rounded-xl bg-[#1F3929] text-white text-sm disabled:opacity-50">
+            <button disabled={!form.name || !form.price || !form.item || create.isPending} onClick={() => create.mutate()} className="h-10 px-5 rounded-xl bg-[#1F3929] text-white text-sm disabled:opacity-50">
               {create.isPending ? "جاري الحفظ..." : "حفظ العرض"}
             </button>
-            <button onClick={() => setOpen(false)} className="h-10 px-4 rounded-xl border border-stone-200 text-stone-500 text-sm">إلغاء</button>
+            <button onClick={() => { setOpen(false); setForm(emptyForm); setCustSearch(""); setProdSearch(""); }} className="h-10 px-4 rounded-xl border border-stone-200 text-stone-500 text-sm">إلغاء</button>
           </div>
         </div>
       )}

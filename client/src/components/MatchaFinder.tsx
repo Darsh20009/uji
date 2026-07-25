@@ -120,18 +120,17 @@ export default function MatchaFinder() {
             <h2 style={{
               fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
               fontSize: "clamp(1.8rem,3.5vw,2.8rem)",
-              fontWeight: 300, color: "#F2EADB", lineHeight: 1.2,
-              marginBottom: "1rem",
+              fontWeight: 300, color: "#F2EADB", lineHeight: 1.25,
+              marginBottom: "1.25rem",
             }}>
-              مو متأكد أي ماتشا<br />
-              تناسبك؟
+              لكل شخص ماتشاه.
             </h2>
             <p style={{
               fontFamily: "'IBM Plex Sans Arabic', sans-serif",
               fontSize: "0.88rem", color: "rgba(155,161,123,0.85)",
-              lineHeight: 1.8, marginBottom: "2.5rem", maxWidth: 380, margin: "0 auto 2.5rem",
+              lineHeight: 1.9, maxWidth: 380, margin: "0 auto 2.5rem",
             }}>
-              جاوب على ٣ أسئلة بسيطة ونساعدك تختار الصنف المناسب لك، سواء للريتشوال اليومي أو اللاتيه أو الحلويات.
+              ثلاثة أسئلة فقط — وستعرف أي صنف يناسب أسلوبك وذوقك.
             </p>
             <button
               onClick={() => setStep(0)}
@@ -148,7 +147,7 @@ export default function MatchaFinder() {
               onMouseEnter={e => (e.currentTarget.style.background = "#DDD5C3")}
               onMouseLeave={e => (e.currentTarget.style.background = "#F2EADB")}
             >
-              اكتشف ماتشاتك
+              ابدأ الاختبار
             </button>
           </div>
         )}
