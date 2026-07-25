@@ -129,6 +129,10 @@ export default function CheckoutPage() {
 
   const handle = async (e: React.FormEvent) => {
     e.preventDefault(); setLoading(true); setError("");
+    if (!form.city) { setError("يرجى اختيار المدينة"); setLoading(false); return; }
+    if (!form.district.trim()) { setError("يرجى إدخال الحي"); setLoading(false); return; }
+    if (!form.name.trim()) { setError("يرجى إدخال الاسم الكامل"); setLoading(false); return; }
+    if (!form.phone.trim()) { setError("يرجى إدخال رقم الجوال"); setLoading(false); return; }
     try {
       const result = await api.post("/orders", {
         customer: { name: form.name, phone: form.phone, email: form.email || undefined },

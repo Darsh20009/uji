@@ -631,7 +631,8 @@ function ProductModal({ mode, product, onClose, onSaved }: { mode: "add" | "edit
       fd.append("data", JSON.stringify({ ...form, price: Number(form.price), comparePrice: Number(form.comparePrice) || 0, stock: Number(form.stock) }));
       files.forEach(f => fd.append("images", f));
       const url = mode === "add" ? "/api/admin/products" : `/api/admin/products/${product._id}`;
-      await fetch(url, { method: mode === "add" ? "POST" : "PUT", body: fd, credentials: "include" });
+      const res = await fetch(url, { method: mode === "add" ? "POST" : "PUT", body: fd, credentials: "include" });
+      if (!res.ok) { const err = await res.json().catch(() => ({})); throw new Error(err.message || "خطأ في الحفظ"); }
       onSaved();
     } catch (e: any) { setError(e.message || "خطأ في الحفظ"); }
     setLoading(false);
@@ -729,7 +730,11 @@ function AdminOrders() {
 
   const upd = useMutation({
     mutationFn: ({ id, status }: any) => api.put(`/admin/orders/${id}`, { status }),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-orders"] }); qc.invalidateQueries({ queryKey: ["admin-stats"] }); },
+    onSuccess: (_data, vars) => {
+      qc.invalidateQueries({ queryKey: ["admin-orders"] });
+      qc.invalidateQueries({ queryKey: ["admin-stats"] });
+      setSelected((prev: any) => prev?._id === vars.id ? { ...prev, status: vars.status } : prev);
+    },
   });
   const updReceipt = useMutation({
     mutationFn: ({ id, receiptStatus }: any) => api.put(`/admin/orders/${id}/receipt-status`, { receiptStatus }),
@@ -1146,7 +1151,7 @@ function AdminCustomers() {
               </div>
               <div>
                 <label className="block text-xs text-stone-500 mb-1.5">الدور</label>
-                <select defaultValue={selected.role} id={`role-${selected._id}`}
+                <select value={selected.role} onChange={e => setSelected({ ...selected, role: e.target.value })}
                   className="w-full h-10 px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none">
                   <option value="customer">عميل</option>
                   <option value="employee">موظف</option>
@@ -1154,10 +1159,7 @@ function AdminCustomers() {
                 </select>
               </div>
               <div className="flex gap-3 pt-2">
-                <button onClick={() => {
-                  const sel = document.getElementById(`role-${selected._id}`) as HTMLSelectElement;
-                  upd.mutate({ id: selected._id, role: sel?.value || selected.role });
-                }} disabled={upd.isPending}
+                <button onClick={() => upd.mutate({ id: selected._id, role: selected.role })} disabled={upd.isPending}
                   className="flex-1 h-10 rounded-xl bg-[#1F3929] text-[#F2EADB] text-sm hover:bg-[#16281D] disabled:opacity-60">
                   {upd.isPending ? "جاري..." : "حفظ"}
                 </button>
@@ -1341,8 +1343,12 @@ function AdminSettings() {
   const current = form || (settings ? { ...defaults, ...settings } : defaults);
 
   const save = useMutation({
-    mutationFn: (data: any) => api.put("/admin/settings", data),
-    onSuccess: () => { setSaved(true); qc.invalidateQueries({ queryKey: ["admin-settings"] }); setTimeout(() => setSaved(false), 2500); },
+    mutationFn: (data: any) => {
+      // Strip computed/internal fields that should not be persisted as settings
+      const { _geideaEnabled, ...rest } = data;
+      return api.put("/admin/settings", rest);
+    },
+    onSuccess: () => { setSaved(true); qc.invalidateQueries({ queryKey: ["admin-settings"] }); qc.invalidateQueries({ queryKey: ["settings"] }); setTimeout(() => setSaved(false), 2500); },
   });
 
   const sendTest = async () => {
@@ -2062,8 +2068,16 @@ function AdminMarketing() {
   const { data: campaigns = [] } = useQuery({ queryKey: ["admin-campaigns"], queryFn: () => api.get("/admin/campaigns") });
   const { data: newsletter } = useQuery({ queryKey: ["admin-newsletter"], queryFn: () => api.get("/admin/newsletter") });
   const [form, setForm] = useState({ name: "", subject: "", message: "", channel: "email" });
-  const create = useMutation({ mutationFn: () => api.post("/admin/campaigns", form), onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-campaigns"] }); setForm({ name: "", subject: "", message: "", channel: "email" }); } });
-  const send = useMutation({ mutationFn: (id: string) => api.post(`/admin/campaigns/${id}/send`, {}), onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-campaigns"] }) });
+  const create = useMutation({
+    mutationFn: () => api.post("/admin/campaigns", form),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-campaigns"] }); setForm({ name: "", subject: "", message: "", channel: "email" }); },
+    onError: (e: any) => alert("خطأ في حفظ الحملة: " + e.message),
+  });
+  const send = useMutation({
+    mutationFn: (id: string) => api.post(`/admin/campaigns/${id}/send`, {}),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-campaigns"] }); alert("✅ تم إرسال الحملة بنجاح"); },
+    onError: (e: any) => alert("خطأ في الإرسال: " + e.message),
+  });
   const inp = "w-full h-10 px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none focus:border-[#9BA17B] transition-colors";
   return <div className="space-y-5"><div><h2 className="text-lg font-semibold text-stone-800">التسويق والرسائل الجماعية</h2><p className="text-xs text-stone-400 mt-0.5">أنشئ حملات بريدية للمشتركين وتابع أثرها</p></div><div className="grid grid-cols-2 lg:grid-cols-3 gap-4"><StatCard label="مشتركو النشرة" value={newsletter?.count || 0} icon={<Mail size={18} />} /><StatCard label="الحملات" value={(campaigns as any[]).length} icon={<Megaphone size={18} />} /><StatCard label="القنوات" value="Email · WhatsApp" icon={<Send size={18} />} /></div><div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-5 space-y-3"><h3 className="text-sm font-semibold text-stone-700">حملة جديدة</h3><div className="grid grid-cols-2 gap-3"><input className={inp} placeholder="اسم الحملة" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /><input className={inp} placeholder="عنوان الرسالة" value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} /></div><textarea className={`${inp} !h-28 resize-none py-2`} placeholder="اكتب الرسالة للعملاء..." value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} /><button disabled={!form.name || !form.message || create.isPending} onClick={() => create.mutate()} className="h-10 px-4 rounded-xl bg-[#1F3929] text-white text-sm disabled:opacity-50">حفظ الحملة</button></div><div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden"><div className="divide-y divide-stone-50">{(campaigns as any[]).map(c => <div key={c._id} className="px-5 py-4 flex items-center justify-between gap-3"><div><p className="text-sm font-semibold text-stone-700">{c.name}</p><p className="text-xs text-stone-400">{c.recipients || 0} مستلم · {c.status === "sent" ? "تم الإرسال" : "مسودة"}</p></div><button disabled={c.status === "sent" || send.isPending} onClick={() => send.mutate(c._id)} className="h-8 px-3 rounded-lg border border-[#1F3929] text-xs text-[#1F3929] flex items-center gap-1 disabled:opacity-40"><Send size={12} /> إرسال</button></div>)}{!(campaigns as any[]).length && <p className="py-10 text-center text-sm text-stone-400">لا توجد حملات بعد</p>}</div></div></div>;
 }
@@ -2074,6 +2088,43 @@ function AdminSEO() {
   const { data: saved } = useQuery({ queryKey: ["admin-seo"], queryFn: () => api.get("/admin/seo") });
   const [form, setForm] = useState<any>(null);
   const current = form || saved || {};
-  const save = useMutation({ mutationFn: () => api.put("/admin/seo", current), onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-seo"] }); alert("تم حفظ إعدادات SEO / AEO"); } });
-  return <div className="space-y-5 max-w-4xl"><div><h2 className="text-lg font-semibold text-stone-800">SEO / AEO</h2><p className="text-xs text-stone-400 mt-0.5">الكلمات والبيانات التي تساعد Google ونتائج الذكاء الاصطناعي على فهم UJI</p></div><div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-5 space-y-4"><div><label className="text-xs text-stone-500 mb-1.5 block">العنوان الرئيسي</label><input value={current.title || "UJI MATCHA — ماتشا يابانية أصلية من أوجي إلى السعودية"} onChange={e => setForm({ ...current, title: e.target.value })} /></div><div><label className="text-xs text-stone-500 mb-1.5 block">الوصف</label><textarea className="!h-24" value={current.description || "ماتشا يابانية أصلية من أوجي، توصيل سريع إلى الرياض وجميع مدن السعودية. ماتشا لاتيه بارد وساخن ومشروبات صيفية وشتوية."} onChange={e => setForm({ ...current, description: e.target.value })} /></div><div><label className="text-xs text-stone-500 mb-1.5 block">كلمات البحث العربية والإنجليزية (كلمة في كل سطر)</label><textarea className="!h-40" value={(current.keywords || defaults?.keywords || []).join("\n")} onChange={e => setForm({ ...current, keywords: e.target.value.split("\n").map((x: string) => x.trim()).filter(Boolean) })} /></div><div><label className="text-xs text-stone-500 mb-1.5 block">أسئلة AEO إضافية — JSON اختياري</label><textarea className="!h-32 font-mono text-xs" value={JSON.stringify(current.faqs || defaults?.faqs || [], null, 2)} onChange={e => { try { setForm({ ...current, faqs: JSON.parse(e.target.value) }); } catch {} }} /></div><button onClick={() => save.mutate()} disabled={save.isPending} className="h-11 w-full rounded-xl bg-[#1F3929] text-white text-sm disabled:opacity-50">{save.isPending ? "جاري الحفظ..." : "حفظ SEO / AEO"}</button></div><div className="bg-[#1F3929] text-[#F2EADB] rounded-2xl p-5"><p className="text-sm font-semibold mb-2">مفعل تلقائياً</p><p className="text-xs leading-7 text-[#C8BBA4]">Sitemap XML · robots.txt · llms.txt · Product schema · FAQ schema · كلمات ماتشا بالعربية والإنجليزية · مدن السعودية · صيف وشتاء · روابط Canonical وOpen Graph.</p></div></div>;
+  const inp = "w-full px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none focus:border-[#9BA17B] transition-colors";
+  const save = useMutation({
+    mutationFn: () => api.put("/admin/seo", current),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-seo"] }); qc.invalidateQueries({ queryKey: ["seo-site"] }); alert("تم حفظ إعدادات SEO / AEO"); },
+    onError: (e: any) => alert("خطأ: " + e.message),
+  });
+  return (
+    <div className="space-y-5 max-w-4xl">
+      <div>
+        <h2 className="text-lg font-semibold text-stone-800">SEO / AEO</h2>
+        <p className="text-xs text-stone-400 mt-0.5">الكلمات والبيانات التي تساعد Google ونتائج الذكاء الاصطناعي على فهم UJI</p>
+      </div>
+      <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-5 space-y-4">
+        <div>
+          <label className="text-xs text-stone-500 mb-1.5 block">العنوان الرئيسي</label>
+          <input className={`${inp} h-10`} value={current.title || "UJI MATCHA — ماتشا يابانية أصلية من أوجي إلى السعودية"} onChange={e => setForm({ ...current, title: e.target.value })} />
+        </div>
+        <div>
+          <label className="text-xs text-stone-500 mb-1.5 block">الوصف</label>
+          <textarea className={`${inp} h-24 py-2 resize-none`} value={current.description || "ماتشا يابانية أصلية من أوجي، توصيل سريع إلى الرياض وجميع مدن السعودية. ماتشا لاتيه بارد وساخن ومشروبات صيفية وشتوية."} onChange={e => setForm({ ...current, description: e.target.value })} />
+        </div>
+        <div>
+          <label className="text-xs text-stone-500 mb-1.5 block">كلمات البحث العربية والإنجليزية (كلمة في كل سطر)</label>
+          <textarea className={`${inp} h-40 py-2 resize-none`} value={(current.keywords || (defaults as any)?.keywords || []).join("\n")} onChange={e => setForm({ ...current, keywords: e.target.value.split("\n").map((x: string) => x.trim()).filter(Boolean) })} />
+        </div>
+        <div>
+          <label className="text-xs text-stone-500 mb-1.5 block">أسئلة AEO إضافية — JSON اختياري</label>
+          <textarea className={`${inp} h-32 py-2 font-mono text-xs resize-none`} value={JSON.stringify(current.faqs || (defaults as any)?.faqs || [], null, 2)} onChange={e => { try { setForm({ ...current, faqs: JSON.parse(e.target.value) }); } catch {} }} />
+        </div>
+        <button onClick={() => save.mutate()} disabled={save.isPending} className="h-11 w-full rounded-xl bg-[#1F3929] text-white text-sm disabled:opacity-50">
+          {save.isPending ? "جاري الحفظ..." : "حفظ SEO / AEO"}
+        </button>
+      </div>
+      <div className="bg-[#1F3929] text-[#F2EADB] rounded-2xl p-5">
+        <p className="text-sm font-semibold mb-2">مفعل تلقائياً</p>
+        <p className="text-xs leading-7 text-[#C8BBA4]">Sitemap XML · robots.txt · llms.txt · Product schema · FAQ schema · كلمات ماتشا بالعربية والإنجليزية · مدن السعودية · صيف وشتاء · روابط Canonical وOpen Graph.</p>
+      </div>
+    </div>
+  );
 }

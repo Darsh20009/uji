@@ -494,7 +494,13 @@ router.get("/admin/orders", requireAdmin, async (_req, res) => {
 });
 
 router.put("/admin/orders/:id", requireAdmin, async (req, res) => {
-  try { res.json(await Order.findByIdAndUpdate(req.params.id, { status: req.body.status }, { new: true })); }
+  try {
+    const { status } = req.body;
+    const update: any = { status };
+    // Auto-set paymentStatus when admin marks as confirmed/delivered
+    if (status === "confirmed" || status === "delivered") update.paymentStatus = "paid";
+    res.json(await Order.findByIdAndUpdate(req.params.id, update, { new: true }));
+  }
   catch (e: any) { res.status(500).json({ message: e.message }); }
 });
 
