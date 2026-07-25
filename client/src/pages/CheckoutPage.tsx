@@ -141,7 +141,7 @@ export default function CheckoutPage() {
         couponCode: couponData?.code,
         notes: `مزود التوصيل: ${deliveryProvider.name}${form.notes ? `\n${form.notes}` : ""}`,
       }) as any;
-      if (result.geideaRedirectUrl) { clear(); window.location.href = result.geideaRedirectUrl; return; }
+      if (result.geideaRedirectUrl) { window.location.href = result.geideaRedirectUrl; return; }
       setOrder(result.order || result); clear();
     } catch (e: any) { setError(e.message || "حدث خطأ، حاول مرة أخرى"); }
     setLoading(false);
@@ -532,31 +532,31 @@ function OrderSuccess({ order, user, font, serif, mono }: { order: any; user: an
         <CheckCircle size={42} color="#1F3929" strokeWidth={1.2} style={{ margin: "0 auto 1rem" }} />
         <p style={{ fontFamily: mono, fontSize: "0.62rem", letterSpacing: "0.2em", color: "#9BA17B" }}>UJI MATCHA · ORDER RECEIVED</p>
         <h1 style={{ fontFamily: serif, fontSize: "2rem", fontWeight: 300, color: "#1C201B", margin: "0.75rem 0" }}>تم استلام طلبك بنجاح</h1>
-        <p style={{ fontFamily, fontSize: "0.9rem", color: "#6F7860", lineHeight: 1.9 }}>طلبك الآن <b style={{ color: "#1F3929" }}>جاري المعالجة</b> وسيتم تحديث حالته بعد مراجعة الدفع.</p>
+        <p style={{ fontFamily: font, fontSize: "0.9rem", color: "#6F7860", lineHeight: 1.9 }}>طلبك الآن <b style={{ color: "#1F3929" }}>جاري المعالجة</b> وسيتم تحديث حالته بعد مراجعة الدفع.</p>
         <div style={{ display: "flex", justifyContent: "space-between", gap: 12, background: "rgba(31,57,41,0.06)", padding: "1rem 1.25rem", margin: "1.5rem 0", textAlign: "right" }}>
-          <span style={{ fontFamily, color: "#9BA17B", fontSize: "0.8rem" }}>رقم الطلب</span>
+          <span style={{ fontFamily: font, color: "#9BA17B", fontSize: "0.8rem" }}>رقم الطلب</span>
           <b style={{ fontFamily: mono, color: "#1F3929", direction: "ltr" }}>{order.orderNumber}</b>
-          <b style={{ fontFamily, color: "#1F3929" }}>{Number(order.total || 0).toFixed(2)} ر.س</b>
+          <b style={{ fontFamily: font, color: "#1F3929" }}>{Number(order.total || 0).toFixed(2)} ر.س</b>
         </div>
         {isBankPayment && (
           <div style={{ borderTop: "1px solid rgba(200,187,164,0.35)", paddingTop: "1.5rem", textAlign: "right" }}>
-            <h2 style={{ fontFamily, fontSize: "1rem", color: "#1C201B", marginBottom: "0.5rem" }}>إرفاق إيصال التحويل</h2>
-            <p style={{ fontFamily, fontSize: "0.8rem", color: "#9BA17B", marginBottom: "1rem" }}>ارفع صورة الإيصال ليتمكن فريق UJI من مراجعته. سيبقى الطلب قيد المعالجة حتى الاعتماد.</p>
+            <h2 style={{ fontFamily: font, fontSize: "1rem", color: "#1C201B", marginBottom: "0.5rem" }}>إرفاق إيصال التحويل</h2>
+            <p style={{ fontFamily: font, fontSize: "0.8rem", color: "#9BA17B", marginBottom: "1rem" }}>ارفع صورة الإيصال ليتمكن فريق UJI من مراجعته. سيبقى الطلب قيد المعالجة حتى الاعتماد.</p>
             {receiptData ? (
               <div style={{ background: "rgba(5,150,105,0.07)", border: "1px solid rgba(5,150,105,0.22)", padding: "1rem", textAlign: "center" }}>
-                <p style={{ fontFamily, color: "#047857", fontSize: "0.9rem", marginBottom: "0.75rem" }}>✓ {statusText}</p>
-                {receiptData.whatsappUrl && <a href={receiptData.whatsappUrl} target="_blank" rel="noopener" className="btn-primary" style={{ height: 42, fontFamily, fontSize: "0.8rem" }}>إرسال الإيصال عبر واتساب</a>}
+                <p style={{ fontFamily: font, color: "#047857", fontSize: "0.9rem", marginBottom: "0.75rem" }}>✓ {statusText}</p>
+                {receiptData.whatsappUrl && <a href={receiptData.whatsappUrl} target="_blank" rel="noopener" className="btn-primary" style={{ height: 42, fontFamily: font, fontSize: "0.8rem" }}>إرسال الإيصال عبر واتساب</a>}
               </div>
             ) : (
               <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-                <input type="file" accept="image/*,.pdf" onChange={e => setReceipt(e.target.files?.[0] || null)} style={{ flex: 1, height: 48, padding: "0.7rem", fontFamily, fontSize: "0.8rem" }} />
-                <button type="button" onClick={uploadReceipt} disabled={!receipt || uploading} className="btn-primary" style={{ height: 48, fontFamily, fontSize: "0.8rem", opacity: !receipt || uploading ? 0.55 : 1 }}>{uploading ? "جاري الرفع..." : "رفع الإيصال"}</button>
+                <input type="file" accept="image/*,.pdf" onChange={e => setReceipt(e.target.files?.[0] || null)} style={{ flex: 1, height: 48, padding: "0.7rem", fontFamily: font, fontSize: "0.8rem" }} />
+                <button type="button" onClick={uploadReceipt} disabled={!receipt || uploading} className="btn-primary" style={{ height: 48, fontFamily: font, fontSize: "0.8rem", opacity: !receipt || uploading ? 0.55 : 1 }}>{uploading ? "جاري الرفع..." : "رفع الإيصال"}</button>
               </div>
             )}
-            {error && <p style={{ fontFamily, color: "#c0392b", fontSize: "0.8rem", marginTop: 10 }}>{error}</p>}
+            {error && <p style={{ fontFamily: font, color: "#c0392b", fontSize: "0.8rem", marginTop: 10 }}>{error}</p>}
           </div>
         )}
-        <Link href="/products" className="btn-outline" style={{ marginTop: "1.75rem", height: 44, fontFamily, fontSize: "0.8rem" }}>العودة للمتجر</Link>
+        <Link href="/products" className="btn-outline" style={{ marginTop: "1.75rem", height: 44, fontFamily: font, fontSize: "0.8rem" }}>العودة للمتجر</Link>
       </div>
     </div>
   );

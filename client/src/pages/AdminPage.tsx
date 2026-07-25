@@ -1674,9 +1674,9 @@ function AdminFinance({ stats }: { stats: any }) {
     <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
       <div className="px-5 py-4 border-b border-stone-50 flex items-center justify-between"><div><h3 className="text-sm font-semibold text-stone-700">المصروفات</h3><p className="text-xs text-stone-400 mt-1">{(expenses as any[]).length} سجل</p></div><button onClick={() => setShowForm(v => !v)} className="h-9 px-3 rounded-xl bg-[#1F3929] text-[#F2EADB] text-xs flex items-center gap-1"><Plus size={14} /> مصروف جديد</button></div>
       {showForm && <div className="p-5 bg-stone-50 border-b border-stone-100 grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <input placeholder="اسم المصروف" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} />
-        <input placeholder="التصنيف" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} />
-        <input type="number" placeholder="المبلغ ر.س" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} />
+        <input placeholder="اسم المصروف" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="w-full h-10 px-3 rounded-lg border border-stone-200 text-sm bg-white outline-none focus:border-[#9BA17B] transition-colors" />
+        <input placeholder="التصنيف" value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} className="w-full h-10 px-3 rounded-lg border border-stone-200 text-sm bg-white outline-none focus:border-[#9BA17B] transition-colors" />
+        <input type="number" placeholder="المبلغ ر.س" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} className="w-full h-10 px-3 rounded-lg border border-stone-200 text-sm bg-white outline-none focus:border-[#9BA17B] transition-colors" />
         <button disabled={!form.title || !form.amount || add.isPending} onClick={() => add.mutate()} className="h-10 rounded-xl bg-[#1F3929] text-white text-sm disabled:opacity-50">حفظ المصروف</button>
       </div>}
       <div className="divide-y divide-stone-50">{(expenses as any[]).map(e => <div key={e._id} className="px-5 py-3 flex items-center justify-between"><div><p className="text-sm text-stone-700">{e.title}</p><p className="text-xs text-stone-400">{e.category} · {new Date(e.date || e.createdAt).toLocaleDateString("ar-SA")}</p></div><div className="flex items-center gap-3"><b className="text-sm text-red-600">-{Number(e.amount).toFixed(2)} ر.س</b><button onClick={() => del.mutate(e._id)} className="text-red-300 hover:text-red-600"><Trash2 size={14} /></button></div></div>)}{!(expenses as any[]).length && <p className="py-12 text-center text-sm text-stone-400">لا توجد مصروفات مسجلة</p>}</div>
@@ -1826,6 +1826,9 @@ function AdminQuotes() {
   const { data: allCustomers = [] } = useQuery({ queryKey: ["admin-customers-q"], queryFn: () => api.get("/admin/customers?limit=200") });
   const { data: allProducts = [] } = useQuery({ queryKey: ["admin-products-q"], queryFn: () => api.get("/admin/products") });
 
+  const inp = "w-full h-10 px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none focus:border-[#9BA17B] transition-colors";
+  const lbl = "block text-xs text-stone-500 mb-1.5";
+
   const [open, setOpen] = useState(false);
   const [custSearch, setCustSearch] = useState("");
   const [prodSearch, setProdSearch] = useState("");
@@ -1911,7 +1914,7 @@ function AdminQuotes() {
                 placeholder="ابحث باسم العميل أو الجوال أو البريد..."
                 value={custSearch}
                 onChange={e => setCustSearch(e.target.value)}
-                className="!mb-0"
+                className={inp}
               />
               {custMatches.length > 0 && (
                 <div className="absolute z-20 top-full right-0 left-0 bg-white border border-stone-200 rounded-xl shadow-md mt-1 overflow-hidden">
@@ -1939,9 +1942,9 @@ function AdminQuotes() {
             {/* Manual fields if no customer selected */}
             {!form.name && (
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 mt-2">
-                <input placeholder="الاسم *" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
-                <input placeholder="الجوال" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} />
-                <input placeholder="البريد الإلكتروني" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+                <input placeholder="الاسم *" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className={inp} />
+                <input placeholder="الجوال" value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} className={inp} />
+                <input placeholder="البريد الإلكتروني" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className={inp} />
               </div>
             )}
           </div>
@@ -1954,7 +1957,7 @@ function AdminQuotes() {
                 placeholder="ابحث باسم المنتج..."
                 value={prodSearch}
                 onChange={e => setProdSearch(e.target.value)}
-                className="!mb-0"
+                className={inp}
               />
               {prodMatches.length > 0 && (
                 <div className="absolute z-20 top-full right-0 left-0 bg-white border border-stone-200 rounded-xl shadow-md mt-1 overflow-hidden">
@@ -1978,15 +1981,15 @@ function AdminQuotes() {
               </div>
             )}
             {!form.item && (
-              <input placeholder="اسم المنتج *" value={form.item} onChange={e => setForm({ ...form, item: e.target.value })} className="mt-2" />
+              <input placeholder="اسم المنتج *" value={form.item} onChange={e => setForm({ ...form, item: e.target.value })} className={`${inp} mt-2`} />
             )}
           </div>
 
           {/* ── Qty / Price / Date / Notes ── */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <input type="number" placeholder="الكمية" value={form.qty} onChange={e => setForm({ ...form, qty: e.target.value })} />
-            <input type="number" placeholder="السعر (ر.س) *" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} />
-            <input type="date" title="صالح حتى" value={form.validUntil} onChange={e => setForm({ ...form, validUntil: e.target.value })} className="col-span-1" />
+            <input type="number" placeholder="الكمية" value={form.qty} onChange={e => setForm({ ...form, qty: e.target.value })} className={inp} />
+            <input type="number" placeholder="السعر (ر.س) *" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} className={inp} />
+            <input type="date" title="صالح حتى" value={form.validUntil} onChange={e => setForm({ ...form, validUntil: e.target.value })} className={`${inp} col-span-1`} />
             <div className="col-span-2 lg:col-span-1 text-xs text-stone-400 flex items-center">
               {form.qty && form.price ? (
                 <span className="text-emerald-700 font-semibold text-sm">
@@ -1995,7 +1998,7 @@ function AdminQuotes() {
               ) : "أدخل الكمية والسعر"}
             </div>
           </div>
-          <textarea placeholder="ملاحظات (اختياري)" value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} className="!h-20 resize-none" />
+          <textarea placeholder="ملاحظات (اختياري)" value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} className={`${inp} !h-20 resize-none py-2`} />
 
           <div className="flex gap-2">
             <button disabled={!form.name || !form.price || !form.item || create.isPending} onClick={() => create.mutate()} className="h-10 px-5 rounded-xl bg-[#1F3929] text-white text-sm disabled:opacity-50">
@@ -2061,7 +2064,8 @@ function AdminMarketing() {
   const [form, setForm] = useState({ name: "", subject: "", message: "", channel: "email" });
   const create = useMutation({ mutationFn: () => api.post("/admin/campaigns", form), onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-campaigns"] }); setForm({ name: "", subject: "", message: "", channel: "email" }); } });
   const send = useMutation({ mutationFn: (id: string) => api.post(`/admin/campaigns/${id}/send`, {}), onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-campaigns"] }) });
-  return <div className="space-y-5"><div><h2 className="text-lg font-semibold text-stone-800">التسويق والرسائل الجماعية</h2><p className="text-xs text-stone-400 mt-0.5">أنشئ حملات بريدية للمشتركين وتابع أثرها</p></div><div className="grid grid-cols-2 lg:grid-cols-3 gap-4"><StatCard label="مشتركو النشرة" value={newsletter?.count || 0} icon={<Mail size={18} />} /><StatCard label="الحملات" value={(campaigns as any[]).length} icon={<Megaphone size={18} />} /><StatCard label="القنوات" value="Email · WhatsApp" icon={<Send size={18} />} /></div><div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-5 space-y-3"><h3 className="text-sm font-semibold text-stone-700">حملة جديدة</h3><div className="grid grid-cols-2 gap-3"><input placeholder="اسم الحملة" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /><input placeholder="عنوان الرسالة" value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} /></div><textarea className="!h-28" placeholder="اكتب الرسالة للعملاء..." value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} /><button disabled={!form.name || !form.message || create.isPending} onClick={() => create.mutate()} className="h-10 px-4 rounded-xl bg-[#1F3929] text-white text-sm disabled:opacity-50">حفظ الحملة</button></div><div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden"><div className="divide-y divide-stone-50">{(campaigns as any[]).map(c => <div key={c._id} className="px-5 py-4 flex items-center justify-between gap-3"><div><p className="text-sm font-semibold text-stone-700">{c.name}</p><p className="text-xs text-stone-400">{c.recipients || 0} مستلم · {c.status === "sent" ? "تم الإرسال" : "مسودة"}</p></div><button disabled={c.status === "sent" || send.isPending} onClick={() => send.mutate(c._id)} className="h-8 px-3 rounded-lg border border-[#1F3929] text-xs text-[#1F3929] flex items-center gap-1 disabled:opacity-40"><Send size={12} /> إرسال</button></div>)}{!(campaigns as any[]).length && <p className="py-10 text-center text-sm text-stone-400">لا توجد حملات بعد</p>}</div></div></div>;
+  const inp = "w-full h-10 px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none focus:border-[#9BA17B] transition-colors";
+  return <div className="space-y-5"><div><h2 className="text-lg font-semibold text-stone-800">التسويق والرسائل الجماعية</h2><p className="text-xs text-stone-400 mt-0.5">أنشئ حملات بريدية للمشتركين وتابع أثرها</p></div><div className="grid grid-cols-2 lg:grid-cols-3 gap-4"><StatCard label="مشتركو النشرة" value={newsletter?.count || 0} icon={<Mail size={18} />} /><StatCard label="الحملات" value={(campaigns as any[]).length} icon={<Megaphone size={18} />} /><StatCard label="القنوات" value="Email · WhatsApp" icon={<Send size={18} />} /></div><div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-5 space-y-3"><h3 className="text-sm font-semibold text-stone-700">حملة جديدة</h3><div className="grid grid-cols-2 gap-3"><input className={inp} placeholder="اسم الحملة" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /><input className={inp} placeholder="عنوان الرسالة" value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} /></div><textarea className={`${inp} !h-28 resize-none py-2`} placeholder="اكتب الرسالة للعملاء..." value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} /><button disabled={!form.name || !form.message || create.isPending} onClick={() => create.mutate()} className="h-10 px-4 rounded-xl bg-[#1F3929] text-white text-sm disabled:opacity-50">حفظ الحملة</button></div><div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden"><div className="divide-y divide-stone-50">{(campaigns as any[]).map(c => <div key={c._id} className="px-5 py-4 flex items-center justify-between gap-3"><div><p className="text-sm font-semibold text-stone-700">{c.name}</p><p className="text-xs text-stone-400">{c.recipients || 0} مستلم · {c.status === "sent" ? "تم الإرسال" : "مسودة"}</p></div><button disabled={c.status === "sent" || send.isPending} onClick={() => send.mutate(c._id)} className="h-8 px-3 rounded-lg border border-[#1F3929] text-xs text-[#1F3929] flex items-center gap-1 disabled:opacity-40"><Send size={12} /> إرسال</button></div>)}{!(campaigns as any[]).length && <p className="py-10 text-center text-sm text-stone-400">لا توجد حملات بعد</p>}</div></div></div>;
 }
 
 function AdminSEO() {
