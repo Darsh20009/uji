@@ -4,8 +4,8 @@ const articles = [
   {
     id: 1,
     tag: "أصول",
-    title: "من أوجي إلى العالم — قصة المدينة التي اخترعت الماتشا",
-    excerpt: "في القرن الثاني عشر، حمل الراهب البوذي ايساي بذور الشاي الأخضر من الصين إلى اليابان. لكن أوجي هي التي حوّلته إلى فن.",
+    title: "من شيزوكا إلى العالم — قصة الأرض التي تُزرع فيها ماتشا UJI",
+    excerpt: "على سفوح جبل فوجي، في قلب محافظة شيزوكا، تنمو أوراق الشاي الخضراء التي تُحوَّل إلى ماتشا UJI. أرض يصنعها المناخ والحرفة معاً.",
     read: "٥ دقائق",
     img: "/assets/magazine/mag-storefront.png",
     featured: true,
@@ -138,7 +138,7 @@ export default function MagazinePage() {
             <p style={{
               fontFamily: "'IBM Plex Sans Arabic',sans-serif",
               fontSize: "0.88rem", color: "rgba(242,234,219,0.7)", lineHeight: 1.9,
-            }}>كل علبة تحمل ثمانمائة سنة من فن زراعة الشاي في أوجي، اليابان.</p>
+            }}>كل علبة تحمل قروناً من فن زراعة الشاي في شيزوكا، اليابان.</p>
           </div>
         </div>
       </div>
@@ -166,14 +166,14 @@ export default function MagazinePage() {
               fontSize: "0.88rem", color: "rgba(242,234,219,0.7)",
               lineHeight: 1.9, marginBottom: "2rem",
             }}>
-              أوجي مدينة تاريخية جنوب كيوتو، تُعرف عالمياً بأنها موطن أجود أنواع الماتشا والشاي الأخضر منذ أكثر من ٨٠٠ عام.
+              UJI هو اسم علامتنا التجارية، مستوحى من عالم الماتشا اليابانية وثقافة الشاي العريقة. ماتشا UJI مصدرها مزارع شيزوكا — واحدة من أرقى مناطق زراعة الشاي في اليابان.
             </p>
             <p style={{
               fontFamily: "'IBM Plex Sans Arabic',sans-serif",
               fontSize: "0.82rem", color: "rgba(155,161,123,0.85)",
               lineHeight: 1.85,
             }}>
-              تشتهر بمناخها المثالي وتربتها الغنية وأساليب زراعة الشاي التقليدية التي تُنتج ماتشا ذات جودة استثنائية.
+              شيزوكا تقع على سفوح جبل فوجي، مناخها المعتدل وتربتها البركانية الغنية تُنتج ماتشا ذات جودة استثنائية ونكهة عميقة.
             </p>
           </div>
           <div className="mag-image-panel" style={{ overflow: "hidden", minHeight: 420 }}>
@@ -353,7 +353,7 @@ export default function MagazinePage() {
             <div className="mag-fields-copy" style={{ padding: "3rem 4rem", maxWidth: 420 }}>
               <p style={{ fontFamily: "'DM Mono',monospace", fontSize: "0.52rem", letterSpacing: "0.42em", color: "#C8D09F", marginBottom: "1rem" }}>✦ FROM THE SOURCE</p>
               <h2 style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "clamp(1.9rem,3.5vw,3rem)", color: "#F2EADB", lineHeight: 1.2, marginBottom: "1rem" }}>من قلب الحقول<br />إلى طقسك اليومي</h2>
-              <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.86rem", color: "rgba(242,234,219,0.78)", lineHeight: 1.9 }}>أوجي ليست اسماً على العلبة فقط؛ إنها أرض ومناخ وحرفة تتوارثها الأجيال.</p>
+              <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.86rem", color: "rgba(242,234,219,0.78)", lineHeight: 1.9 }}>شيزوكا ليست مجرد موقع على الخريطة؛ إنها أرض ومناخ وحرفة تتوارثها الأجيال.</p>
             </div>
           </div>
         </div>

@@ -83,7 +83,7 @@ router.get("/robots.txt", (_req, res) => {
 
 router.get("/llms.txt", (_req, res) => {
   res.type("text/plain").send(`# UJI MATCHA
-UJI MATCHA (أوجي ماتشا) is a Saudi online store for authentic Japanese matcha from Uji, Kyoto.
+UJI MATCHA (أوجي ماتشا) is a Saudi online store for authentic Japanese ceremonial matcha sourced from Shizuoka, Japan.
 Topics: ceremonial matcha, everyday matcha, matcha latte, iced matcha, hot matcha, Japanese green tea, matcha delivery in Riyadh and Saudi Arabia.
 Arabic queries: ماتشا، أوجي ماتشا، ماتشا الرياض، ماتشا السعودية، ماتشا لاتيه، ماتشا بارد، ماتشا ساخن، مشروب صيفي، مشروب شتوي، طريقة تحضير الماتشا.
 English queries: Uji matcha, matcha Riyadh, matcha Saudi Arabia, ceremonial Japanese matcha, iced matcha, hot matcha, matcha latte.
@@ -117,11 +117,11 @@ router.get("/seo/site", async (_req, res) => {
   const configured = (saved?.value || {}) as any;
   res.json({
     brand: "UJI MATCHA", alternateNames: ["أوجي ماتشا", "اوجي ماتشا", "Uji Matcha", "UJI"],
-    title: configured.title || "UJI MATCHA — ماتشا يابانية أصلية من أوجي إلى السعودية",
-    description: configured.description || "ماتشا يابانية أصلية من أوجي، توصيل سريع إلى الرياض وجميع مدن السعودية. ماتشا لاتيه بارد وساخن ومشروبات صيفية وشتوية.",
+    title: configured.title || "UJI MATCHA — ماتشا يابانية أصلية من شيزوكا إلى السعودية",
+    description: configured.description || "ماتشا يابانية أصلية من شيزوكا، توصيل سريع إلى الرياض وجميع مدن السعودية. ماتشا لاتيه بارد وساخن ومشروبات صيفية وشتوية.",
     keywords: configured.keywords?.length ? configured.keywords : ["ماتشا", "ماتشا يابانية", "ماتشا الرياض", "ماتشا السعودية", "ماتشا جدة", "ماتشا الدمام", "أوجي ماتشا", "اوجي ماتشا", "ماتشا لاتيه", "ماتشا بارد", "ماتشا ساخن", "مشروب صيفي", "مشروب شتوي", "طريقة تحضير الماتشا", "matcha", "uji matcha", "matcha Riyadh", "matcha Saudi Arabia", "ceremonial matcha", "Japanese matcha", "matcha latte", "iced matcha", "hot matcha", "matcha delivery Saudi"],
     faqs: configured.faqs?.length ? configured.faqs : [
-      { question: "ما هي ماتشا أوجي؟", answer: "ماتشا أوجي هي مسحوق شاي أخضر ياباني أصيل من مدينة أوجي في كيوتو، مطحون بالحجر." },
+      { question: "ما هي ماتشا UJI؟", answer: "ماتشا UJI هي مسحوق شاي أخضر ياباني أصيل من مزارع شيزوكا في اليابان، مطحون بالحجر وبدرجة احتفالية." },
       { question: "هل توصلون الماتشا إلى الرياض؟", answer: "نعم، توصل UJI MATCHA إلى الرياض وجدة والدمام وجميع مدن المملكة العربية السعودية." },
       { question: "هل الماتشا مشروب صيفي أم شتوي؟", answer: "كلاهما؛ تقدم باردة مع الثلج في الصيف وساخنة أو كـماتشا لاتيه في الشتاء." },
       { question: "كيف أحضر ماتشا لاتيه؟", answer: "اخفق ملعقة ماتشا مع ماء دافئ ثم أضف الحليب والثلج أو سخنه حسب رغبتك." },

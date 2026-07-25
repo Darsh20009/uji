@@ -271,7 +271,7 @@ export default function HomePage() {
               marginBottom: "2.5rem", maxWidth: 420,
               animation: "heroFadeUp 1s ease 0.4s both",
             }}>
-              ماتشا احتفالية من مستوى الدرجة الأولى، مصنوعة في أوجي<br />ومصممة لريتشوالك اليومي.
+              ماتشا احتفالية من مستوى الدرجة الأولى، مزروعة في شيزوكا<br />ومصممة لريتشوالك اليومي.
             </p>
 
             <div className="hero-buttons" style={{
@@ -391,14 +391,14 @@ export default function HomePage() {
             color: "#1C201B", lineHeight: 1.4,
             marginBottom: "1.5rem",
           }}>
-            "ماتشا مختارة بعناية<br />من اليابان إلى كوبك."
+            ماتشا مختارة بعناية<br />من اليابان إلى كوبك.
           </p>
           <p style={{
             fontFamily: "'IBM Plex Sans Arabic', sans-serif",
             fontSize: "0.85rem", color: "#9BA17B",
             letterSpacing: "0.04em", lineHeight: 1.8,
           }}>
-            من مزارع شيزوكا وأوجي إلى يديك. لكل تحضير صنف، ولكل لحظة نكهة.
+            من مزارع شيزوكا اليابانية إلى يديك. لكل تحضير صنف، ولكل لحظة نكهة.
           </p>
         </div>
       </section>
@@ -523,8 +523,8 @@ export default function HomePage() {
                     <path d="M14 3C8 3 4 8 4 14s4 11 10 11 10-5 10-11"/><path d="M14 3v6M20 5l-4 5"/>
                   </svg>
                 ),
-                title: "من مزارع شيزوكا وأوجي",
-                body: "نختار من أبرز مزارع اليابان، شيزوكا وأوجي، حيث يُزرع أجود الشاي منذ قرون.",
+                title: "من مزارع شيزوكا اليابانية",
+                body: "نختار من أبرز مزارع شيزوكا في اليابان، حيث يُزرع أجود الشاي منذ قرون.",
               },
               {
                 icon: (

@@ -3,7 +3,7 @@ export default function OurStoryPage() {
     {
       ar: "الأصالة",
       en: "AUTHENTICITY",
-      desc: "كل كيس ماتشا UJI مصدره مزارع أوجي اليابانية مباشرة. لا وسطاء ولا تنازلات.",
+      desc: "كل كيس ماتشا UJI مصدره مزارع شيزوكا اليابانية مباشرة. لا وسطاء ولا تنازلات.",
     },
     {
       ar: "الريتشوال",
@@ -24,7 +24,7 @@ export default function OurStoryPage() {
 
   const timeline = [
     { year: "٢٠٢٣", event: "بدأت الفكرة. مؤسسو UJI يبحثون عن ماتشا يابانية أصيلة في السوق السعودي ولا يجدونها." },
-    { year: "٢٠٢٤", event: "أول شحنة مباشرة من مزارع أوجي. التجربة تتجاوز كل التوقعات." },
+    { year: "٢٠٢٤", event: "أول شحنة مباشرة من مزارع شيزوكا اليابانية. التجربة تتجاوز كل التوقعات." },
     { year: "٢٠٢٤", event: "إطلاق UJI MATCHA. أول متجر سعودي متخصص في الماتشا الاحتفالية اليابانية." },
     { year: "٢٠٢٥", event: "انضمام آلاف العملاء. بدء خدمة B2B للكافيهات والمطاعم." },
     { year: "٢٠٢٦", event: "التوسع في المنطقة العربية. استمرار الرحلة نحو تجربة ماتشا لا مثيل لها." },
@@ -58,7 +58,7 @@ export default function OurStoryPage() {
             fontWeight: 700, color: "#F2EADB",
             lineHeight: 1.2, marginBottom: "1.5rem",
           }}>
-            من أوجي اليابانية<br />إلى كوبك
+            من شيزوكا اليابانية<br />إلى كوبك
           </h1>
           <p style={{
             fontFamily: "'IBM Plex Sans Arabic',sans-serif",
@@ -115,7 +115,7 @@ export default function OurStoryPage() {
               {
                 num: "٣",
                 title: "لا توعية بالفرق الحقيقي",
-                body: "لم يكن هناك من يشرح الفرق بين Ceremonial Grade وCulinary Grade، أو لماذا مزارع أوجي تحديداً تنتج أجود الماتشا. بدون توعية، الزبون يشتري على الشكل لا على الجوهر.",
+                body: "لم يكن هناك من يشرح الفرق بين Ceremonial Grade وCulinary Grade، أو لماذا مزارع شيزوكا تحديداً تنتج أجود الماتشا. بدون توعية، الزبون يشتري على الشكل لا على الجوهر.",
               },
             ].map(item => (
               <div key={item.num} style={{
@@ -163,7 +163,7 @@ export default function OurStoryPage() {
                 color: "#F2EADB", lineHeight: 1.55,
                 marginBottom: "0.75rem",
               }}>
-                قررنا أن نحلّ المشكلة من جذرها — شراء مباشر من مزارع أوجي، توصيل مباشر إليك، وشفافية كاملة عن كل ما في العلبة.
+                قررنا أن نحلّ المشكلة من جذرها — شراء مباشر من مزارع شيزوكا، توصيل مباشر إليك، وشفافية كاملة عن كل ما في العلبة.
               </p>
               <p style={{
                 fontFamily: "'IBM Plex Sans Arabic',sans-serif",
@@ -187,17 +187,17 @@ export default function OurStoryPage() {
             <p style={{
               fontFamily: "'DM Mono',monospace", fontSize: "0.58rem",
               letterSpacing: "0.35em", color: "#9BA17B", marginBottom: "1rem",
-            }}>UJI, JAPAN</p>
+            }}>SHIZUOKA, JAPAN</p>
             <h2 style={{
               fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
               fontSize: "1.8rem", fontWeight: 700, color: "#1C201B",
               marginBottom: "1.25rem", lineHeight: 1.3,
-            }}>مدينة أوجي</h2>
+            }}>مزارع شيزوكا</h2>
             <p style={{
               fontFamily: "'IBM Plex Sans Arabic',sans-serif",
               fontSize: "0.88rem", color: "#6B7280", lineHeight: 1.95,
             }}>
-              تقع أوجي جنوب كيوتو — عاصمة الماتشا في العالم منذ أكثر من ٨٠٠ عام. مناخها الرطب وتربتها الغنية والضباب الصباحي الذي يكسو مزارعها يخلقون ظروفاً لا تتكرر في أي مكان آخر على وجه الأرض.
+              تقع شيزوكا على سفوح جبل فوجي — من أبرز مناطق زراعة الشاي في اليابان. مناخها المعتدل وتربتها البركانية الغنية والضباب الصباحي الذي يكسو مزارعها يخلقون ماتشا ذات نكهة عميقة وجودة استثنائية.
             </p>
           </div>
           <div style={{ background: "rgba(200,187,164,0.3)", alignSelf: "stretch" }} />
@@ -215,7 +215,7 @@ export default function OurStoryPage() {
               fontFamily: "'IBM Plex Sans Arabic',sans-serif",
               fontSize: "0.88rem", color: "#6B7280", lineHeight: 1.95,
             }}>
-              UJI MATCHA ليست مجرد علامة تجارية — إنها جسر بين ثقافتين. نحمل اسم المدينة لأن الأمانة تقتضي ذلك: ما تحصل عليه هو فعلاً ماتشا أوجي، بنفس الجودة التي يشربها اليابانيون.
+              UJI MATCHA ليست مجرد علامة تجارية — إنها جسر بين ثقافتين. نحمل روح الماتشا اليابانية في كل علبة: ماتشا مزروعة في شيزوكا، بنفس الجودة الاحتفالية التي يشربها اليابانيون.
             </p>
           </div>
         </div>

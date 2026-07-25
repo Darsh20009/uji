@@ -364,7 +364,7 @@ export async function sendNewsletterWelcome(email: string) {
             <td style="padding:0 8px;text-align:center;vertical-align:top;width:33%;">
               <div style="font-size:20px;margin-bottom:8px;">📖</div>
               <div style="font-size:12px;font-weight:600;color:#1C201B;margin-bottom:4px;">من المجلة</div>
-              <div style="font-size:11px;color:#A09680;">قصص من قلب أوجي</div>
+              <div style="font-size:11px;color:#A09680;">قصص من قلب اليابان</div>
             </td>
             <td style="padding:0 8px;text-align:center;vertical-align:top;width:33%;">
               <div style="font-size:20px;margin-bottom:8px;">✦</div>

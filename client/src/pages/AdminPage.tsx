@@ -1641,7 +1641,7 @@ function AdminSettings() {
         <div className="p-5 flex items-center justify-between">
           <div>
             <p className="text-sm text-stone-700">تعطيل المتجر مؤقتاً</p>
-            <p className="text-xs text-stone-400 mt-0.5">الزوار يرون صفحة "تحت الصيانة"</p>
+            <p className="text-xs text-stone-400 mt-0.5">الزوار يرون صفحة تحت الصيانة</p>
           </div>
           <Toggle value={!!current.maintenanceMode} onChange={v => setForm({ ...current, maintenanceMode: v })} />
         </div>
@@ -2103,11 +2103,11 @@ function AdminSEO() {
       <div className="bg-white rounded-2xl border border-stone-100 shadow-sm p-5 space-y-4">
         <div>
           <label className="text-xs text-stone-500 mb-1.5 block">العنوان الرئيسي</label>
-          <input className={`${inp} h-10`} value={current.title || "UJI MATCHA — ماتشا يابانية أصلية من أوجي إلى السعودية"} onChange={e => setForm({ ...current, title: e.target.value })} />
+          <input className={`${inp} h-10`} value={current.title || "UJI MATCHA — ماتشا يابانية أصلية من شيزوكا إلى السعودية"} onChange={e => setForm({ ...current, title: e.target.value })} />
         </div>
         <div>
           <label className="text-xs text-stone-500 mb-1.5 block">الوصف</label>
-          <textarea className={`${inp} h-24 py-2 resize-none`} value={current.description || "ماتشا يابانية أصلية من أوجي، توصيل سريع إلى الرياض وجميع مدن السعودية. ماتشا لاتيه بارد وساخن ومشروبات صيفية وشتوية."} onChange={e => setForm({ ...current, description: e.target.value })} />
+          <textarea className={`${inp} h-24 py-2 resize-none`} value={current.description || "ماتشا يابانية أصلية من شيزوكا، توصيل سريع إلى الرياض وجميع مدن السعودية. ماتشا لاتيه بارد وساخن ومشروبات صيفية وشتوية."} onChange={e => setForm({ ...current, description: e.target.value })} />
         </div>
         <div>
           <label className="text-xs text-stone-500 mb-1.5 block">كلمات البحث العربية والإنجليزية (كلمة في كل سطر)</label>
