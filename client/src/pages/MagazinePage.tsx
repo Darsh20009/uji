@@ -552,10 +552,12 @@ export default function MagazinePage() {
           .mag-brand-banner > div > div { padding: 0 !important; max-width: none !important; }
           .mag-content { padding: 0 !important; }
           .mag-meaning, .mag-featured, .mag-logo-section, .mag-tin-feature, .mag-lifestyle { display: flex !important; flex-direction: column !important; }
+          /* Fix: mag-featured inner div has inline display:grid — must override explicitly */
+          .mag-featured > div { display: flex !important; flex-direction: column !important; min-height: 0 !important; grid-template-columns: none !important; }
+          .mag-featured > div > div:first-child { width: 100% !important; height: 280px !important; min-height: 0 !important; }
+          .mag-featured > div > div:last-child { padding: 2.75rem 1.35rem !important; width: 100% !important; }
           .mag-copy-panel, .mag-feature-copy, .mag-tin-copy { padding: 2.75rem 1.35rem !important; min-height: 0 !important; }
           .mag-image-panel { min-height: 300px !important; height: 300px !important; }
-          .mag-featured > div:first-child { height: 300px; min-height: 0; }
-          .mag-featured > div:last-child { padding: 2.75rem 1.35rem !important; }
           .mag-photo-row { display: grid !important; grid-template-columns: 1fr 1fr !important; }
           .mag-photo-row > div { height: 190px !important; }
           .mag-photo-row > div:last-child { grid-column: 1 / -1; height: 230px !important; }

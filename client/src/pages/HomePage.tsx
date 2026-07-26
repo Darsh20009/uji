@@ -67,21 +67,20 @@ function Newsletter() {
       textAlign: "center",
     }}>
       <div className="container" style={{ maxWidth: 640 }}>
-        <p className="label-eyebrow" style={{ marginBottom: "1.5rem" }}>نشرة بريدية</p>
         <h2 style={{
           fontFamily: "'Mirza', serif",
-          fontSize: "clamp(2rem, 3.5vw, 3rem)",
-          fontWeight: 300, color: "#1C201B",
-          marginBottom: "1rem", lineHeight: 1.2,
+          fontSize: "clamp(2.4rem, 4.5vw, 3.8rem)",
+          fontWeight: 400, color: "#1C201B",
+          marginBottom: "1rem", lineHeight: 1.15,
         }}>
-          صندوق بريد أهدأ.
+          نشرة بريدية
         </h2>
         <p style={{
           fontFamily: "'Mirza', serif",
-          fontSize: "0.85rem", color: "#9BA17B", lineHeight: 1.8,
-          marginBottom: "3rem",
+          fontSize: "0.9rem", color: "#9BA17B", lineHeight: 1.85,
+          marginBottom: "3rem", maxWidth: 460, margin: "0 auto 3rem",
         }}>
-          ريتشوال الماتشا، ملاحظات من المجلة، وإصدارات حصرية. بدون ضجيج.
+          كل ما تحتاج معرفته عن عالم الماتشا — ريتشوالات، مقالات من المجلة، وإصدارات حصرية. بدون ضجيج.
         </p>
 
         {status === "done" ? (
