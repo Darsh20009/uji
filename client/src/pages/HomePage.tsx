@@ -122,6 +122,28 @@ function Newsletter() {
   );
 }
 
+/* ─── Trust bar icons ─── */
+const TRUST_ICONS: Record<string, React.ReactNode> = {
+  delivery: (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="1" y="7" width="16" height="12" rx="1.5"/><path d="M17 10h4l4 4v5h-8V10z"/><circle cx="6.5" cy="21" r="2"/><circle cx="21.5" cy="21" r="2"/>
+    </svg>
+  ),
+  secure: (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14 2L4 6v7c0 6 4.5 10.5 10 12 5.5-1.5 10-6 10-12V6L14 2z"/><path d="M9 14l3.5 3.5L19 11"/>
+    </svg>
+  ),
+  return: (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 14A10 10 0 1 0 6 7.5"/><path d="M4 4v4h4"/>
+    </svg>
+  ),
+};
+
+/* Maps badge index → icon key */
+const BADGE_ICON_KEYS = ["delivery", "secure", "return"];
+
 /* ─── Trust bar ─── */
 const DEFAULT_BADGES = [
   { icon: "🚚", title: "يوصلك خلال", value: "١–٣ أيام", enabled: true },
@@ -133,43 +155,46 @@ function TrustBar({ badges }: { badges?: typeof DEFAULT_BADGES }) {
   if (!list.length) return null;
   return (
     <section style={{
-      background: "#F7F2E8",
-      borderTop: "1px solid rgba(200,187,164,0.3)",
-      borderBottom: "1px solid rgba(200,187,164,0.3)",
-      padding: "0",
+      background: "#1F3929",
+      borderTop: "none",
+      borderBottom: "none",
     }}>
-      <div className="container" style={{ padding: "0 1.5rem" }}>
+      <div className="container">
         <div style={{
           display: "flex",
           justifyContent: "center",
           alignItems: "stretch",
-          gap: "0",
-          flexWrap: "wrap",
         }}>
           {list.map((b, i) => (
             <div key={i} style={{
               flex: "1 1 0",
-              minWidth: 0,
               display: "flex",
+              flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
-              gap: "0.7rem",
-              padding: "1.1rem 1.5rem",
-              borderLeft: i < list.length - 1 ? "1px solid rgba(200,187,164,0.35)" : "none",
+              gap: "0.6rem",
+              padding: "1.6rem 1rem",
+              borderLeft: i < list.length - 1 ? "1px solid rgba(242,234,219,0.12)" : "none",
+              textAlign: "center",
             }}>
-              <span style={{ fontSize: "1.35rem", lineHeight: 1, flexShrink: 0 }}>{b.icon}</span>
-              <div style={{ textAlign: "right" }}>
-                <p style={{
-                  fontFamily: "'Mirza', serif",
-                  fontSize: "0.75rem", color: "#9BA17B",
-                  margin: 0, lineHeight: 1.2,
-                }}>{b.title}</p>
-                <p style={{
-                  fontFamily: "'Mirza', serif",
-                  fontSize: "0.85rem", fontWeight: 600, color: "#1C201B",
-                  margin: 0, lineHeight: 1.3, marginTop: 2,
-                }}>{b.value}</p>
-              </div>
+              {/* SVG icon */}
+              <span style={{ color: "#9BA17B", lineHeight: 0, flexShrink: 0 }}>
+                {TRUST_ICONS[BADGE_ICON_KEYS[i]] ?? TRUST_ICONS["delivery"]}
+              </span>
+              {/* Value */}
+              <p style={{
+                fontFamily: "'Mirza', serif",
+                fontSize: "1rem", fontWeight: 600,
+                color: "#F2EADB",
+                margin: 0, lineHeight: 1.2,
+              }}>{b.value}</p>
+              {/* Label */}
+              <p style={{
+                fontFamily: "'Mirza', serif",
+                fontSize: "0.75rem",
+                color: "rgba(155,161,123,0.85)",
+                margin: 0, lineHeight: 1.2,
+              }}>{b.title}</p>
             </div>
           ))}
         </div>
@@ -202,7 +227,7 @@ export default function HomePage() {
       <section
         ref={heroRef}
         style={{
-          position: "relative", minHeight: "72vh",
+          position: "relative", minHeight: "65vh",
           display: "flex", alignItems: "center",
           overflow: "hidden",
         }}
@@ -224,7 +249,7 @@ export default function HomePage() {
         }} className="hero-overlay-mobile" />
 
         {/* Content */}
-        <div className="container" style={{ position: "relative", zIndex: 2, paddingTop: 120, paddingBottom: 80 }}>
+        <div className="container" style={{ position: "relative", zIndex: 2, paddingTop: 80, paddingBottom: 40 }}>
           <div style={{ maxWidth: 560 }}>
             <p style={{
               fontFamily: "'Cascadia Code', monospace",
@@ -267,10 +292,35 @@ export default function HomePage() {
           </div>
         </div>
 
+        {/* Scroll indicator */}
+        <div style={{
+          position: "absolute", bottom: "1.75rem", left: "50%", transform: "translateX(-50%)",
+          zIndex: 3, display: "flex", flexDirection: "column", alignItems: "center", gap: "0.35rem",
+          animation: "heroFadeUp 1s ease 1s both",
+        }}>
+          <span style={{
+            fontFamily: "'Cascadia Code', monospace", fontSize: "0.5rem",
+            letterSpacing: "0.25em", textTransform: "uppercase",
+            color: "rgba(242,234,219,0.55)",
+          }}>SCROLL</span>
+          <svg width="16" height="22" viewBox="0 0 16 22" fill="none" style={{ animation: "scrollBounce 1.8s ease-in-out infinite" }}>
+            <rect x="1" y="1" width="14" height="20" rx="7" stroke="rgba(242,234,219,0.4)" strokeWidth="1.2"/>
+            <rect x="7" y="5" width="2" height="5" rx="1" fill="rgba(242,234,219,0.7)" style={{ animation: "scrollDot 1.8s ease-in-out infinite" }}/>
+          </svg>
+        </div>
+
         <style>{`
           @keyframes heroFadeUp {
             from { opacity: 0; transform: translateY(14px); }
             to   { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes scrollBounce {
+            0%, 100% { transform: translateY(0); opacity: 0.7; }
+            50%       { transform: translateY(5px); opacity: 1; }
+          }
+          @keyframes scrollDot {
+            0%, 100% { transform: translateY(0); opacity: 1; }
+            50%       { transform: translateY(3px); opacity: 0.5; }
           }
         `}</style>
       </section>
@@ -281,32 +331,38 @@ export default function HomePage() {
       {/* ══════════════════════════════════════════════
           PRODUCTS — first thing after hero, always visible
       ══════════════════════════════════════════════ */}
-      <section style={{ background: "#F2EADB", padding: "4rem 0 5rem" }}>
+      <section id="products" style={{ background: "#F7F2E8", padding: "2rem 0 5rem", borderTop: "3px solid #1F3929" }}>
         <div className="container">
 
           {/* Section header */}
           <div style={{
-            display: "flex", alignItems: "center", justifyContent: "space-between",
+            display: "flex", alignItems: "flex-end", justifyContent: "space-between",
             marginBottom: "2.5rem", flexWrap: "wrap", gap: "1rem",
+            paddingBottom: "1.5rem",
+            borderBottom: "1px solid rgba(200,187,164,0.4)",
           }}>
             <div>
               <p style={{
                 fontFamily: "'Cascadia Code', monospace", fontSize: "0.55rem",
                 letterSpacing: "0.32em", textTransform: "uppercase", color: "#9BA17B",
-                marginBottom: "0.5rem",
+                marginBottom: "0.6rem",
               }}>THE COLLECTION</p>
               <h2 style={{
                 fontFamily: "'Mirza', serif",
-                fontSize: "clamp(1.8rem, 3vw, 2.6rem)",
-                fontWeight: 400, color: "#1C201B", lineHeight: 1.15, margin: 0,
+                fontSize: "clamp(2.2rem, 3.5vw, 3rem)",
+                fontWeight: 400, color: "#1C201B", lineHeight: 1.1, margin: 0,
               }}>منتجاتنا</h2>
             </div>
             <Link href="/products" style={{
               display: "inline-flex", alignItems: "center", gap: "0.5rem",
               fontFamily: "'Mirza', serif", fontSize: "0.85rem",
-              color: "#1F3929", border: "1px solid rgba(31,57,41,0.35)",
-              padding: "0.6rem 1.25rem", transition: "all 0.2s",
-            }}>
+              color: "#1F3929", border: "1px solid rgba(31,57,41,0.45)",
+              padding: "0.65rem 1.4rem", transition: "all 0.2s",
+              background: "transparent",
+            }}
+              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = "#1F3929"; (e.currentTarget as HTMLAnchorElement).style.color = "#F2EADB"; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = "transparent"; (e.currentTarget as HTMLAnchorElement).style.color = "#1F3929"; }}
+            >
               عرض جميع المنتجات <ArrowLeft size={14} strokeWidth={1.5} />
             </Link>
           </div>
@@ -317,17 +373,17 @@ export default function HomePage() {
               {products.slice(0, 6).map((p: any) => <ProductCard key={p._id} product={p} />)}
             </div>
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "1.5rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "1.5rem" }}>
               {[
                 { name: "ماتشا احتفالية", sub: "Ceremonial Matcha", price: "89", img: "/assets/packaging/uji-tin-front-transparent.png" },
                 { name: "مخفقة الخيزران", sub: "Bamboo Whisk",      price: "45", img: "/assets/products/uji-product-bamboo-whisk-transparent.png" },
                 { name: "طقم البداية",   sub: "Starter Set",        price: "149", img: "/assets/packaging/uji-tin-open-transparent.png" },
               ].map(({ name, sub, price, img }) => (
-                <div key={name} style={{ background: "#F7F2E8", border: "1px solid rgba(200,187,164,0.25)" }}>
-                  <div style={{ aspectRatio: "1/1", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", background: "#F2EADB" }}>
+                <div key={name} style={{ background: "#F2EADB", border: "1px solid rgba(200,187,164,0.35)" }}>
+                  <div style={{ aspectRatio: "3/4", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", background: "#F2EADB" }}>
                     <img src={img} alt={name} style={{ width: "75%", height: "75%", objectFit: "contain" }} />
                   </div>
-                  <div style={{ padding: "1.25rem 1.5rem 1.75rem" }}>
+                  <div style={{ padding: "1.25rem 1.5rem 1.75rem", background: "#F7F2E8" }}>
                     <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.55rem", letterSpacing: "0.2em", color: "#9BA17B", textTransform: "uppercase", marginBottom: "0.4rem" }}>{sub}</p>
                     <h3 style={{ fontFamily: "'Mirza', serif", fontSize: "1rem", fontWeight: 500, color: "#1C201B", marginBottom: "1rem" }}>{name}</h3>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "0.75rem", borderTop: "1px solid rgba(200,187,164,0.25)" }}>
@@ -340,9 +396,9 @@ export default function HomePage() {
             </div>
           )}
 
-          {/* Mobile CTA */}
-          <div style={{ textAlign: "center", marginTop: "3rem" }}>
-            <Link href="/products" className="btn-primary" style={{ display: "inline-flex", gap: "0.5rem", alignItems: "center" }}>
+          {/* Bottom CTA */}
+          <div style={{ textAlign: "center", marginTop: "3rem", paddingTop: "2rem", borderTop: "1px solid rgba(200,187,164,0.3)" }}>
+            <Link href="/products" className="btn-primary" style={{ display: "inline-flex", gap: "0.5rem", alignItems: "center", height: 52, padding: "0 2.5rem", fontSize: "0.9rem" }}>
               تسوق جميع منتجات UJI <ArrowLeft size={15} strokeWidth={1.5} />
             </Link>
           </div>
