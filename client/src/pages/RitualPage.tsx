@@ -62,18 +62,18 @@ export default function RitualPage() {
           maxWidth: 800,
         }}>
           <p style={{
-            fontFamily: "'DM Mono',monospace", fontSize: "0.58rem",
+            fontFamily: "'Cascadia Code', monospace", fontSize: "0.58rem",
             letterSpacing: "0.4em", color: "#9BA17B", marginBottom: "1.25rem",
           }}>THE MATCHA RITUAL · دليل الريتشوال</p>
           <h1 style={{
-            fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+            fontFamily: "'Mirza', serif",
             fontSize: "clamp(2.8rem,6vw,5rem)",
             fontWeight: 700, color: "#F2EADB", lineHeight: 1.15, margin: "0 0 1.25rem",
           }}>
             فن إعداد<br />الماتشا الأصيل
           </h1>
           <p style={{
-            fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+            fontFamily: "'Mirza', serif",
             fontSize: "1rem", color: "rgba(242,234,219,0.7)",
             lineHeight: 1.9, maxWidth: 480,
           }}>
@@ -103,18 +103,18 @@ export default function RitualPage() {
                 borderLeft: "1px solid rgba(200,187,164,0.3)",
               }}>
                 <span style={{
-                  fontFamily: "'DM Mono',monospace", fontSize: "0.6rem",
+                  fontFamily: "'Cascadia Code', monospace", fontSize: "0.6rem",
                   letterSpacing: "0.3em",
                   color: i === 0 || i === 4 ? "#9BA17B" : "#C8BBA4",
                 }}>{s.num}</span>
                 <span style={{
-                  fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+                  fontFamily: "'Mirza', serif",
                   fontSize: "1.8rem", fontWeight: 700,
                   color: i === 0 || i === 4 ? "#F2EADB" : "#1F3929",
                   lineHeight: 1,
                 }}>{s.ar}</span>
                 <span style={{
-                  fontFamily: "'DM Mono',monospace", fontSize: "0.55rem",
+                  fontFamily: "'Cascadia Code', monospace", fontSize: "0.55rem",
                   letterSpacing: "0.2em",
                   color: i === 0 || i === 4 ? "rgba(242,234,219,0.4)" : "#C8BBA4",
                 }}>{s.en}</span>
@@ -122,12 +122,12 @@ export default function RitualPage() {
               {/* Content column */}
               <div style={{ padding: "2.5rem 2.5rem 2.5rem 2rem" }}>
                 <p style={{
-                  fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+                  fontFamily: "'Mirza', serif",
                   fontSize: "0.95rem", color: "#1C201B",
                   lineHeight: 1.85, marginBottom: "0.75rem",
                 }}>{s.desc}</p>
                 <p style={{
-                  fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+                  fontFamily: "'Mirza', serif",
                   fontSize: "0.8rem", color: "#9BA17B",
                   lineHeight: 1.8, borderRight: "2px solid #9BA17B",
                   paddingRight: "0.75rem", margin: 0,
@@ -142,12 +142,12 @@ export default function RitualPage() {
       <div style={{ background: "#16281D", padding: "4rem 1.5rem" }}>
         <div style={{ maxWidth: 860, margin: "0 auto" }}>
           <p style={{
-            fontFamily: "'DM Mono',monospace", fontSize: "0.6rem",
+            fontFamily: "'Cascadia Code', monospace", fontSize: "0.6rem",
             letterSpacing: "0.35em", color: "#9BA17B",
             marginBottom: "0.75rem", textAlign: "center",
           }}>PRO TIPS</p>
           <h2 style={{
-            fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+            fontFamily: "'Mirza', serif",
             fontSize: "clamp(1.8rem,3.5vw,2.5rem)",
             fontWeight: 700, color: "#F2EADB",
             textAlign: "center", marginBottom: "3rem",
@@ -163,11 +163,11 @@ export default function RitualPage() {
               }}>
                 <div style={{ fontSize: "2rem", marginBottom: "0.75rem" }}>{t.icon}</div>
                 <p style={{
-                  fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+                  fontFamily: "'Mirza', serif",
                   fontSize: "1.1rem", color: "#F2EADB", marginBottom: "0.5rem",
                 }}>{t.title}</p>
                 <p style={{
-                  fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+                  fontFamily: "'Mirza', serif",
                   fontSize: "0.82rem", color: "#9BA17B", lineHeight: 1.75, margin: 0,
                 }}>{t.body}</p>
               </div>
@@ -179,12 +179,12 @@ export default function RitualPage() {
       {/* ── CTA ── */}
       <div style={{ textAlign: "center", padding: "5rem 1.5rem" }}>
         <p style={{
-          fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+          fontFamily: "'Mirza', serif",
           fontSize: "clamp(1.5rem,3vw,2rem)",
           color: "#1C201B", marginBottom: "0.75rem",
         }}>جاهز لتجربة الريتشوال؟</p>
         <p style={{
-          fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+          fontFamily: "'Mirza', serif",
           fontSize: "0.9rem", color: "#9BA17B", marginBottom: "2rem",
         }}>احصل على ماتشا UJI الاحتفالية وابدأ اليوم.</p>
         <a
@@ -192,7 +192,7 @@ export default function RitualPage() {
           style={{
             display: "inline-block", background: "#1F3929", color: "#F2EADB",
             padding: "1rem 3rem", textDecoration: "none",
-            fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+            fontFamily: "'Mirza', serif",
             fontSize: "0.95rem", letterSpacing: "0.05em",
           }}
         >تسوّق الماتشا ←</a>

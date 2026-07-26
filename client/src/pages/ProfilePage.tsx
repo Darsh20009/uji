@@ -35,7 +35,7 @@ export default function ProfilePage() {
   if (!user) return (
     <div style={{ minHeight: "70vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1.5rem", background: "#F2EADB" }}>
       <User size={40} color="#C8BBA4" strokeWidth={1} />
-      <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", color: "#9BA17B" }}>يرجى تسجيل الدخول أولاً</p>
+      <p style={{ fontFamily: "'Mirza', serif", color: "#9BA17B" }}>يرجى تسجيل الدخول أولاً</p>
       <Link href="/" className="btn-primary">العودة للرئيسية</Link>
     </div>
   );
@@ -49,7 +49,7 @@ export default function ProfilePage() {
     <div style={{ background: "#F2EADB", minHeight: "100vh", paddingTop: 100, paddingBottom: 80 }}>
       <div className="container" style={{ maxWidth: 900 }}>
         {/* Header */}
-        <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "0.6rem", letterSpacing: "0.3em", color: "#9BA17B", marginBottom: "2rem" }}>
+        <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.6rem", letterSpacing: "0.3em", color: "#9BA17B", marginBottom: "2rem" }}>
           ACCOUNT — حسابي
         </p>
 
@@ -68,16 +68,16 @@ export default function ProfilePage() {
               }}>
                 <User size={28} strokeWidth={1} color={tier.color} />
               </div>
-              <p style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.3rem", fontWeight: 400, color: "#1C201B", margin: "0 0 4px" }}>
+              <p style={{ fontFamily: "'Mirza', serif", fontSize: "1.3rem", fontWeight: 400, color: "#1C201B", margin: "0 0 4px" }}>
                 {u.name}
               </p>
-              <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.78rem", color: "#9BA17B", margin: "0 0 8px", direction: "ltr" }}>
+              <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.78rem", color: "#9BA17B", margin: "0 0 8px", direction: "ltr" }}>
                 {u.phone}
               </p>
               {u.role === "employee" && (
                 <span style={{
                   display: "inline-block", background: "#1F3929", color: "#F2EADB",
-                  fontSize: "0.65rem", letterSpacing: "0.15em", padding: "3px 10px", fontFamily: "'Inter',sans-serif",
+                  fontSize: "0.65rem", letterSpacing: "0.15em", padding: "3px 10px", fontFamily: "'Cascadia Code', monospace",
                 }}>
                   {u.jobTitle || "موظف"} · EMPLOYEE
                 </span>
@@ -88,26 +88,26 @@ export default function ProfilePage() {
             <div style={{ background: tier.bg, border: `1px solid ${tier.color}30`, padding: "1.5rem" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1rem" }}>
                 <Award size={18} color={tier.color} strokeWidth={1.5} />
-                <span style={{ fontFamily: "'Inter',sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", color: tier.color }}>
+                <span style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.6rem", letterSpacing: "0.2em", color: tier.color }}>
                   LOYALTY — {tier.label.toUpperCase()}
                 </span>
               </div>
-              <p style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "2.2rem", fontWeight: 300, color: "#1C201B", margin: "0 0 4px", lineHeight: 1 }}>
+              <p style={{ fontFamily: "'Mirza', serif", fontSize: "2.2rem", fontWeight: 300, color: "#1C201B", margin: "0 0 4px", lineHeight: 1 }}>
                 {points.toLocaleString("ar-SA")}
               </p>
-              <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.78rem", color: "#9BA17B", margin: "0 0 1rem" }}>نقطة مكافأة</p>
+              <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.78rem", color: "#9BA17B", margin: "0 0 1rem" }}>نقطة مكافأة</p>
               {tier.next > 0 && (
                 <>
                   <div style={{ background: "rgba(0,0,0,0.08)", height: 4, borderRadius: 2, marginBottom: 8 }}>
                     <div style={{ width: `${progress}%`, height: "100%", background: tier.color, borderRadius: 2, transition: "width 0.5s" }} />
                   </div>
-                  <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.72rem", color: "#9BA17B", margin: 0 }}>
+                  <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.72rem", color: "#9BA17B", margin: 0 }}>
                     {(tier.next - points).toLocaleString("ar-SA")} نقطة للمستوى التالي
                   </p>
                 </>
               )}
               {tier.next === 0 && (
-                <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.72rem", color: tier.color, margin: 0, fontWeight: 600 }}>
+                <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.72rem", color: tier.color, margin: 0, fontWeight: 600 }}>
                   ✦ أعلى مستوى — بلاتيني
                 </p>
               )}
@@ -117,7 +117,7 @@ export default function ProfilePage() {
             <div style={{ background: "#FDFAF5", border: "1px solid rgba(200,187,164,0.3)", padding: "1.25rem" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: "0.75rem" }}>
                 <Gift size={15} color="#9BA17B" strokeWidth={1.5} />
-                <span style={{ fontFamily: "'Inter',sans-serif", fontSize: "0.58rem", letterSpacing: "0.2em", color: "#9BA17B" }}>كيف تكسب النقاط؟</span>
+                <span style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.58rem", letterSpacing: "0.2em", color: "#9BA17B" }}>كيف تكسب النقاط؟</span>
               </div>
               {[
                 { desc: "1 نقطة لكل 10 ر.س تنفقها", icon: "🛒" },
@@ -127,7 +127,7 @@ export default function ProfilePage() {
               ].map((item, i) => (
                 <div key={i} style={{ display: "flex", gap: 8, padding: "6px 0", borderBottom: i < 3 ? "1px solid rgba(200,187,164,0.2)" : "none" }}>
                   <span style={{ fontSize: "0.85rem" }}>{item.icon}</span>
-                  <span style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.75rem", color: "#6B7280" }}>{item.desc}</span>
+                  <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.75rem", color: "#6B7280" }}>{item.desc}</span>
                 </div>
               ))}
             </div>
@@ -137,13 +137,13 @@ export default function ProfilePage() {
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: "1.25rem" }}>
               <ShoppingBag size={18} color="#9BA17B" strokeWidth={1.5} />
-              <span style={{ fontFamily: "'Inter',sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#9BA17B" }}>
+              <span style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#9BA17B" }}>
                 MY ORDERS — طلباتي
               </span>
             </div>
 
             {isLoading && (
-              <div style={{ textAlign: "center", padding: "3rem", color: "#9BA17B", fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.88rem" }}>
+              <div style={{ textAlign: "center", padding: "3rem", color: "#9BA17B", fontFamily: "'Mirza', serif", fontSize: "0.88rem" }}>
                 جار التحميل...
               </div>
             )}
@@ -151,8 +151,8 @@ export default function ProfilePage() {
             {!isLoading && orders.length === 0 && (
               <div style={{ background: "#FDFAF5", border: "1px solid rgba(200,187,164,0.3)", padding: "3rem", textAlign: "center" }}>
                 <ShoppingBag size={36} color="#C8BBA4" strokeWidth={1} style={{ marginBottom: "1rem" }} />
-                <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", color: "#9BA17B", margin: 0 }}>لا توجد طلبات بعد</p>
-                <Link href="/products" style={{ display: "inline-block", marginTop: "1rem", color: "#1F3929", fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.85rem", fontWeight: 600, textDecoration: "underline" }}>
+                <p style={{ fontFamily: "'Mirza', serif", color: "#9BA17B", margin: 0 }}>لا توجد طلبات بعد</p>
+                <Link href="/products" style={{ display: "inline-block", marginTop: "1rem", color: "#1F3929", fontFamily: "'Mirza', serif", fontSize: "0.85rem", fontWeight: 600, textDecoration: "underline" }}>
                   تسوق الآن
                 </Link>
               </div>
@@ -169,19 +169,19 @@ export default function ProfilePage() {
                       style={{ padding: "1rem 1.25rem", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between" }}
                     >
                       <div>
-                        <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.88rem", color: "#1C201B", margin: "0 0 4px", fontWeight: 600 }}>
+                        <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.88rem", color: "#1C201B", margin: "0 0 4px", fontWeight: 600 }}>
                           {order.orderNumber}
                         </p>
-                        <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.75rem", color: "#9BA17B", margin: 0 }}>
+                        <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.75rem", color: "#9BA17B", margin: 0 }}>
                           {new Date(order.createdAt).toLocaleDateString("ar-SA", { year: "numeric", month: "long", day: "numeric" })}
                         </p>
                       </div>
                       <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                        <span style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.88rem", fontWeight: 600, color: "#1C201B" }}>
+                        <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.88rem", fontWeight: 600, color: "#1C201B" }}>
                           {order.total?.toFixed(2)} ر.س
                         </span>
                         <span style={{
-                          fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.72rem",
+                          fontFamily: "'Mirza', serif", fontSize: "0.72rem",
                           color: st.color, background: `${st.color}15`,
                           padding: "3px 10px", borderRadius: 20,
                         }}>
@@ -195,10 +195,10 @@ export default function ProfilePage() {
                       <div style={{ borderTop: "1px solid rgba(200,187,164,0.3)", padding: "1rem 1.25rem" }}>
                         {order.items?.map((item: any, i: number) => (
                           <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: i < order.items.length - 1 ? "1px solid rgba(200,187,164,0.2)" : "none" }}>
-                            <span style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.82rem", color: "#1C201B" }}>
+                            <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.82rem", color: "#1C201B" }}>
                               {item.name} × {item.qty}
                             </span>
-                            <span style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.82rem", color: "#9BA17B" }}>
+                            <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.82rem", color: "#9BA17B" }}>
                               {(item.price * item.qty).toFixed(2)} ر.س
                             </span>
                           </div>
@@ -206,20 +206,20 @@ export default function ProfilePage() {
                         <div style={{ marginTop: "0.75rem", display: "flex", flexDirection: "column", gap: 4 }}>
                           {order.discount > 0 && (
                             <div style={{ display: "flex", justifyContent: "space-between" }}>
-                              <span style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.78rem", color: "#059669" }}>خصم كوبون</span>
-                              <span style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.78rem", color: "#059669" }}>-{order.discount?.toFixed(2)} ر.س</span>
+                              <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.78rem", color: "#059669" }}>خصم كوبون</span>
+                              <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.78rem", color: "#059669" }}>-{order.discount?.toFixed(2)} ر.س</span>
                             </div>
                           )}
                           <div style={{ display: "flex", justifyContent: "space-between" }}>
-                            <span style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.78rem", color: "#9BA17B" }}>الشحن</span>
-                            <span style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.78rem", color: "#9BA17B" }}>
+                            <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.78rem", color: "#9BA17B" }}>الشحن</span>
+                            <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.78rem", color: "#9BA17B" }}>
                               {order.shipping === 0 ? "مجاني" : `${order.shipping?.toFixed(2)} ر.س`}
                             </span>
                           </div>
                           {order.pointsEarned > 0 && (
                             <div style={{ display: "flex", alignItems: "center", gap: 6, background: "#F2F7F3", padding: "6px 10px", marginTop: 4 }}>
                               <Star size={13} color="#1F3929" strokeWidth={1.5} />
-                              <span style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.75rem", color: "#1F3929" }}>
+                              <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.75rem", color: "#1F3929" }}>
                                 ربحت {order.pointsEarned} نقطة ولاء
                               </span>
                             </div>

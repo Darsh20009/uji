@@ -111,33 +111,33 @@ export default function MatchaFinder() {
         {step === "intro" && (
           <div style={{ textAlign: "center" }}>
             <p style={{
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Cascadia Code', monospace",
               fontSize: "0.6rem", letterSpacing: "0.3em", textTransform: "uppercase",
               color: "#9BA17B", marginBottom: "1.5rem",
             }}>
               MATCHA FINDER
             </p>
             <h2 style={{
-              fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "clamp(1.8rem,3.5vw,2.8rem)",
               fontWeight: 300, color: "#F2EADB", lineHeight: 1.25,
               marginBottom: "1.25rem",
             }}>
-              لكل شخص ماتشاه.
+              ماتشا تناسب كل الأذواق.
             </h2>
             <p style={{
-              fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "0.88rem", color: "rgba(155,161,123,0.85)",
               lineHeight: 1.9, maxWidth: 380, margin: "0 auto 2.5rem",
             }}>
-              ثلاثة أسئلة فقط — وستعرف أي صنف يناسب أسلوبك وذوقك.
+              ثلاثة أسئلة فقط وستعرف أي صنف يناسب أسلوبك وذوقك.
             </p>
             <button
               onClick={() => setStep(0)}
               style={{
                 display: "inline-block",
                 background: "#F2EADB", color: "#16281D",
-                fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "0.95rem", fontWeight: 600,
                 padding: "0.9rem 2.5rem",
                 border: "none", cursor: "pointer",
@@ -158,10 +158,10 @@ export default function MatchaFinder() {
             {/* Progress */}
             <div style={{ marginBottom: "2.5rem" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                <span style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.78rem", color: "#9BA17B" }}>
+                <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.78rem", color: "#9BA17B" }}>
                   السؤال {qIdx + 1} من {QUESTIONS.length}
                 </span>
-                <span style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.78rem", color: "#9BA17B" }}>
+                <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.78rem", color: "#9BA17B" }}>
                   {Math.round(progress)}%
                 </span>
               </div>
@@ -175,7 +175,7 @@ export default function MatchaFinder() {
             </div>
 
             <h3 style={{
-              fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "clamp(1.4rem,3vw,2rem)",
               fontWeight: 300, color: "#F2EADB", lineHeight: 1.3,
               marginBottom: "2rem", textAlign: "center",
@@ -194,7 +194,7 @@ export default function MatchaFinder() {
                     background: "rgba(242,234,219,0.06)",
                     border: "1px solid rgba(155,161,123,0.25)",
                     color: "#F2EADB",
-                    fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                    fontFamily: "'Mirza', serif",
                     fontSize: "0.92rem", textAlign: "right",
                     cursor: "pointer",
                     transition: "background 0.18s, border-color 0.18s",
@@ -220,7 +220,7 @@ export default function MatchaFinder() {
                 style={{
                   marginTop: "1.5rem",
                   background: "none", border: "none", cursor: "pointer",
-                  color: "#9BA17B", fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+                  color: "#9BA17B", fontFamily: "'Mirza', serif",
                   fontSize: "0.8rem", display: "flex", alignItems: "center", gap: "0.4rem",
                 }}>
                 ← السؤال السابق
@@ -233,7 +233,7 @@ export default function MatchaFinder() {
         {step === "result" && res && (
           <div style={{ textAlign: "center" }}>
             <p style={{
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Cascadia Code', monospace",
               fontSize: "0.6rem", letterSpacing: "0.3em", textTransform: "uppercase",
               color: "#9BA17B", marginBottom: "1.5rem",
             }}>
@@ -247,7 +247,7 @@ export default function MatchaFinder() {
               marginBottom: "2rem",
             }}>
               <div style={{
-                fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "clamp(2rem,4vw,3rem)",
                 fontWeight: 300, color: res.color,
                 marginBottom: "0.4rem",
@@ -255,14 +255,14 @@ export default function MatchaFinder() {
                 {res.label}
               </div>
               <div style={{
-                fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "0.75rem", color: "#9BA17B",
                 letterSpacing: "0.06em", marginBottom: "1.5rem",
               }}>
                 {res.sub}
               </div>
               <p style={{
-                fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "0.88rem", color: "rgba(242,234,219,0.85)",
                 lineHeight: 1.9, maxWidth: 420, margin: "0 auto 1.5rem",
               }}>
@@ -275,7 +275,7 @@ export default function MatchaFinder() {
                 paddingTop: "1.25rem",
               }}>
                 <p style={{
-                  fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                  fontFamily: "'Mirza', serif",
                   fontSize: "0.72rem", color: "#9BA17B",
                   marginBottom: "0.75rem", letterSpacing: "0.04em",
                 }}>
@@ -287,7 +287,7 @@ export default function MatchaFinder() {
                       background: "rgba(242,234,219,0.08)",
                       border: `1px solid ${res.border}`,
                       color: "#F2EADB",
-                      fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                      fontFamily: "'Mirza', serif",
                       fontSize: "0.78rem",
                       padding: "0.3rem 0.8rem",
                     }}>
@@ -302,7 +302,7 @@ export default function MatchaFinder() {
               <Link href={res.link} style={{
                 display: "inline-flex", alignItems: "center", gap: "0.5rem",
                 background: "#F2EADB", color: "#16281D",
-                fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "0.9rem", fontWeight: 600,
                 padding: "0.85rem 2rem", textDecoration: "none",
               }}>
@@ -315,7 +315,7 @@ export default function MatchaFinder() {
                   background: "none",
                   border: "1px solid rgba(155,161,123,0.4)",
                   color: "#9BA17B",
-                  fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                  fontFamily: "'Mirza', serif",
                   fontSize: "0.88rem",
                   padding: "0.85rem 1.5rem",
                   cursor: "pointer",

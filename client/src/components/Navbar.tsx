@@ -70,7 +70,7 @@ export default function Navbar() {
               ].map(({ href, label }) => (
                 <Link key={href} href={href} style={{
                   color: textColor, fontSize: "0.75rem",
-                  fontFamily: "'Cairo', sans-serif",
+                  fontFamily: "'Mirza', serif",
                   letterSpacing: "0.04em", fontWeight: 400,
                   opacity: 0.85, transition: "opacity 0.2s",
                 }}>
@@ -83,7 +83,7 @@ export default function Navbar() {
           {/* Center: Logo */}
           <Link href="/" style={{ display: "flex", justifyContent: "center", flexDirection: "column", alignItems: "center", gap: 2 }}>
             <span style={{
-              fontFamily: "'Cormorant Garamond', serif",
+              fontFamily: "'Cascadia Code', monospace",
               fontSize: scrolled ? "1.5rem" : "1.85rem",
               fontWeight: 400, letterSpacing: "0.22em",
               color: transparent ? "#F2EADB" : "#1C201B",
@@ -91,7 +91,7 @@ export default function Navbar() {
               transition: "font-size 0.3s ease, color 0.3s ease",
             }}>UJI</span>
             <span style={{
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Cascadia Code', monospace",
               fontSize: "0.45rem", letterSpacing: "0.35em",
               color: transparent ? "rgba(242,234,219,0.55)" : "rgba(28,32,27,0.45)",
               textTransform: "uppercase",
@@ -113,7 +113,7 @@ export default function Navbar() {
                   background: "#78933C", color: "#F2EADB",
                   borderRadius: "50%", width: 16, height: 16,
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 9, fontFamily: "'Inter',sans-serif", fontWeight: 500,
+                  fontSize: 9, fontFamily: "'Cascadia Code', monospace", fontWeight: 500,
                 }}>{cartCount}</span>
               )}
             </Link>
@@ -121,7 +121,7 @@ export default function Navbar() {
             {/* Language toggle (decorative for now) */}
             <span style={{
               color: textColor, fontSize: "0.65rem",
-              fontFamily: "'Inter',sans-serif",
+              fontFamily: "'Cascadia Code', monospace",
               letterSpacing: "0.12em", opacity: 0.5,
             }}>
               AR/EN
@@ -161,12 +161,12 @@ export default function Navbar() {
                 style={{ display: "flex", alignItems: "baseline", gap: "1rem" }}
               >
                 <span style={{
-                  fontFamily: "'Cormorant Garamond', serif",
+                  fontFamily: "'Cascadia Code', monospace",
                   fontSize: "2.5rem", fontWeight: 300,
                   color: "#F2EADB", lineHeight: 1,
                 }}>{label}</span>
                 <span style={{
-                  fontFamily: "'Inter',sans-serif",
+                  fontFamily: "'Cascadia Code', monospace",
                   fontSize: "0.7rem", letterSpacing: "0.18em",
                   color: "#9BA17B", textTransform: "uppercase",
                 }}>{en}</span>
@@ -175,7 +175,7 @@ export default function Navbar() {
           </nav>
 
           <div style={{ marginTop: "auto", paddingTop: "3rem", borderTop: "1px solid rgba(155,161,123,0.2)" }}>
-            <p style={{ color: "#9BA17B", fontSize: "0.7rem", fontFamily: "'Inter',sans-serif", letterSpacing: "0.15em" }}>CEREMONIAL JAPANESE MATCHA</p>
+            <p style={{ color: "#9BA17B", fontSize: "0.7rem", fontFamily: "'Cascadia Code', monospace", letterSpacing: "0.15em" }}>CEREMONIAL JAPANESE MATCHA</p>
           </div>
         </div>
       )}

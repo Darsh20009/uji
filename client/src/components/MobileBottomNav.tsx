@@ -84,12 +84,12 @@ export default function MobileBottomNav() {
                   background: "#78933C", color: "#F2EADB",
                   borderRadius: "50%", width: 16, height: 16,
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 9, fontFamily: "'Inter', sans-serif", fontWeight: 600,
+                  fontSize: 9, fontFamily: "'Cascadia Code', monospace", fontWeight: 600,
                 }}>{badge}</span>
               )}
             </div>
             <span style={{
-              fontSize: "0.6rem", fontFamily: "'Cairo', sans-serif",
+              fontSize: "0.6rem", fontFamily: "'Mirza', serif",
               color, letterSpacing: "0.02em", lineHeight: 1,
             }}>{label}</span>
             {active && (

@@ -23,7 +23,7 @@ export default function Footer() {
       {/* Big watermark wordmark */}
       <div style={{
         position: "absolute", bottom: -40, left: "50%", transform: "translateX(-50%)",
-        fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif", fontSize: "clamp(8rem,18vw,16rem)",
+        fontFamily: "'Mirza', serif", fontSize: "clamp(8rem,18vw,16rem)",
         fontWeight: 300, letterSpacing: "0.15em", color: "rgba(31,57,41,0.8)",
         whiteSpace: "nowrap", pointerEvents: "none", userSelect: "none",
         lineHeight: 1,
@@ -46,7 +46,7 @@ export default function Footer() {
               style={{ height: 56, objectFit: "contain", objectPosition: "right" }}
             />
             <p style={{
-              fontFamily: "'Cairo', sans-serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "0.8rem", lineHeight: 1.8,
               color: "rgba(155,161,123,0.85)",
             }}>
@@ -111,19 +111,19 @@ export default function Footer() {
             <div key={title}>
               <div style={{ marginBottom: "1.5rem" }}>
                 <p style={{
-                  fontFamily: "'DM Mono', monospace",
+                  fontFamily: "'Cascadia Code', monospace",
                   fontSize: "0.6rem", letterSpacing: "0.28em", textTransform: "uppercase",
                   color: "#9BA17B", marginBottom: "0.25rem",
                 }}>{en}</p>
                 <p style={{
-                  fontFamily: "'Cairo', sans-serif",
+                  fontFamily: "'Mirza', serif",
                   fontSize: "0.85rem", color: "rgba(242,234,219,0.6)",
                 }}>{title}</p>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "0.875rem" }}>
                 {links.map(l => (
                   <Link key={l.label} href={l.href} style={{
-                    fontFamily: "'Cairo', sans-serif",
+                    fontFamily: "'Mirza', serif",
                     fontSize: "0.82rem", color: "rgba(155,161,123,0.8)",
                     transition: "color 0.2s", textDecoration: "none",
                   }}>{l.label}</Link>
@@ -139,7 +139,7 @@ export default function Footer() {
           padding: "2rem 0 2.5rem", flexWrap: "wrap", gap: "1rem",
         }}>
           <p style={{
-            fontFamily: "'DM Mono', monospace", fontSize: "0.65rem",
+            fontFamily: "'Cascadia Code', monospace", fontSize: "0.65rem",
             letterSpacing: "0.1em", color: "rgba(155,161,123,0.5)",
           }}>
             © 2026 UJI MATCHA. ريتشوالك اليومي
@@ -151,7 +151,7 @@ export default function Footer() {
               { label: "مبيعات الجملة", href: "/wholesale" },
             ].map(({ label, href }) => (
               <Link key={label} href={href} style={{
-                fontFamily: "'Cairo', sans-serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "0.65rem", color: "rgba(155,161,123,0.4)",
                 transition: "color 0.2s", textDecoration: "none",
               }}>{label}</Link>
@@ -168,7 +168,7 @@ export default function Footer() {
           flexWrap: "wrap",
         }}>
           <p style={{
-            fontFamily: "'Cairo', sans-serif", fontSize: "0.65rem",
+            fontFamily: "'Mirza', serif", fontSize: "0.65rem",
             color: "rgba(155,161,123,0.45)", letterSpacing: "0.05em",
             flexShrink: 0,
           }}>
@@ -206,7 +206,7 @@ export default function Footer() {
           }}
         />
         <p style={{
-          fontFamily: "'Cairo', sans-serif", fontSize: "0.62rem",
+          fontFamily: "'Mirza', serif", fontSize: "0.62rem",
           color: "rgba(242,234,219,0.72)", letterSpacing: "0.05em",
           margin: 0,
         }}>

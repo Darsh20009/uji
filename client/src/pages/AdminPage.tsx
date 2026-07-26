@@ -119,7 +119,7 @@ function LoginScreen({ onLogin }: { onLogin: () => void }) {
         </div>
         <div className="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
           <div className="bg-[#1F3929] px-6 py-5">
-            <h1 className="text-[#F2EADB] font-light text-lg" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+            <h1 className="text-[#F2EADB] font-light text-lg" style={{ fontFamily: "'Cascadia Code', monospace" }}>
               {setupMode ? "إعداد حساب المدير" : "مرحباً بعودتك"}
             </h1>
             <p className="text-[#9BA17B] text-xs mt-0.5">{setupMode ? "أنشئ كلمة مرور للمرة الأولى" : "سجّل دخولك للوحة الإدارة"}</p>
@@ -242,7 +242,7 @@ export default function AdminPage() {
   const visitors = (visitorData as any)?.count ?? 0;
 
   return (
-    <div className="min-h-screen bg-stone-50 flex" dir="rtl" style={{ fontFamily: "'IBM Plex Sans Arabic', 'Cairo', sans-serif" }}>
+    <div className="min-h-screen bg-stone-50 flex" dir="rtl" style={{ fontFamily: "'Mirza', serif" }}>
       {/* Desktop Sidebar */}
       <aside className="hidden lg:flex flex-col w-60 bg-white border-l border-stone-100 min-h-screen sticky top-0 h-screen shrink-0">
         <div className="px-5 py-5 border-b border-stone-100">
@@ -353,7 +353,7 @@ function AdminDashboard({ onNavigate, stats, visitors }: { onNavigate: (t: Tab) 
     <div className="space-y-6">
       <div className="bg-gradient-to-l from-[#1F3929] to-[#16281D] rounded-2xl p-6 text-white">
         <p className="text-[#9BA17B] text-xs tracking-widest uppercase mb-1">UJI MATCHA — ADMIN</p>
-        <h1 className="text-2xl font-light" style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif" }}>مرحباً بك في لوحة التحكم</h1>
+        <h1 className="text-2xl font-light" style={{ fontFamily: "'Mirza', serif" }}>مرحباً بك في لوحة التحكم</h1>
         <p className="text-[#9BA17B] text-sm mt-1">إدارة متجرك من مكان واحد.</p>
       </div>
 

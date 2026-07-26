@@ -11,7 +11,7 @@ function SectionLabel({ num, en }: { num: string; en: string }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "3rem" }}>
       <span style={{
-        fontFamily: "'Inter', sans-serif", fontSize: "0.6rem",
+        fontFamily: "'Cascadia Code', monospace", fontSize: "0.6rem",
         letterSpacing: "0.28em", textTransform: "uppercase", color: "#9BA17B",
       }}>{en}</span>
       <div style={{ flex: 1, height: 1, background: "rgba(155,161,123,0.25)", maxWidth: 80 }} />
@@ -30,11 +30,11 @@ function FeatureTile({ icon, title, body }: { icon: React.ReactNode; title: stri
     }}>
       <div style={{ color: "#9BA17B" }}>{icon}</div>
       <h3 style={{
-        fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
+        fontFamily: "'Mirza', serif",
         fontSize: "1.4rem", fontWeight: 300, color: "#F2EADB", lineHeight: 1.3,
       }}>{title}</h3>
       <p style={{
-        fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+        fontFamily: "'Mirza', serif",
         fontSize: "0.82rem", lineHeight: 1.8, color: "rgba(155,161,123,0.85)",
       }}>{body}</p>
     </div>
@@ -69,7 +69,7 @@ function Newsletter() {
       <div className="container" style={{ maxWidth: 640 }}>
         <p className="label-eyebrow" style={{ marginBottom: "1.5rem" }}>نشرة بريدية</p>
         <h2 style={{
-          fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
+          fontFamily: "'Mirza', serif",
           fontSize: "clamp(2rem, 3.5vw, 3rem)",
           fontWeight: 300, color: "#1C201B",
           marginBottom: "1rem", lineHeight: 1.2,
@@ -77,7 +77,7 @@ function Newsletter() {
           صندوق بريد أهدأ.
         </h2>
         <p style={{
-          fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+          fontFamily: "'Mirza', serif",
           fontSize: "0.85rem", color: "#9BA17B", lineHeight: 1.8,
           marginBottom: "3rem",
         }}>
@@ -85,7 +85,7 @@ function Newsletter() {
         </p>
 
         {status === "done" ? (
-          <p style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.3rem", fontWeight: 300, color: "#1F3929" }}>
+          <p style={{ fontFamily: "'Mirza', serif", fontSize: "1.3rem", fontWeight: 300, color: "#1F3929" }}>
             أهلاً بك في عائلة UJI
           </p>
         ) : (
@@ -99,7 +99,7 @@ function Newsletter() {
               style={{
                 flex: 1, height: 52, border: "1px solid rgba(200,187,164,0.5)",
                 borderLeft: "none", background: "#F7F2E8",
-                fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "0.85rem", color: "#1C201B",
                 padding: "0 1.25rem", outline: "none",
                 borderRadius: 0,
@@ -115,7 +115,7 @@ function Newsletter() {
           </form>
         )}
         {status === "error" && (
-          <p style={{ color: "#c0392b", fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.82rem", marginTop: "0.75rem" }}>{msg}</p>
+          <p style={{ color: "#c0392b", fontFamily: "'Mirza', serif", fontSize: "0.82rem", marginTop: "0.75rem" }}>{msg}</p>
         )}
       </div>
     </section>
@@ -160,12 +160,12 @@ function TrustBar({ badges }: { badges?: typeof DEFAULT_BADGES }) {
               <span style={{ fontSize: "1.35rem", lineHeight: 1, flexShrink: 0 }}>{b.icon}</span>
               <div style={{ textAlign: "right" }}>
                 <p style={{
-                  fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                  fontFamily: "'Mirza', serif",
                   fontSize: "0.75rem", color: "#9BA17B",
                   margin: 0, lineHeight: 1.2,
                 }}>{b.title}</p>
                 <p style={{
-                  fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                  fontFamily: "'Mirza', serif",
                   fontSize: "0.85rem", fontWeight: 600, color: "#1C201B",
                   margin: 0, lineHeight: 1.3, marginTop: 2,
                 }}>{b.value}</p>
@@ -244,7 +244,7 @@ export default function HomePage() {
         <div className="container" style={{ position: "relative", zIndex: 2, paddingTop: 120, paddingBottom: 80 }}>
           <div style={{ maxWidth: 560 }}>
             <p style={{
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Cascadia Code', monospace",
               fontSize: "0.6rem", letterSpacing: "0.3em", textTransform: "uppercase",
               color: "rgba(155,161,123,0.9)", marginBottom: "2rem",
               animation: "heroFadeUp 0.9s ease 0.1s both",
@@ -253,7 +253,7 @@ export default function HomePage() {
             </p>
 
             <h1 style={{
-              fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "clamp(3rem, 6vw, 5.5rem)",
               fontWeight: 300, lineHeight: 1.1,
               color: "#F2EADB",
@@ -265,7 +265,7 @@ export default function HomePage() {
             </h1>
 
             <p style={{
-              fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "0.95rem", lineHeight: 1.9, fontWeight: 300,
               color: "rgba(242,234,219,0.82)",
               marginBottom: "2.5rem", maxWidth: 420,
@@ -291,7 +291,7 @@ export default function HomePage() {
           display: "flex", flexDirection: "column", alignItems: "center", gap: "0.75rem",
           animation: "heroFadeUp 1s ease 0.9s both",
         }}>
-          <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "0.55rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "#F2EADB" }}>01 — SCROLL</p>
+          <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.55rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "#F2EADB" }}>01 — SCROLL</p>
           <div style={{ width: 1, height: 48, background: "rgba(242,234,219,0.5)", animation: "fadeScroll 1.8s ease-in-out infinite" }} />
         </div>
 
@@ -323,18 +323,18 @@ export default function HomePage() {
           }}>
             <div>
               <h2 style={{
-                fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "clamp(2rem, 3.5vw, 3rem)",
                 fontWeight: 300, color: "#1C201B", lineHeight: 1.2,
                 marginBottom: "0.75rem",
               }}>المجموعة</h2>
-              <p style={{ fontFamily: "'IBM Plex Sans Arabic', sans-serif", fontSize: "0.85rem", color: "#9BA17B" }}>
+              <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.85rem", color: "#9BA17B" }}>
                 كل ما تحتاجه لبدء ريتشوال الماتشا الخاص بك.
               </p>
             </div>
             <Link href="/products" style={{
               display: "flex", alignItems: "center", gap: "0.6rem",
-              fontFamily: "'Cairo', sans-serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "0.75rem", letterSpacing: "0.04em",
               color: "#1F3929",
             }}>
@@ -358,11 +358,11 @@ export default function HomePage() {
                     <img src={img} alt={name} style={{ width: "70%", height: "70%", objectFit: "contain" }} />
                   </div>
                   <div style={{ padding: "1.25rem 1.5rem 1.75rem" }}>
-                    <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#9BA17B", textTransform: "uppercase", marginBottom: "0.5rem" }}>MATCHA</p>
-                    <h3 style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.95rem", fontWeight: 400, color: "#1C201B", marginBottom: "0.25rem" }}>{name}</h3>
-                    <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "0.65rem", color: "#C8BBA4", letterSpacing: "0.08em", marginBottom: "1rem" }}>{sub}</p>
+                    <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#9BA17B", textTransform: "uppercase", marginBottom: "0.5rem" }}>MATCHA</p>
+                    <h3 style={{ fontFamily: "'Mirza', serif", fontSize: "0.95rem", fontWeight: 400, color: "#1C201B", marginBottom: "0.25rem" }}>{name}</h3>
+                    <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.65rem", color: "#C8BBA4", letterSpacing: "0.08em", marginBottom: "1rem" }}>{sub}</p>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1rem", borderTop: "1px solid rgba(200,187,164,0.25)" }}>
-                      <span style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.1rem", color: "#1F3929" }}>{price} <span style={{ fontSize: "0.7rem", fontFamily: "'Inter',sans-serif" }}>ر.س</span></span>
+                      <span style={{ fontFamily: "'Mirza', serif", fontSize: "1.1rem", color: "#1F3929" }}>{price} <span style={{ fontSize: "0.7rem", fontFamily: "'Cascadia Code', monospace" }}>ر.س</span></span>
                       <Link href="/products" className="btn-outline" style={{ height: 36, padding: "0 1rem", fontSize: "0.75rem" }}>أضف</Link>
                     </div>
                   </div>
@@ -385,7 +385,7 @@ export default function HomePage() {
       }}>
         <div className="container">
           <p style={{
-            fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
+            fontFamily: "'Mirza', serif",
             fontSize: "clamp(1.8rem, 3.5vw, 3rem)",
             fontWeight: 300,
             color: "#1C201B", lineHeight: 1.4,
@@ -394,7 +394,7 @@ export default function HomePage() {
             ماتشا مختارة بعناية<br />من اليابان إلى كوبك.
           </p>
           <p style={{
-            fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+            fontFamily: "'Mirza', serif",
             fontSize: "0.85rem", color: "#9BA17B",
             letterSpacing: "0.04em", lineHeight: 1.8,
           }}>
@@ -408,7 +408,7 @@ export default function HomePage() {
       ══════════════════════════════════════════════ */}
       <section className="section" style={{ background: "#F2EADB" }}>
         <div className="container">
-          <SectionLabel num="02" en="THE TIN" />
+          <SectionLabel num="02" en="THE MATCHA" />
 
           <div className="grid-2col" style={{
             display: "grid", gridTemplateColumns: "1fr 1fr",
@@ -418,7 +418,7 @@ export default function HomePage() {
             <div style={{ position: "relative", height: 480, borderRadius: 4, overflow: "hidden" }}>
               <img
                 src="/assets/packaging/uji-tin-hero.png"
-                alt="علبة UJI الماتشا"
+                alt="ماتشا UJI"
                 style={{
                   width: "100%",
                   height: "100%",
@@ -443,19 +443,19 @@ export default function HomePage() {
             {/* Right: annotations */}
             <div>
               <h2 style={{
-                fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "clamp(2rem, 3.5vw, 3rem)",
                 fontWeight: 300, color: "#1C201B",
                 marginBottom: "0.75rem", lineHeight: 1.2,
               }}>
-                علبة مصممة<br />بعناية فائقة.
+                ماتشا احتفالية<br />بجودة استثنائية.
               </h2>
               <p style={{
-                fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "0.85rem", color: "#9BA17B",
                 lineHeight: 1.8, marginBottom: "3rem",
               }}>
-                30 جراماً من ماتشا احتفالية نقية، محمية في علبة معدنية محكمة الإغلاق تحافظ على النكهة والأخضر الحي.
+                مسحوق ماتشا ياباني أصلي من الدرجة الاحتفالية، مطحون بالحجر من أوراق الشاي المظللة للحصول على أعمق نكهة وأغنى لون أخضر.
               </p>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "0" }}>
@@ -471,8 +471,8 @@ export default function HomePage() {
                     padding: "1rem 0",
                     borderBottom: "1px solid rgba(200,187,164,0.3)",
                   }}>
-                    <span style={{ fontFamily: "'IBM Plex Sans Arabic', sans-serif", fontSize: "0.88rem", color: "#1C201B" }}>{ar}</span>
-                    <span style={{ fontFamily: "'Inter', sans-serif", fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#9BA17B" }}>{en}</span>
+                    <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.88rem", color: "#1C201B" }}>{ar}</span>
+                    <span style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#9BA17B" }}>{en}</span>
                   </div>
                 ))}
               </div>
@@ -497,7 +497,7 @@ export default function HomePage() {
             gap: "4rem", alignItems: "end", marginBottom: "5rem",
           }}>
             <h2 style={{
-              fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "clamp(2.2rem, 4vw, 3.5rem)",
               fontWeight: 300, color: "#F2EADB", lineHeight: 1.15,
             }}>
@@ -505,7 +505,7 @@ export default function HomePage() {
               لكل طريقة تحضير.
             </h2>
             <p style={{
-              fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "0.88rem", color: "rgba(155,161,123,0.85)", lineHeight: 1.9,
             }}>
               سواء كنت تعدّها لنفسك أو تشاركها في تجمع، كل صنف من ماتشا UJI مختار بدقة من مزارع اليابان، ومنها مزارع شيزوكا الشهيرة، ليناسب كل ذوق وكل أسلوب تحضير.
@@ -576,7 +576,7 @@ export default function HomePage() {
           <div className="grid-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5rem", alignItems: "center" }}>
             <div>
               <p style={{
-                fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "clamp(2rem, 3vw, 2.8rem)",
                 fontWeight: 300,
                 color: "#4C5734", lineHeight: 1.3, marginBottom: "2rem",
@@ -584,7 +584,7 @@ export default function HomePage() {
                 تباطأ. تذوّق الماتشا.
               </p>
               <p style={{
-                fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "0.85rem", lineHeight: 1.9, color: "#9BA17B",
                 marginBottom: "3rem",
               }}>
@@ -598,7 +598,7 @@ export default function HomePage() {
               <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                 <img src="/assets/lifestyle/uji-lifestyle-car-window-01.png" alt="كوب UJI" style={{ width: "100%", height: "60%", objectFit: "cover" }} />
                 <div style={{ flex: 1, background: "#16281D", display: "flex", alignItems: "center", justifyContent: "center", padding: "1.5rem" }}>
-                  <p style={{ fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif", fontSize: "1.3rem", fontWeight: 300, color: "#9BA17B", textAlign: "center", lineHeight: 1.4 }}>
+                  <p style={{ fontFamily: "'Mirza', serif", fontSize: "1.3rem", fontWeight: 300, color: "#9BA17B", textAlign: "center", lineHeight: 1.4 }}>
                     صُنعت<br />لريتشوالك.
                   </p>
                 </div>

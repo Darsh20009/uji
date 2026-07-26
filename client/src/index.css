@@ -23,16 +23,16 @@
   --radius:       0px;
 
   /* ── Typography System ──────────────────────────────── */
-  /* Display headings (Arabic)  → El Messiri — elegant modern Arabic, upright & readable */
-  --font-display: 'El Messiri', 'Cairo', system-ui, sans-serif;
-  /* Editorial / en headlines   → Playfair Display — luxury serif, upright, easy to read */
-  --font-serif:   'Playfair Display', 'Georgia', serif;
-  /* Body copy                  → Cairo — modern geometric Arabic (Fuji-style) */
-  --font-arabic:  'Cairo', system-ui, sans-serif;
-  /* Accent labels / mono       → DM Mono — unique techy contrast */
-  --font-mono:    'DM Mono', 'Courier New', monospace;
+  /* Arabic text (all weights)  → Mirza */
+  --font-display: 'Mirza', serif;
+  /* English / editorial        → Cascadia Code */
+  --font-serif:   'Cascadia Code', monospace;
+  /* Arabic body copy           → Mirza */
+  --font-arabic:  'Mirza', serif;
+  /* Accent labels / mono       → Cascadia Code */
+  --font-mono:    'Cascadia Code', monospace;
   /* Legacy alias */
-  --font-sans:    'Cairo', system-ui, sans-serif;
+  --font-sans:    'Mirza', serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

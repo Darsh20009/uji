@@ -9,13 +9,13 @@ import PhoneInput, { COUNTRIES, type Country } from "./PhoneInput";
 const F: React.CSSProperties  = { display: "flex", flexDirection: "column", gap: 6 };
 const LBL: React.CSSProperties = {
   fontSize: "0.58rem", letterSpacing: "0.22em", textTransform: "uppercase",
-  color: "#9BA17B", fontFamily: "'Inter', sans-serif",
+  color: "#9BA17B", fontFamily: "'Cascadia Code', monospace",
 };
 const INP: React.CSSProperties = {
   height: 48, background: "#F7F2E8",
   border: "1px solid rgba(200,187,164,0.55)",
   padding: "0 1rem",
-  fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif",
+  fontFamily: "'Mirza', serif",
   fontSize: "0.88rem", color: "#1C201B", outline: "none",
   boxSizing: "border-box", width: "100%", transition: "border-color 0.2s",
 };
@@ -23,33 +23,33 @@ const ERR: React.CSSProperties = {
   background: "#FDF2F2", borderRight: "3px solid #C87070",
   border: "1px solid #F5BABA", padding: "10px 14px",
   fontSize: "0.82rem", color: "#8B3A3A",
-  fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif",
+  fontFamily: "'Mirza', serif",
   lineHeight: 1.6, direction: "rtl", textAlign: "right",
 };
 const OK: React.CSSProperties = {
   background: "#F2F7F3", borderRight: "3px solid #1F3929",
   border: "1px solid #A8C8B0", padding: "10px 14px",
   fontSize: "0.82rem", color: "#1F3929",
-  fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif",
+  fontFamily: "'Mirza', serif",
   lineHeight: 1.6, direction: "rtl", textAlign: "right",
 };
 const BTN = (disabled: boolean): React.CSSProperties => ({
   height: 50, background: disabled ? "#C8BBA4" : "#16281D",
   color: "#F2EADB", border: "none", width: "100%",
   cursor: disabled ? "not-allowed" : "pointer",
-  fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif",
+  fontFamily: "'Mirza', serif",
   fontSize: "0.88rem", letterSpacing: "0.08em",
   transition: "background 0.2s",
 });
 const LINK: React.CSSProperties = {
   background: "none", border: "none", padding: 0,
   color: "#1F3929", cursor: "pointer",
-  fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif",
+  fontFamily: "'Mirza', serif",
   fontSize: "0.78rem", fontWeight: 600, textDecoration: "underline",
 };
 const MUTED: React.CSSProperties = {
   fontSize: "0.78rem", color: "#9BA17B",
-  fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif",
+  fontFamily: "'Mirza', serif",
   textAlign: "center", margin: 0,
 };
 
@@ -278,9 +278,9 @@ export default function AuthModal() {
               if (next) next.style.display = "block";
             }}
           />
-          <span style={{ display: "none", fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif", fontSize: "1.8rem", fontWeight: 300, letterSpacing: "0.3em", color: "#F2EADB" }}>UJI</span>
+          <span style={{ display: "none", fontFamily: "'Mirza', serif", fontSize: "1.8rem", fontWeight: 300, letterSpacing: "0.3em", color: "#F2EADB" }}>UJI</span>
           <div style={{ width: 28, height: 1, background: "#9BA17B" }} />
-          <span style={{ fontFamily: "'Inter', sans-serif", fontSize: "0.5rem", letterSpacing: "0.42em", color: "#9BA17B" }}>CEREMONIAL GRADE MATCHA</span>
+          <span style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.5rem", letterSpacing: "0.42em", color: "#9BA17B" }}>CEREMONIAL GRADE MATCHA</span>
         </div>
 
         {/* ══════════ LOGGED-IN STATE ══════════ */}
@@ -290,19 +290,19 @@ export default function AuthModal() {
               <User size={28} strokeWidth={1} color="#9BA17B" />
             </div>
             <div style={{ textAlign: "center" }}>
-              <p style={{ fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif", fontSize: "1.35rem", fontWeight: 400, color: "#1C201B", margin: "0 0 4px" }}>{(user as any).name || "مرحباً"}</p>
-              <p style={{ fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif", fontSize: "0.82rem", color: "#9BA17B", margin: 0, direction: "ltr" }}>{(user as any).phone}</p>
+              <p style={{ fontFamily: "'Mirza', serif", fontSize: "1.35rem", fontWeight: 400, color: "#1C201B", margin: "0 0 4px" }}>{(user as any).name || "مرحباً"}</p>
+              <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.82rem", color: "#9BA17B", margin: 0, direction: "ltr" }}>{(user as any).phone}</p>
             </div>
             {/* Loyalty points */}
             {(user as any).loyaltyPoints > 0 && (
               <div style={{ background: "#F2F7F3", border: "1px solid #A8C8B0", padding: "10px 20px", textAlign: "center" }}>
-                <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.82rem", color: "#1F3929", margin: 0 }}>
+                <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.82rem", color: "#1F3929", margin: 0 }}>
                   نقاط الولاء: <strong>{(user as any).loyaltyPoints}</strong> ✦ مستوى {(user as any).loyaltyTier === "bronze" ? "برونزي" : (user as any).loyaltyTier === "silver" ? "فضي" : (user as any).loyaltyTier === "gold" ? "ذهبي" : "بلاتيني"}
                 </p>
               </div>
             )}
             <div style={{ width: "100%", background: "#EDE8DF", height: 1 }} />
-            <button onClick={doLogout} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "1px solid #C8BBA4", padding: "11px 28px", cursor: "pointer", fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif", fontSize: "0.88rem", color: "#1C201B", transition: "all 0.2s" }}
+            <button onClick={doLogout} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "1px solid #C8BBA4", padding: "11px 28px", cursor: "pointer", fontFamily: "'Mirza', serif", fontSize: "0.88rem", color: "#1C201B", transition: "all 0.2s" }}
               onMouseEnter={e => { const b = e.currentTarget; b.style.background="#1F3929"; b.style.color="#F2EADB"; b.style.borderColor="#1F3929"; }}
               onMouseLeave={e => { const b = e.currentTarget; b.style.background="none"; b.style.color="#1C201B"; b.style.borderColor="#C8BBA4"; }}>
               <LogOut size={14} strokeWidth={1.5} />تسجيل الخروج
@@ -318,7 +318,7 @@ export default function AuthModal() {
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", borderBottom: "1px solid rgba(200,187,164,0.4)", flexShrink: 0 }}>
               {(["login", "register"] as const).map(t => (
                 <button key={t} type="button" onClick={() => go(t)}
-                  style={{ padding: "0.85rem", background: "none", border: "none", borderBottom: `2px solid ${view === t ? "#16281D" : "transparent"}`, fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif", fontSize: "0.82rem", color: view === t ? "#16281D" : "#9BA17B", cursor: "pointer", transition: "all 0.2s", fontWeight: view === t ? 600 : 400 }}>
+                  style={{ padding: "0.85rem", background: "none", border: "none", borderBottom: `2px solid ${view === t ? "#16281D" : "transparent"}`, fontFamily: "'Mirza', serif", fontSize: "0.82rem", color: view === t ? "#16281D" : "#9BA17B", cursor: "pointer", transition: "all 0.2s", fontWeight: view === t ? 600 : 400 }}>
                   {t === "login" ? "تسجيل الدخول" : "حساب جديد"}
                 </button>
               ))}
@@ -331,7 +331,7 @@ export default function AuthModal() {
               <button type="button" onClick={() => go("login")} style={{ background: "none", border: "none", cursor: "pointer", color: "#9BA17B", display: "flex", alignItems: "center", padding: 0 }}>
                 <ArrowRight size={16} strokeWidth={1.5} />
               </button>
-              <span style={{ fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif", fontSize: "0.82rem", color: "#1C201B", fontWeight: 600 }}>
+              <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.82rem", color: "#1C201B", fontWeight: 600 }}>
                 {view === "forgot" ? "نسيت كلمة المرور" : "إدخال رمز التحقق"}
               </span>
             </div>
@@ -384,7 +384,7 @@ export default function AuthModal() {
             {/* ════ FORGOT ════ */}
             {view === "forgot" && (
               <form onSubmit={doForgot} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                <p style={{ fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif", fontSize: "0.84rem", color: "#6B7280", lineHeight: 1.8, margin: "0 0 4px", direction: "rtl" }}>
+                <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.84rem", color: "#6B7280", lineHeight: 1.8, margin: "0 0 4px", direction: "rtl" }}>
                   أدخل رقم جوالك المسجل وسنرسل رمز التحقق إلى بريدك الإلكتروني.
                 </p>
                 <div style={F}>
@@ -394,7 +394,7 @@ export default function AuthModal() {
                 <button type="submit" disabled={busy} style={BTN(busy)}>{busy ? "جار الإرسال..." : "إرسال رمز التحقق ✦"}</button>
                 <div style={{ display: "flex", alignItems: "flex-start", gap: 8, background: "#F0EBE1", padding: "12px 14px", direction: "rtl" }}>
                   <Mail size={15} strokeWidth={1.5} color="#9BA17B" style={{ flexShrink: 0, marginTop: 2 }} />
-                  <span style={{ fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif", fontSize: "0.78rem", color: "#9BA17B", lineHeight: 1.7 }}>
+                  <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.78rem", color: "#9BA17B", lineHeight: 1.7 }}>
                     تأكد من وجود بريد إلكتروني مرتبط بحسابك
                   </span>
                 </div>
@@ -404,7 +404,7 @@ export default function AuthModal() {
             {/* ════ OTP ════ */}
             {view === "otp" && (
               <form onSubmit={doReset} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                <p style={{ fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif", fontSize: "0.84rem", color: "#6B7280", lineHeight: 1.8, margin: 0, direction: "rtl" }}>
+                <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.84rem", color: "#6B7280", lineHeight: 1.8, margin: 0, direction: "rtl" }}>
                   أدخل رمز التحقق المرسل لبريدك ثم اختر كلمة مرور جديدة.
                 </p>
                 <div style={F}>
@@ -424,7 +424,7 @@ export default function AuthModal() {
           {/* footer note */}
           {(view === "login" || view === "register") && (
             <div style={{ padding: "0.9rem 1.75rem", borderTop: "1px solid rgba(200,187,164,0.3)", flexShrink: 0 }}>
-              <p style={{ fontSize: "0.68rem", color: "#C8BBA4", margin: 0, textAlign: "center", fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif", lineHeight: 1.7 }}>
+              <p style={{ fontSize: "0.68rem", color: "#C8BBA4", margin: 0, textAlign: "center", fontFamily: "'Mirza', serif", lineHeight: 1.7 }}>
                 بتسجيل حسابك توافق على{" "}
                 <a href="/policy" style={{ color: "#9BA17B" }}>سياسة الخصوصية وشروط الاستخدام</a>
               </p>

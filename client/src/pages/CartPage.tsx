@@ -2,8 +2,8 @@ import { useCart } from "../hooks/useCart";
 import { Link } from "wouter";
 import { Trash2, ShoppingBag, Plus, Minus } from "lucide-react";
 
-const font = "'Cairo', sans-serif";
-const mono = "'DM Mono', monospace";
+const font = "'Mirza', serif";
+const mono = "'Cascadia Code', monospace";
 
 export default function CartPage() {
   const { items, remove, update, clear } = useCart();
@@ -132,8 +132,8 @@ export default function CartPage() {
             )}
 
             <div style={{ borderTop: "1px solid rgba(200,187,164,0.4)", paddingTop: "1rem", display: "flex", justifyContent: "space-between", marginBottom: "1.5rem" }}>
-              <span style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.1rem", color: "#1C201B" }}>الإجمالي</span>
-              <span style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.2rem", fontWeight: 500, color: "#1C201B" }}>{total.toFixed(2)} ر.س</span>
+              <span style={{ fontFamily: "'Mirza', serif", fontSize: "1.1rem", color: "#1C201B" }}>الإجمالي</span>
+              <span style={{ fontFamily: "'Mirza', serif", fontSize: "1.2rem", fontWeight: 500, color: "#1C201B" }}>{total.toFixed(2)} ر.س</span>
             </div>
 
             <Link href="/checkout" className="btn-primary" style={{ width: "100%", textAlign: "center", display: "block", height: 52, lineHeight: "52px" }}>

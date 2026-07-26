@@ -55,7 +55,7 @@ export default function ProductCard({ product }: { product: any }) {
           position: "absolute", top: "0.75rem", right: "0.75rem",
           background: typeInfo.bg,
           color: typeInfo.color,
-          fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+          fontFamily: "'Mirza', serif",
           fontSize: "0.65rem", fontWeight: 600,
           padding: "0.2rem 0.55rem",
           borderRadius: 2,
@@ -68,7 +68,7 @@ export default function ProductCard({ product }: { product: any }) {
       {/* Info */}
       <div style={{ padding: "1.25rem 1.25rem 1.5rem" }}>
         <p style={{
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "'Cascadia Code', monospace",
           fontSize: "0.6rem", letterSpacing: "0.22em", textTransform: "uppercase",
           color: "#9BA17B", marginBottom: "0.5rem",
         }}>
@@ -77,7 +77,7 @@ export default function ProductCard({ product }: { product: any }) {
 
         <Link href={`/products/${product._id}`}>
           <h3 style={{
-            fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+            fontFamily: "'Mirza', serif",
             fontSize: "0.92rem", fontWeight: 400,
             color: "#1C201B", lineHeight: 1.4,
             marginBottom: "1rem",
@@ -92,15 +92,15 @@ export default function ProductCard({ product }: { product: any }) {
         }}>
           <div>
             <span style={{
-              fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "1.1rem", fontWeight: 400,
               color: "#1F3929",
             }}>
-              {product.price?.toFixed(0)} <span style={{ fontSize: "0.7rem", fontFamily: "'Inter',sans-serif", letterSpacing: "0.05em" }}>ر.س</span>
+              {product.price?.toFixed(0)} <span style={{ fontSize: "0.7rem", fontFamily: "'Cascadia Code', monospace", letterSpacing: "0.05em" }}>ر.س</span>
             </span>
             {product.comparePrice > 0 && product.comparePrice > product.price && (
               <span style={{
-                fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "0.85rem", color: "#C8BBA4",
                 textDecoration: "line-through", marginRight: "0.4rem",
               }}>
@@ -115,7 +115,7 @@ export default function ProductCard({ product }: { product: any }) {
               background: "none", border: "1px solid rgba(31,57,41,0.35)",
               padding: "0.4rem 0.875rem",
               display: "flex", alignItems: "center", gap: "0.4rem",
-              fontFamily: "'Inter',sans-serif", fontSize: "0.6rem",
+              fontFamily: "'Cascadia Code', monospace", fontSize: "0.6rem",
               letterSpacing: "0.15em", textTransform: "uppercase",
               color: "#1F3929",
               transition: "background 0.2s, border-color 0.2s",
@@ -140,7 +140,7 @@ export default function ProductCard({ product }: { product: any }) {
         <div style={{
           position: "absolute", top: "1rem", left: "1rem",
           background: "rgba(28,32,27,0.75)", color: "#F2EADB",
-          fontFamily: "'Inter',sans-serif", fontSize: "0.6rem",
+          fontFamily: "'Cascadia Code', monospace", fontSize: "0.6rem",
           letterSpacing: "0.15em", textTransform: "uppercase",
           padding: "0.25rem 0.6rem",
         }}>

@@ -20,13 +20,13 @@ export default function ProductsPage() {
       }}>
         <div className="container">
           <p style={{
-            fontFamily: "'Inter',sans-serif", fontSize: "0.6rem",
+            fontFamily: "'Cascadia Code', monospace", fontSize: "0.6rem",
             letterSpacing: "0.28em", textTransform: "uppercase",
             color: "#9BA17B", marginBottom: "1rem",
           }}>THE COLLECTION</p>
           <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: "1.5rem" }}>
             <h1 style={{
-              fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "clamp(2.5rem,5vw,4rem)",
               fontWeight: 300, color: "#1C201B", lineHeight: 1,
             }}>المجموعة</h1>
@@ -45,7 +45,7 @@ export default function ProductsPage() {
                 style={{
                   border: "none", background: "transparent",
                   padding: "0.75rem 0", width: 220,
-                  fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+                  fontFamily: "'Mirza', serif",
                   fontSize: "0.85rem",
                 }}
               />
@@ -57,13 +57,13 @@ export default function ProductsPage() {
       {/* Grid */}
       <div className="container section-sm">
         {isLoading && (
-          <div style={{ textAlign: "center", padding: "5rem", color: "#9BA17B", fontFamily: "'Inter',sans-serif", fontSize: "0.7rem", letterSpacing: "0.2em" }}>
+          <div style={{ textAlign: "center", padding: "5rem", color: "#9BA17B", fontFamily: "'Cascadia Code', monospace", fontSize: "0.7rem", letterSpacing: "0.2em" }}>
             LOADING...
           </div>
         )}
         {!isLoading && products?.length === 0 && (
           <div style={{ textAlign: "center", padding: "5rem", color: "#9BA17B" }}>
-            <p style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.5rem", fontWeight: 300 }}>لا توجد منتجات</p>
+            <p style={{ fontFamily: "'Mirza', serif", fontSize: "1.5rem", fontWeight: 300 }}>لا توجد منتجات</p>
           </div>
         )}
         {products?.length > 0 && (

@@ -39,7 +39,7 @@ export default function WholesalePage() {
         textAlign: "center",
       }}>
         <p style={{
-          fontFamily: "'DM Mono', monospace",
+          fontFamily: "'Cascadia Code', monospace",
           fontSize: "0.6rem",
           letterSpacing: "0.4em",
           textTransform: "uppercase",
@@ -48,7 +48,7 @@ export default function WholesalePage() {
         }}>للمقاهي والمشاريع</p>
 
         <h1 style={{
-          fontFamily: "'Aref Ruqaa', serif",
+          fontFamily: "'Mirza', serif",
           fontSize: "clamp(2.6rem, 6vw, 4.5rem)",
           fontWeight: 700,
           color: "#F2EADB",
@@ -61,14 +61,14 @@ export default function WholesalePage() {
         </h1>
 
         <p style={{
-          fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+          fontFamily: "'Mirza', serif",
           fontSize: "0.95rem",
           lineHeight: 2,
           color: "rgba(242,234,219,0.7)",
           maxWidth: 480,
           margin: "0 auto 2.5rem",
         }}>
-          من الوصفات الجاهزة إلى تدريب فريقك — نبني معك تجربة ماتشا تجعل عميلك يعود.
+          من الوصفات الجاهزة إلى تدريب فريقك، نبني معك تجربة ماتشا تجعل عميلك يعود.
         </p>
 
         <a
@@ -83,7 +83,7 @@ export default function WholesalePage() {
             color: "#16281D",
             padding: "1rem 2.5rem",
             textDecoration: "none",
-            fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+            fontFamily: "'Mirza', serif",
             fontSize: "0.95rem",
             fontWeight: 600,
             letterSpacing: "0.03em",
@@ -96,7 +96,7 @@ export default function WholesalePage() {
         </a>
 
         <p style={{
-          fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+          fontFamily: "'Mirza', serif",
           fontSize: "0.75rem",
           color: "rgba(155,161,123,0.6)",
           marginTop: "1rem",
@@ -128,7 +128,7 @@ export default function WholesalePage() {
             {
               num: "٠٣",
               title: "دعم متواصل",
-              body: "لا تختفي بعد أول طلب — نبقى معك في كل مرحلة من مراحل نمو مشروعك.",
+              body: "لا تختفي بعد أول طلب، نبقى معك في كل مرحلة من مراحل نمو مشروعك.",
             },
           ].map(({ num, title, body }) => (
             <div
@@ -140,14 +140,14 @@ export default function WholesalePage() {
               }}
             >
               <div style={{
-                fontFamily: "'DM Mono', monospace",
+                fontFamily: "'Cascadia Code', monospace",
                 fontSize: "0.6rem",
                 letterSpacing: "0.35em",
                 color: "#9BA17B",
                 marginBottom: "1.25rem",
               }}>{num}</div>
               <h3 style={{
-                fontFamily: "'Aref Ruqaa', serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "1.5rem",
                 fontWeight: 700,
                 color: "#16281D",
@@ -155,7 +155,7 @@ export default function WholesalePage() {
                 lineHeight: 1.3,
               }}>{title}</h3>
               <p style={{
-                fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "0.85rem",
                 color: "#9BA17B",
                 lineHeight: 1.9,
@@ -177,7 +177,7 @@ export default function WholesalePage() {
         }}>
           <div>
             <p style={{
-              fontFamily: "'Aref Ruqaa', serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "1.6rem",
               fontWeight: 700,
               color: "#F2EADB",
@@ -185,7 +185,7 @@ export default function WholesalePage() {
               lineHeight: 1.3,
             }}>أرسل لنا معلومات مشروعك</p>
             <p style={{
-              fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "0.82rem",
               color: "#9BA17B",
               lineHeight: 1.9,
@@ -205,7 +205,7 @@ export default function WholesalePage() {
               color: "#fff",
               padding: "0.9rem 2rem",
               textDecoration: "none",
-              fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "0.9rem",
               fontWeight: 600,
               whiteSpace: "nowrap",

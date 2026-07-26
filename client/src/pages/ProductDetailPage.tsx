@@ -53,12 +53,12 @@ export default function ProductDetailPage() {
 
   if (isLoading) return (
     <div style={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#F2EADB" }}>
-      <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", color: "#9BA17B" }}>جار التحميل...</p>
+      <p style={{ fontFamily: "'Mirza', serif", color: "#9BA17B" }}>جار التحميل...</p>
     </div>
   );
   if (!p) return (
     <div style={{ minHeight: "80vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1.5rem", background: "#F2EADB" }}>
-      <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", color: "#9BA17B" }}>المنتج غير موجود</p>
+      <p style={{ fontFamily: "'Mirza', serif", color: "#9BA17B" }}>المنتج غير موجود</p>
       <Link href="/products" className="btn-outline">← العودة</Link>
     </div>
   );
@@ -77,11 +77,11 @@ export default function ProductDetailPage() {
       <div className="container">
         {/* Breadcrumb */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "3rem" }}>
-          <Link href="/products" style={{ fontFamily: "'Inter',sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#9BA17B", textTransform: "uppercase" }}>
+          <Link href="/products" style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#9BA17B", textTransform: "uppercase" }}>
             المتجر
           </Link>
           <ArrowRight size={10} color="#C8BBA4" />
-          <span style={{ fontFamily: "'Inter',sans-serif", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#C8BBA4", textTransform: "uppercase" }}>
+          <span style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#C8BBA4", textTransform: "uppercase" }}>
             {p.nameEn || p.name}
           </span>
         </div>
@@ -127,33 +127,33 @@ export default function ProductDetailPage() {
           {/* ── Info ── */}
           <div style={{ paddingTop: "1rem" }}>
             {p.category && (
-              <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "0.58rem", letterSpacing: "0.28em", color: "#9BA17B", textTransform: "uppercase", marginBottom: "1rem" }}>
+              <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.58rem", letterSpacing: "0.28em", color: "#9BA17B", textTransform: "uppercase", marginBottom: "1rem" }}>
                 {p.category === "matcha" ? "MATCHA" : p.category === "tools" ? "TOOLS" : p.category}
               </p>
             )}
 
             <h1 style={{
-              fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "clamp(2rem,3.5vw,3rem)",
               fontWeight: 300, color: "#1C201B", lineHeight: 1.15,
               marginBottom: "0.75rem",
             }}>{p.name}</h1>
 
             {p.nameEn && (
-              <p style={{ fontFamily: "'Inter',sans-serif", fontSize: "0.65rem", letterSpacing: "0.15em", color: "#C8BBA4", marginBottom: "1.5rem" }}>{p.nameEn}</p>
+              <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.65rem", letterSpacing: "0.15em", color: "#C8BBA4", marginBottom: "1.5rem" }}>{p.nameEn}</p>
             )}
 
             {/* Price */}
             <div style={{ display: "flex", alignItems: "baseline", gap: "1rem", marginBottom: "2rem" }}>
-              <span style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "2rem", color: "#1F3929", fontWeight: 400 }}>
-                {p.price?.toFixed(2)} <span style={{ fontSize: "0.9rem", fontFamily: "'IBM Plex Sans Arabic',sans-serif" }}>ر.س</span>
+              <span style={{ fontFamily: "'Mirza', serif", fontSize: "2rem", color: "#1F3929", fontWeight: 400 }}>
+                {p.price?.toFixed(2)} <span style={{ fontSize: "0.9rem", fontFamily: "'Mirza', serif" }}>ر.س</span>
               </span>
               {discount > 0 && (
                 <>
-                  <span style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.2rem", color: "#C8BBA4", textDecoration: "line-through" }}>
+                  <span style={{ fontFamily: "'Mirza', serif", fontSize: "1.2rem", color: "#C8BBA4", textDecoration: "line-through" }}>
                     {p.comparePrice?.toFixed(2)} ر.س
                   </span>
-                  <span style={{ background: "#1F3929", color: "#9BA17B", fontSize: "0.65rem", padding: "2px 8px", letterSpacing: "0.1em", fontFamily: "'Inter',sans-serif" }}>
+                  <span style={{ background: "#1F3929", color: "#9BA17B", fontSize: "0.65rem", padding: "2px 8px", letterSpacing: "0.1em", fontFamily: "'Cascadia Code', monospace" }}>
                     -{discount}%
                   </span>
                 </>
@@ -163,7 +163,7 @@ export default function ProductDetailPage() {
             {/* Description */}
             {p.description && (
               <p style={{
-                fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "0.88rem", lineHeight: 1.9, color: "#9BA17B",
                 marginBottom: "2.5rem",
               }}>{p.description}</p>
@@ -176,7 +176,7 @@ export default function ProductDetailPage() {
             <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem", alignItems: "center" }}>
               <div style={{ display: "flex", border: "1px solid rgba(200,187,164,0.4)", background: "#F7F2E8" }}>
                 <button onClick={() => setQty(q => Math.max(1, q - 1))} style={{ width: 44, height: 52, background: "none", border: "none", cursor: "pointer", fontSize: "1.2rem", color: "#1C201B" }}>−</button>
-                <span style={{ width: 44, height: 52, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.1rem", color: "#1C201B" }}>{qty}</span>
+                <span style={{ width: 44, height: 52, display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Mirza', serif", fontSize: "1.1rem", color: "#1C201B" }}>{qty}</span>
                 <button onClick={() => setQty(q => q + 1)} style={{ width: 44, height: 52, background: "none", border: "none", cursor: "pointer", fontSize: "1.2rem", color: "#1C201B" }}>+</button>
               </div>
               <button
@@ -198,7 +198,7 @@ export default function ProductDetailPage() {
             </div>
 
             {p.stock > 0 && p.stock <= 5 && (
-              <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.78rem", color: "#c0392b", marginBottom: "1.5rem" }}>
+              <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.78rem", color: "#c0392b", marginBottom: "1.5rem" }}>
                 باقي {p.stock} فقط في المخزون
               </p>
             )}
@@ -212,7 +212,7 @@ export default function ProductDetailPage() {
               ].map(f => (
                 <div key={f} style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                   <div style={{ width: 4, height: 4, borderRadius: "50%", background: "#9BA17B", flexShrink: 0 }} />
-                  <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.82rem", color: "#9BA17B", margin: 0 }}>{f}</p>
+                  <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.82rem", color: "#9BA17B", margin: 0 }}>{f}</p>
                 </div>
               ))}
             </div>

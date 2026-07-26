@@ -14,7 +14,7 @@ const articles = [
     id: 2,
     tag: "صحة",
     title: "L-Theanine: السر وراء هدوء الماتشا",
-    excerpt: "الكافيين وحده يعطيك طاقة مع توتر — لكن الماتشا تحتوي على L-Theanine الذي يوازن التأثير ويمنحك تركيزاً صافياً.",
+    excerpt: "الكافيين وحده يعطيك طاقة مع توتر، لكن الماتشا تحتوي على L-Theanine الذي يوازن التأثير ويمنحك تركيزاً صافياً.",
     read: "٣ دقائق",
     img: "/assets/magazine/uji-matcha-latte-still.png",
   },
@@ -22,22 +22,22 @@ const articles = [
     id: 3,
     tag: "ريتشوال",
     title: "الفرق بين الدرجة الاحتفالية ودرجة الطهي",
-    excerpt: "ليست كل الماتشا واحدة. الدرجة الاحتفالية مصنوعة من أصغر الأوراق وأكثرها ظلاً — والفرق يُرى ويُشرب.",
+    excerpt: "ليست كل الماتشا واحدة. الدرجة الاحتفالية مصنوعة من أصغر الأوراق وأكثرها ظلاً، والفرق يُرى ويُشرب.",
     read: "٤ دقائق",
     img: "/assets/magazine/mag-man-bench.png",
   },
   {
     id: 4,
     tag: "وصفة",
-    title: "Matcha Latte المثالي — خطوة بخطوة",
-    excerpt: "ليس مجرد خفق الماتشا في الحليب. النسب، درجة الحرارة، ونوع الحليب — كل تفصيلة تصنع الفرق.",
+    title: "Matcha Latte المثالي خطوة بخطوة",
+    excerpt: "ليس مجرد خفق الماتشا في الحليب. النسب، درجة الحرارة، ونوع الحليب، كل تفصيلة تصنع الفرق.",
     read: "٣ دقائق",
     img: "/assets/magazine/uji-matcha-latte-editorial.png",
   },
   {
     id: 5,
     tag: "ثقافة",
-    title: "حفل الشاي الياباني — Chado طريق الشاي",
+    title: "حفل الشاي الياباني Chado طريق الشاي",
     excerpt: "Chado ليس مجرد شرب شاي. إنه فلسفة مبنية على أربع قيم: الانسجام، الاحترام، النقاء، والهدوء.",
     read: "٦ دقائق",
     img: "/assets/magazine/mag-night-store.png",
@@ -45,8 +45,8 @@ const articles = [
   {
     id: 6,
     tag: "برند",
-    title: "قصة علامة UJI — كيف وُلد التصميم من الهوية",
-    excerpt: "كل منحنى في الشعار له معنى. الاتصال السلس، الـ serif الأنيق، وورقة الشاي — ثلاثة عناصر تحكي قصة مدينة.",
+    title: "قصة علامة UJI كيف وُلد التصميم من الهوية",
+    excerpt: "كل منحنى في الشعار له معنى. الاتصال السلس، الـ serif الأنيق، وورقة الشاي، ثلاثة عناصر تحكي قصة العلامة.",
     read: "٤ دقائق",
     img: "/assets/magazine/mag-man-bag.png",
   },
@@ -87,26 +87,26 @@ export default function MagazinePage() {
           padding: "0 1.5rem",
         }}>
           <p style={{
-            fontFamily: "'DM Mono',monospace",
+            fontFamily: "'Cascadia Code', monospace",
             fontSize: "0.58rem", letterSpacing: "0.5em",
             color: "#9BA17B", marginBottom: "1.25rem",
             textTransform: "uppercase",
           }}>THE UJI JOURNAL — العدد الأول</p>
           <h1 style={{
-            fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+            fontFamily: "'Mirza', serif",
             fontSize: "clamp(3.5rem,9vw,7rem)",
             fontWeight: 700, color: "#F2EADB",
             lineHeight: 1.05, margin: "0 0 1.25rem",
             letterSpacing: "-0.01em",
           }}>عالم الماتشا</h1>
           <p style={{
-            fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+            fontFamily: "'Mirza', serif",
             fontSize: "0.95rem", color: "rgba(242,234,219,0.75)",
             maxWidth: 400, lineHeight: 1.8,
           }}>قصص، ثقافة، وعلوم من قلب اليابان</p>
           {/* Scroll indicator */}
           <div style={{ marginTop: "2.5rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
-            <p style={{ fontFamily: "'DM Mono',monospace", fontSize: "0.5rem", letterSpacing: "0.4em", color: "rgba(242,234,219,0.45)" }}>SCROLL</p>
+            <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.5rem", letterSpacing: "0.4em", color: "rgba(242,234,219,0.45)" }}>SCROLL</p>
             <div style={{ width: 1, height: 40, background: "rgba(242,234,219,0.35)", animation: "fadeScroll 1.8s ease-in-out infinite" }} />
           </div>
         </div>
@@ -126,17 +126,17 @@ export default function MagazinePage() {
         }}>
           <div style={{ padding: "3rem 4rem", maxWidth: 420 }}>
             <p style={{
-              fontFamily: "'DM Mono',monospace", fontSize: "0.52rem",
+              fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem",
               letterSpacing: "0.45em", color: "#9BA17B", marginBottom: "1rem",
               textTransform: "uppercase",
             }}>✦ CRAFTED IN JAPAN — SINCE 2026</p>
             <h2 style={{
-              fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "clamp(1.8rem,3.5vw,3rem)",
               color: "#F2EADB", fontWeight: 700, lineHeight: 1.2, marginBottom: "1rem",
             }}>ماتشا نُشِئت من الحرفية والتقليد</h2>
             <p style={{
-              fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "0.88rem", color: "rgba(242,234,219,0.7)", lineHeight: 1.9,
             }}>كل علبة تحمل قروناً من فن زراعة الشاي في شيزوكا، اليابان.</p>
           </div>
@@ -153,23 +153,23 @@ export default function MagazinePage() {
             display: "flex", flexDirection: "column", justifyContent: "center",
           }}>
             <p style={{
-              fontFamily: "'DM Mono',monospace", fontSize: "0.52rem",
+              fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem",
               letterSpacing: "0.4em", color: "#9BA17B", marginBottom: "1.5rem",
             }}>✦ عن الاسم</p>
             <h2 style={{
-              fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "clamp(2rem,4vw,3.5rem)",
               color: "#F2EADB", fontWeight: 700, lineHeight: 1.15, marginBottom: "1.25rem",
             }}>ما معنى<br />UJI؟</h2>
             <p style={{
-              fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "0.88rem", color: "rgba(242,234,219,0.7)",
               lineHeight: 1.9, marginBottom: "2rem",
             }}>
-              UJI هو اسم علامتنا التجارية، مستوحى من عالم الماتشا اليابانية وثقافة الشاي العريقة. ماتشا UJI مصدرها مزارع شيزوكا — واحدة من أرقى مناطق زراعة الشاي في اليابان.
+              UJI هو اسم علامتنا التجارية، مستوحى من عالم الماتشا اليابانية وثقافة الشاي العريقة. ماتشا UJI مصدرها مزارع شيزوكا، واحدة من أرقى مناطق زراعة الشاي في اليابان.
             </p>
             <p style={{
-              fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "0.82rem", color: "rgba(155,161,123,0.85)",
               lineHeight: 1.85,
             }}>
@@ -207,31 +207,31 @@ export default function MagazinePage() {
               display: "flex", flexDirection: "column", justifyContent: "center",
             }}>
               <p style={{
-                fontFamily: "'DM Mono',monospace", fontSize: "0.52rem",
+                fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem",
                 letterSpacing: "0.4em", color: "#9BA17B", marginBottom: "1rem",
               }}>✦ المقال المميز</p>
               <span style={{
                 display: "inline-block", alignSelf: "flex-start",
                 background: "#1F3929", color: "#9BA17B",
-                fontFamily: "'DM Mono',monospace", fontSize: "0.5rem",
+                fontFamily: "'Cascadia Code', monospace", fontSize: "0.5rem",
                 letterSpacing: "0.3em", padding: "5px 14px", marginBottom: "1.5rem",
                 border: "1px solid rgba(155,161,123,0.3)",
               }}>{featured.tag}</span>
               <h2 style={{
-                fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "clamp(1.6rem,2.8vw,2.5rem)",
                 fontWeight: 700, color: "#F2EADB",
                 lineHeight: 1.3, marginBottom: "1.5rem",
               }}>{featured.title}</h2>
               <p style={{
-                fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "0.88rem", color: "rgba(242,234,219,0.65)",
                 lineHeight: 1.9, marginBottom: "2rem",
               }}>{featured.excerpt}</p>
               <div style={{ display: "flex", alignItems: "center", gap: "1.25rem" }}>
                 <div style={{ width: 32, height: 1, background: "#9BA17B" }} />
                 <span style={{
-                  fontFamily: "'DM Mono',monospace", fontSize: "0.55rem",
+                  fontFamily: "'Cascadia Code', monospace", fontSize: "0.55rem",
                   letterSpacing: "0.2em", color: "#9BA17B",
                 }}>قراءة {featured.read}</span>
               </div>
@@ -277,28 +277,28 @@ export default function MagazinePage() {
             borderRight: "1px solid rgba(200,187,164,0.4)",
           }}>
             <p style={{
-              fontFamily: "'DM Mono',monospace", fontSize: "0.52rem",
+              fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem",
               letterSpacing: "0.4em", color: "#9BA17B", marginBottom: "1.5rem",
             }}>✦ الهوية البصرية</p>
             <h2 style={{
-              fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "clamp(1.8rem,3vw,2.8rem)",
               color: "#1C201B", fontWeight: 700,
               lineHeight: 1.25, marginBottom: "1.25rem",
             }}>تصميم وُلد<br />من المعنى</h2>
             <p style={{
-              fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "0.88rem", color: "#9BA17B",
               lineHeight: 1.9, marginBottom: "1rem",
             }}>
               الاتصال السلس يعكس انسياب الشاي. الـ Serif الأنيق يحاكي عمارة اليابان الكلاسيكية. وورقة الشاي تُكمل القصة.
             </p>
             <p style={{
-              fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "0.82rem", color: "#C8BBA4",
               lineHeight: 1.85,
             }}>
-              كل تفصيلة في الشعار صُممت لتعكس فلسفة UJI — البساطة التي تحمل عمقاً.
+              كل تفصيلة في الشعار صُممت لتعكس فلسفة UJI، البساطة التي تحمل عمقاً.
             </p>
           </div>
         </div>
@@ -320,20 +320,20 @@ export default function MagazinePage() {
             flexDirection: "column", justifyContent: "center",
           }}>
             <p style={{
-              fontFamily: "'DM Mono',monospace", fontSize: "0.52rem",
+              fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem",
               letterSpacing: "0.4em", color: "#7E8962", marginBottom: "1.25rem",
             }}>✦ THE TIN — 01</p>
             <h2 style={{
-              fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "clamp(1.8rem,3.2vw,2.8rem)", color: "#1C201B",
               lineHeight: 1.25, marginBottom: "1rem",
             }}>علبة صُممت<br />بعناية فائقة</h2>
             <p style={{
-              fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "0.86rem", color: "#6D7559", lineHeight: 1.95,
             }}>من الملمس إلى آخر تفصيلة في الغطاء، صُممت علبة UJI لتحتفظ بنضارة الماتشا وتحضر طقساً جميلاً في كل مرة.</p>
             <span style={{
-              marginTop: "1.5rem", fontFamily: "'DM Mono',monospace",
+              marginTop: "1.5rem", fontFamily: "'Cascadia Code', monospace",
               fontSize: "0.5rem", letterSpacing: "0.25em", color: "#1F3929",
             }}>CEREMONIAL GRADE · STONE GROUND</span>
           </div>
@@ -351,9 +351,9 @@ export default function MagazinePage() {
             display: "flex", alignItems: "center",
           }}>
             <div className="mag-fields-copy" style={{ padding: "3rem 4rem", maxWidth: 420 }}>
-              <p style={{ fontFamily: "'DM Mono',monospace", fontSize: "0.52rem", letterSpacing: "0.42em", color: "#C8D09F", marginBottom: "1rem" }}>✦ FROM THE SOURCE</p>
-              <h2 style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "clamp(1.9rem,3.5vw,3rem)", color: "#F2EADB", lineHeight: 1.2, marginBottom: "1rem" }}>من قلب الحقول<br />إلى طقسك اليومي</h2>
-              <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.86rem", color: "rgba(242,234,219,0.78)", lineHeight: 1.9 }}>شيزوكا ليست مجرد موقع على الخريطة؛ إنها أرض ومناخ وحرفة تتوارثها الأجيال.</p>
+              <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem", letterSpacing: "0.42em", color: "#C8D09F", marginBottom: "1rem" }}>✦ FROM THE SOURCE</p>
+              <h2 style={{ fontFamily: "'Mirza', serif", fontSize: "clamp(1.9rem,3.5vw,3rem)", color: "#F2EADB", lineHeight: 1.2, marginBottom: "1rem" }}>من قلب الحقول<br />إلى طقسك اليومي</h2>
+              <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.86rem", color: "rgba(242,234,219,0.78)", lineHeight: 1.9 }}>شيزوكا ليست مجرد موقع على الخريطة؛ إنها أرض ومناخ وحرفة تتوارثها الأجيال.</p>
             </div>
           </div>
         </div>
@@ -375,16 +375,16 @@ export default function MagazinePage() {
           }}>
             <div style={{ padding: "3rem 4rem", maxWidth: 440 }}>
               <p style={{
-                fontFamily: "'DM Mono',monospace", fontSize: "0.52rem",
+                fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem",
                 letterSpacing: "0.45em", color: "#9BA17B", marginBottom: "1rem",
               }}>✦ المنتج</p>
               <h2 style={{
-                fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "clamp(1.8rem,3.5vw,3rem)",
                 color: "#F2EADB", fontWeight: 700, lineHeight: 1.2, marginBottom: "1rem",
               }}>Matcha Latte المثالي</h2>
               <p style={{
-                fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "0.88rem", color: "rgba(242,234,219,0.7)", lineHeight: 1.9,
               }}>النسب، درجة الحرارة، ونوع الحليب — كل تفصيلة تصنع الفرق بين كوب عادي وتجربة لا تُنسى.</p>
             </div>
@@ -425,23 +425,23 @@ export default function MagazinePage() {
                   <span style={{
                     display: "inline-block",
                     background: tc.bg, color: tc.text,
-                    fontFamily: "'DM Mono',monospace",
+                    fontFamily: "'Cascadia Code', monospace",
                     fontSize: "0.48rem", letterSpacing: "0.25em",
                     padding: "3px 10px", marginBottom: "1rem",
                   }}>{a.tag}</span>
                   <h3 style={{
-                    fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+                    fontFamily: "'Mirza', serif",
                     fontSize: "1.1rem", fontWeight: 700,
                     color: "#1C201B", lineHeight: 1.4,
                     marginBottom: "0.75rem",
                   }}>{a.title}</h3>
                   <p style={{
-                    fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+                    fontFamily: "'Mirza', serif",
                     fontSize: "0.78rem", color: "#9BA17B",
                     lineHeight: 1.85, marginBottom: "1rem",
                   }}>{a.excerpt}</p>
                   <span style={{
-                    fontFamily: "'DM Mono',monospace",
+                    fontFamily: "'Cascadia Code', monospace",
                     fontSize: "0.52rem", letterSpacing: "0.2em",
                     color: isHov ? "#1F3929" : "#C8BBA4",
                     transition: "color 0.3s",
@@ -487,17 +487,17 @@ export default function MagazinePage() {
           gap: "1rem",
         }}>
           <p style={{
-            fontFamily: "'DM Mono',monospace",
+            fontFamily: "'Cascadia Code', monospace",
             fontSize: "0.55rem", letterSpacing: "0.4em",
             color: "#9BA17B",
           }}>✦ النشرة البريدية</p>
           <h3 style={{
-            fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+            fontFamily: "'Mirza', serif",
             fontSize: "clamp(1.6rem,3.5vw,2.5rem)",
             color: "#F2EADB", fontWeight: 700, lineHeight: 1.2,
           }}>مقالات جديدة كل أسبوع</h3>
           <p style={{
-            fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+            fontFamily: "'Mirza', serif",
             fontSize: "0.88rem", color: "rgba(242,234,219,0.55)",
             maxWidth: 380, lineHeight: 1.85,
           }}>اشترك في نشرة UJI وكن أول من يقرأ عالم الماتشا الياباني</p>
@@ -514,7 +514,7 @@ export default function MagazinePage() {
                 background: "rgba(255,255,255,0.07)",
                 border: "1px solid rgba(155,161,123,0.3)",
                 color: "#F2EADB", outline: "none",
-                fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "0.85rem",
               }}
             />
@@ -524,7 +524,7 @@ export default function MagazinePage() {
                 height: 50, padding: "0 1.75rem",
                 background: "#9BA17B", color: "#1C201B",
                 border: "none", cursor: "pointer",
-                fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "0.85rem", fontWeight: 600,
                 whiteSpace: "nowrap",
                 transition: "background 0.2s",

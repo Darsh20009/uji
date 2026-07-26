@@ -118,12 +118,12 @@ export default function App() {
                   justifyContent: "center", flexDirection: "column", gap: "2rem",
                   background: "#F2EADB",
                 }}>
-                  <p style={{ fontFamily: "'Cormorant Garamond',serif", fontSize: "8rem", fontWeight: 300, color: "#C8BBA4", lineHeight: 1 }}>404</p>
-                  <p style={{ fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.9rem", color: "#9BA17B" }}>الصفحة غير موجودة</p>
+                  <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "8rem", fontWeight: 300, color: "#C8BBA4", lineHeight: 1 }}>404</p>
+                  <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.9rem", color: "#9BA17B" }}>الصفحة غير موجودة</p>
                   <Link href="/" style={{
                     background: "#1F3929", color: "#F2EADB",
                     padding: "0.875rem 2.5rem", textDecoration: "none",
-                    fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.9rem",
+                    fontFamily: "'Mirza', serif", fontSize: "0.9rem",
                   }}>العودة للرئيسية</Link>
                 </div>
               </Route>

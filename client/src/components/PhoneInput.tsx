@@ -130,7 +130,7 @@ export default function PhoneInput({
     border:      "none",
     outline:     "none",
     color:       clr.text,
-    fontFamily:  "'IBM Plex Sans Arabic', Tahoma, sans-serif",
+    fontFamily:  "'Mirza', serif",
     fontSize:    "0.88rem",
     flex:        1,
     padding:     "0 0.75rem",
@@ -229,7 +229,7 @@ export default function PhoneInput({
                 width: "100%", border: `1px solid ${clr.ddBorder}`,
                 background: clr.searchBg, color: clr.text,
                 padding: "6px 10px", borderRadius: 4, outline: "none",
-                fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif", fontSize: "0.82rem",
+                fontFamily: "'Mirza', serif", fontSize: "0.82rem",
                 boxSizing: "border-box", direction: "rtl",
               }}
             />
@@ -259,7 +259,7 @@ export default function PhoneInput({
                   textAlign:  "right",
                   direction:  "rtl",
                   color:      clr.text,
-                  fontFamily: "'IBM Plex Sans Arabic', Tahoma, sans-serif",
+                  fontFamily: "'Mirza', serif",
                   fontSize:   "0.84rem",
                   transition: "background 0.15s",
                 }}

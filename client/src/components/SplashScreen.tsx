@@ -55,7 +55,7 @@ export default function SplashScreen({ onDone }: Props) {
         }} />
 
         <p style={{
-          fontFamily: "'Inter', sans-serif",
+          fontFamily: "'Cascadia Code', monospace",
           fontSize: "0.625rem",
           letterSpacing: "0.35em",
           textTransform: "uppercase",

@@ -49,11 +49,11 @@ export default function OurStoryPage() {
         />
         <div style={{ position: "relative", zIndex: 1, maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
           <p style={{
-            fontFamily: "'DM Mono',monospace", fontSize: "0.58rem",
+            fontFamily: "'Cascadia Code', monospace", fontSize: "0.58rem",
             letterSpacing: "0.4em", color: "#9BA17B", marginBottom: "1.5rem",
           }}>قصتنا</p>
           <h1 style={{
-            fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+            fontFamily: "'Mirza', serif",
             fontSize: "clamp(2.8rem,6vw,4.5rem)",
             fontWeight: 700, color: "#F2EADB",
             lineHeight: 1.2, marginBottom: "1.5rem",
@@ -61,7 +61,7 @@ export default function OurStoryPage() {
             من شيزوكا اليابانية<br />إلى كوبك
           </h1>
           <p style={{
-            fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+            fontFamily: "'Mirza', serif",
             fontSize: "1rem", color: "rgba(242,234,219,0.7)",
             lineHeight: 1.95, maxWidth: 520, margin: "0 auto",
           }}>
@@ -74,12 +74,12 @@ export default function OurStoryPage() {
       <div style={{ background: "#F7F2E8", padding: "5rem 1.5rem", borderBottom: "1px solid rgba(200,187,164,0.3)" }}>
         <div style={{ maxWidth: 820, margin: "0 auto" }}>
           <p style={{
-            fontFamily: "'DM Mono',monospace", fontSize: "0.58rem",
+            fontFamily: "'Cascadia Code', monospace", fontSize: "0.58rem",
             letterSpacing: "0.4em", color: "#9BA17B",
             marginBottom: "1rem", textAlign: "center",
           }}>لماذا وُجدنا</p>
           <h2 style={{
-            fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+            fontFamily: "'Mirza', serif",
             fontSize: "clamp(2rem,4vw,3rem)", fontWeight: 700,
             color: "#1C201B", textAlign: "center",
             lineHeight: 1.25, marginBottom: "1rem",
@@ -87,12 +87,12 @@ export default function OurStoryPage() {
             لماذا لا تتوفر ماتشا<br />حقيقية في السوق السعودي؟
           </h2>
           <p style={{
-            fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+            fontFamily: "'Mirza', serif",
             fontSize: "0.9rem", color: "#9BA17B",
             lineHeight: 1.9, textAlign: "center",
             maxWidth: 580, margin: "0 auto 3.5rem",
           }}>
-            هذا السؤال هو سبب وجودنا. جلسنا نفكر فيه طويلاً — ووجدنا ثلاثة أسباب حقيقية.
+            هذا السؤال هو سبب وجودنا. جلسنا نفكر فيه طويلاً ووجدنا ثلاثة أسباب حقيقية.
           </p>
 
           <div style={{
@@ -105,7 +105,7 @@ export default function OurStoryPage() {
               {
                 num: "١",
                 title: "الماتشا الموجودة ليست ماتشا",
-                body: "معظم ما يُباع في الأسواق السعودية هو مسحوق طهي مجهول المصدر أو ماتشا من درجات دنيا تُعبّأ في أكياس فاخرة. الطعم مرّ، اللون باهت، والفائدة محدودة — لأنها ليست ماتشا احتفالية أصلاً.",
+                body: "معظم ما يُباع في الأسواق السعودية هو مسحوق طهي مجهول المصدر أو ماتشا من درجات دنيا تُعبّأ في أكياس فاخرة. الطعم مرّ، اللون باهت، والفائدة محدودة لأنها ليست ماتشا احتفالية أصلاً.",
               },
               {
                 num: "٢",
@@ -122,19 +122,19 @@ export default function OurStoryPage() {
                 background: "#FDFAF5", padding: "2.5rem 2rem",
               }}>
                 <div style={{
-                  fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+                  fontFamily: "'Mirza', serif",
                   fontSize: "2.5rem", fontWeight: 300,
                   color: "rgba(155,161,123,0.4)",
                   lineHeight: 1, marginBottom: "1rem",
                 }}>{item.num}</div>
                 <h3 style={{
-                  fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+                  fontFamily: "'Mirza', serif",
                   fontSize: "1.25rem", fontWeight: 700,
                   color: "#1F3929", marginBottom: "0.75rem",
                   lineHeight: 1.35,
                 }}>{item.title}</h3>
                 <p style={{
-                  fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+                  fontFamily: "'Mirza', serif",
                   fontSize: "0.83rem", color: "#6B7280",
                   lineHeight: 1.9, margin: 0,
                 }}>{item.body}</p>
@@ -158,19 +158,19 @@ export default function OurStoryPage() {
             </div>
             <div style={{ flex: 1, minWidth: 220 }}>
               <p style={{
-                fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "1.35rem", fontWeight: 400,
                 color: "#F2EADB", lineHeight: 1.55,
                 marginBottom: "0.75rem",
               }}>
-                قررنا أن نحلّ المشكلة من جذرها — شراء مباشر من مزارع شيزوكا، توصيل مباشر إليك، وشفافية كاملة عن كل ما في العلبة.
+                قررنا أن نحلّ المشكلة من جذرها، شراء مباشر من مزارع شيزوكا، توصيل مباشر إليك، وشفافية كاملة عن كل ما في العلبة.
               </p>
               <p style={{
-                fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "0.83rem", color: "rgba(155,161,123,0.85)",
                 lineHeight: 1.85,
               }}>
-                لهذا كل منتج UJI مرفق بشهادة المصدر. لهذا نذكر اسم المزرعة. لهذا نشرح الفرق بين كل صنف. لأن الشفافية ليست خياراً — هي أساس الثقة.
+                لهذا كل منتج UJI مرفق بشهادة المصدر. لهذا نذكر اسم المزرعة. لهذا نشرح الفرق بين كل صنف. الشفافية أساس الثقة.
               </p>
             </div>
           </div>
@@ -185,37 +185,37 @@ export default function OurStoryPage() {
         }}>
           <div>
             <p style={{
-              fontFamily: "'DM Mono',monospace", fontSize: "0.58rem",
+              fontFamily: "'Cascadia Code', monospace", fontSize: "0.58rem",
               letterSpacing: "0.35em", color: "#9BA17B", marginBottom: "1rem",
             }}>SHIZUOKA, JAPAN</p>
             <h2 style={{
-              fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "1.8rem", fontWeight: 700, color: "#1C201B",
               marginBottom: "1.25rem", lineHeight: 1.3,
             }}>مزارع شيزوكا</h2>
             <p style={{
-              fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "0.88rem", color: "#6B7280", lineHeight: 1.95,
             }}>
-              تقع شيزوكا على سفوح جبل فوجي — من أبرز مناطق زراعة الشاي في اليابان. مناخها المعتدل وتربتها البركانية الغنية والضباب الصباحي الذي يكسو مزارعها يخلقون ماتشا ذات نكهة عميقة وجودة استثنائية.
+              تقع شيزوكا على سفوح جبل فوجي، من أبرز مناطق زراعة الشاي في اليابان. مناخها المعتدل وتربتها البركانية الغنية والضباب الصباحي الذي يكسو مزارعها يخلقون ماتشا ذات نكهة عميقة وجودة استثنائية.
             </p>
           </div>
           <div style={{ background: "rgba(200,187,164,0.3)", alignSelf: "stretch" }} />
           <div>
             <p style={{
-              fontFamily: "'DM Mono',monospace", fontSize: "0.58rem",
+              fontFamily: "'Cascadia Code', monospace", fontSize: "0.58rem",
               letterSpacing: "0.35em", color: "#9BA17B", marginBottom: "1rem",
             }}>UJI MATCHA, SA</p>
             <h2 style={{
-              fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "1.8rem", fontWeight: 700, color: "#1C201B",
               marginBottom: "1.25rem", lineHeight: 1.3,
             }}>علامتنا</h2>
             <p style={{
-              fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+              fontFamily: "'Mirza', serif",
               fontSize: "0.88rem", color: "#6B7280", lineHeight: 1.95,
             }}>
-              UJI MATCHA ليست مجرد علامة تجارية — إنها جسر بين ثقافتين. نحمل روح الماتشا اليابانية في كل علبة: ماتشا مزروعة في شيزوكا، بنفس الجودة الاحتفالية التي يشربها اليابانيون.
+              UJI MATCHA ليست مجرد علامة تجارية، إنها جسر بين ثقافتين. نحمل روح الماتشا اليابانية في كل علبة: ماتشا مزروعة في شيزوكا، بنفس الجودة الاحتفالية التي يشربها اليابانيون.
             </p>
           </div>
         </div>
@@ -225,12 +225,12 @@ export default function OurStoryPage() {
       <div style={{ background: "#1F3929", padding: "5rem 1.5rem" }}>
         <div style={{ maxWidth: 700, margin: "0 auto" }}>
           <p style={{
-            fontFamily: "'DM Mono',monospace", fontSize: "0.58rem",
+            fontFamily: "'Cascadia Code', monospace", fontSize: "0.58rem",
             letterSpacing: "0.4em", color: "#9BA17B",
             marginBottom: "0.75rem", textAlign: "center",
           }}>TIMELINE</p>
           <h2 style={{
-            fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+            fontFamily: "'Mirza', serif",
             fontSize: "2rem", fontWeight: 700, color: "#F2EADB",
             textAlign: "center", marginBottom: "3rem",
           }}>رحلتنا</h2>
@@ -244,13 +244,13 @@ export default function OurStoryPage() {
                 paddingTop: i > 0 ? "2rem" : 0,
               }}>
                 <div style={{
-                  fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+                  fontFamily: "'Mirza', serif",
                   fontSize: "1.5rem", fontWeight: 400, color: "#9BA17B",
                   letterSpacing: "0.05em", lineHeight: 1,
                   minWidth: 70, textAlign: "center",
                 }}>{t.year}</div>
                 <p style={{
-                  fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+                  fontFamily: "'Mirza', serif",
                   fontSize: "0.88rem", color: "rgba(242,234,219,0.8)",
                   lineHeight: 1.8, margin: 0, paddingTop: "0.2rem",
                 }}>{t.event}</p>
@@ -263,12 +263,12 @@ export default function OurStoryPage() {
       {/* ── Values ── */}
       <div style={{ maxWidth: 900, margin: "0 auto", padding: "5rem 1.5rem" }}>
         <p style={{
-          fontFamily: "'DM Mono',monospace", fontSize: "0.58rem",
+          fontFamily: "'Cascadia Code', monospace", fontSize: "0.58rem",
           letterSpacing: "0.4em", color: "#9BA17B",
           marginBottom: "0.75rem", textAlign: "center",
         }}>VALUES</p>
         <h2 style={{
-          fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+          fontFamily: "'Mirza', serif",
           fontSize: "2rem", fontWeight: 700, color: "#1C201B",
           textAlign: "center", marginBottom: "3rem",
         }}>ما نؤمن به</h2>
@@ -282,17 +282,17 @@ export default function OurStoryPage() {
               background: "#FDFAF5", padding: "2.5rem 2rem",
             }}>
               <p style={{
-                fontFamily: "'DM Mono',monospace",
+                fontFamily: "'Cascadia Code', monospace",
                 fontSize: "0.55rem", letterSpacing: "0.3em",
                 color: "#9BA17B", marginBottom: "0.6rem",
               }}>{v.en}</p>
               <h3 style={{
-                fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "1.5rem", fontWeight: 700,
                 color: "#1F3929", marginBottom: "0.75rem",
               }}>{v.ar}</h3>
               <p style={{
-                fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+                fontFamily: "'Mirza', serif",
                 fontSize: "0.83rem", color: "#9BA17B",
                 lineHeight: 1.85, margin: 0,
               }}>{v.desc}</p>
@@ -306,19 +306,19 @@ export default function OurStoryPage() {
         background: "#16281D", padding: "4rem 1.5rem", textAlign: "center",
       }}>
         <h2 style={{
-          fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif",
+          fontFamily: "'Mirza', serif",
           fontSize: "1.8rem", fontWeight: 700,
           color: "#F2EADB", marginBottom: "0.75rem",
         }}>كن جزءاً من القصة</h2>
         <p style={{
-          fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+          fontFamily: "'Mirza', serif",
           fontSize: "0.9rem", color: "#9BA17B",
           marginBottom: "2rem",
         }}>اشترك في نشرتنا وكن أول من يعرف كل جديد.</p>
         <a href="/products" style={{
           display: "inline-block", background: "#F2EADB", color: "#16281D",
           padding: "1rem 3rem", textDecoration: "none",
-          fontFamily: "'IBM Plex Sans Arabic',sans-serif",
+          fontFamily: "'Mirza', serif",
           fontSize: "0.95rem", fontWeight: 600,
         }}>تسوّق الآن ←</a>
       </div>

@@ -26,10 +26,10 @@ export default class ErrorBoundary extends Component<Props, State> {
         minHeight: "100vh", display: "flex", flexDirection: "column",
         alignItems: "center", justifyContent: "center",
         background: "#F2EADB", padding: "2rem", textAlign: "center",
-        fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+        fontFamily: "'Mirza', serif",
       }}>
         <img src="/assets/brand/uji-logo-forest-green-transparent.png" alt="UJI" style={{ height: 60, marginBottom: "2rem", objectFit: "contain" }} />
-        <h2 style={{ fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif", fontSize: "2rem", fontWeight: 300, color: "#1C201B", marginBottom: "1rem" }}>
+        <h2 style={{ fontFamily: "'Mirza', serif", fontSize: "2rem", fontWeight: 300, color: "#1C201B", marginBottom: "1rem" }}>
           حدث خطأ غير متوقع
         </h2>
         <p style={{ fontSize: "0.9rem", color: "#9BA17B", marginBottom: "2rem", lineHeight: 1.8 }}>
@@ -40,7 +40,7 @@ export default class ErrorBoundary extends Component<Props, State> {
           style={{
             background: "#1F3929", color: "#F2EADB", border: "none",
             padding: "0.875rem 2.5rem", cursor: "pointer",
-            fontFamily: "'IBM Plex Sans Arabic', sans-serif", fontSize: "0.9rem",
+            fontFamily: "'Mirza', serif", fontSize: "0.9rem",
             letterSpacing: "0.05em",
           }}
         >

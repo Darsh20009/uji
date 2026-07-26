@@ -3,23 +3,23 @@ export default function PolicyPage() {
     marginBottom: "3rem",
   };
   const h2Style: React.CSSProperties = {
-    fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif",
+    fontFamily: "'Mirza', serif",
     fontSize: "1.6rem", fontWeight: 300, color: "#1F3929",
     marginBottom: "1.25rem", paddingBottom: "0.75rem",
     borderBottom: "1px solid rgba(200,187,164,0.3)",
   };
   const h3Style: React.CSSProperties = {
-    fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+    fontFamily: "'Mirza', serif",
     fontSize: "0.95rem", fontWeight: 600, color: "#1C201B",
     marginBottom: "0.75rem", marginTop: "1.5rem",
   };
   const pStyle: React.CSSProperties = {
-    fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+    fontFamily: "'Mirza', serif",
     fontSize: "0.88rem", lineHeight: 2, color: "#555",
     marginBottom: "0.75rem",
   };
   const qStyle: React.CSSProperties = {
-    fontFamily: "'IBM Plex Sans Arabic', sans-serif",
+    fontFamily: "'Mirza', serif",
     fontSize: "0.88rem", lineHeight: 1.9, color: "#1C201B",
     fontWeight: 600, marginBottom: "0.4rem",
   };
@@ -30,11 +30,11 @@ export default function PolicyPage() {
         {/* Header */}
         <div style={{ marginBottom: "4rem", borderBottom: "1px solid rgba(200,187,164,0.3)", paddingBottom: "2.5rem" }}>
           <p style={{
-            fontFamily: "'Inter', sans-serif", fontSize: "0.58rem",
+            fontFamily: "'Cascadia Code', monospace", fontSize: "0.58rem",
             letterSpacing: "0.3em", textTransform: "uppercase", color: "#9BA17B", marginBottom: "1rem",
           }}>POLICIES — السياسات</p>
           <h1 style={{
-            fontFamily: "'Aref Ruqaa', 'Cormorant Garamond', serif", fontSize: "clamp(2rem, 4vw, 3rem)",
+            fontFamily: "'Mirza', serif", fontSize: "clamp(2rem, 4vw, 3rem)",
             fontWeight: 300, color: "#1C201B", lineHeight: 1.2,
           }}>
             سياسات المتجر
@@ -158,7 +158,7 @@ export default function PolicyPage() {
           textAlign: "center", padding: "3rem",
           background: "#1F3929", marginTop: "3rem",
         }}>
-          <p style={{ fontFamily: "'Aref Ruqaa','Cormorant Garamond',serif", fontSize: "1.4rem", fontWeight: 300, color: "#F2EADB", marginBottom: "0.75rem" }}>
+          <p style={{ fontFamily: "'Mirza', serif", fontSize: "1.4rem", fontWeight: 300, color: "#F2EADB", marginBottom: "0.75rem" }}>
             هل لديك استفسار؟
           </p>
           <p style={{ ...pStyle, color: "rgba(155,161,123,0.85)", marginBottom: "1.5rem" }}>
@@ -171,7 +171,7 @@ export default function PolicyPage() {
               display: "inline-block",
               background: "#25D366", color: "#fff",
               padding: "0.875rem 2rem", textDecoration: "none",
-              fontFamily: "'IBM Plex Sans Arabic',sans-serif", fontSize: "0.88rem",
+              fontFamily: "'Mirza', serif", fontSize: "0.88rem",
             }}
           >
             تواصل عبر واتساب

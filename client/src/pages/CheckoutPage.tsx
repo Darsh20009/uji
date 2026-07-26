@@ -7,9 +7,9 @@ import { api } from "../lib/api";
 import { CheckCircle, ShoppingBag, Tag, X, Star, MapPin, Navigation, Truck, ChevronDown } from "lucide-react";
 import PhoneInput, { COUNTRIES, type Country } from "../components/PhoneInput";
 
-const font = "'Cairo', sans-serif";
-const mono = "'DM Mono', monospace";
-const serif = "'Aref Ruqaa','Cormorant Garamond',serif";
+const font = "'Mirza', serif";
+const mono = "'Cascadia Code', monospace";
+const serif = "'Mirza', serif";
 
 const inp: React.CSSProperties = {
   width: "100%", height: 52,
