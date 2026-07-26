@@ -179,24 +179,7 @@ function TrustBar({ badges }: { badges?: typeof DEFAULT_BADGES }) {
 }
 
 export default function HomePage() {
-  /* ── Hero auto-scroll: fires once after 3s, cancels if user scrolls first ── */
   const heroRef = useRef<HTMLElement>(null);
-  useEffect(() => {
-    let fired = false;
-    const cancelScroll = () => { fired = true; };
-    window.addEventListener("scroll", cancelScroll, { passive: true, once: true });
-    const timer = setTimeout(() => {
-      if (!fired) {
-        const hero = heroRef.current;
-        const next = hero?.nextElementSibling as HTMLElement | null;
-        next?.scrollIntoView({ behavior: "smooth" });
-      }
-    }, 3000);
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener("scroll", cancelScroll);
-    };
-  }, []);
 
   const { data: products } = useQuery({
     queryKey: ["products-featured"],
@@ -219,7 +202,7 @@ export default function HomePage() {
       <section
         ref={heroRef}
         style={{
-          position: "relative", minHeight: "100vh",
+          position: "relative", minHeight: "72vh",
           display: "flex", alignItems: "center",
           overflow: "hidden",
         }}
@@ -284,122 +267,85 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Scroll hint */}
-        <div style={{
-          position: "absolute", bottom: "2.5rem", left: "50%",
-          transform: "translateX(-50%)",
-          display: "flex", flexDirection: "column", alignItems: "center", gap: "0.75rem",
-          animation: "heroFadeUp 1s ease 0.9s both",
-        }}>
-          <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.55rem", letterSpacing: "0.3em", textTransform: "uppercase", color: "#F2EADB" }}>01 — SCROLL</p>
-          <div style={{ width: 1, height: 48, background: "rgba(242,234,219,0.5)", animation: "fadeScroll 1.8s ease-in-out infinite" }} />
-        </div>
-
         <style>{`
           @keyframes heroFadeUp {
             from { opacity: 0; transform: translateY(14px); }
             to   { opacity: 1; transform: translateY(0); }
           }
-          @keyframes fadeScroll {
-            0%,100%{opacity:0.2;transform:scaleY(0.5);transform-origin:top}
-            50%{opacity:1;transform:scaleY(1);transform-origin:top}
-          }
         `}</style>
       </section>
 
-      {/* ══ TRUST BAR — above position ══ */}
-      {(badgesPosition === "above" || badgesPosition === "both") && <TrustBar badges={trustBadges} />}
+      {/* ══ TRUST BAR — always visible after hero ══ */}
+      <TrustBar badges={trustBadges} />
 
       {/* ══════════════════════════════════════════════
-          THE COLLECTION — moved up so products are immediately visible
+          PRODUCTS — first thing after hero, always visible
       ══════════════════════════════════════════════ */}
-      <section className="section" style={{ background: "#F2EADB" }}>
+      <section style={{ background: "#F2EADB", padding: "4rem 0 5rem" }}>
         <div className="container">
-          <SectionLabel num="01" en="THE COLLECTION" />
 
+          {/* Section header */}
           <div style={{
-            display: "flex", alignItems: "flex-end", justifyContent: "space-between",
-            marginBottom: "4rem", flexWrap: "wrap", gap: "1.5rem",
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            marginBottom: "2.5rem", flexWrap: "wrap", gap: "1rem",
           }}>
             <div>
+              <p style={{
+                fontFamily: "'Cascadia Code', monospace", fontSize: "0.55rem",
+                letterSpacing: "0.32em", textTransform: "uppercase", color: "#9BA17B",
+                marginBottom: "0.5rem",
+              }}>THE COLLECTION</p>
               <h2 style={{
                 fontFamily: "'Mirza', serif",
-                fontSize: "clamp(2rem, 3.5vw, 3rem)",
-                fontWeight: 300, color: "#1C201B", lineHeight: 1.2,
-                marginBottom: "0.75rem",
-              }}>المجموعة</h2>
-              <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.85rem", color: "#9BA17B" }}>
-                كل ما تحتاجه لبدء ريتشوال الماتشا الخاص بك.
-              </p>
+                fontSize: "clamp(1.8rem, 3vw, 2.6rem)",
+                fontWeight: 400, color: "#1C201B", lineHeight: 1.15, margin: 0,
+              }}>منتجاتنا</h2>
             </div>
             <Link href="/products" style={{
-              display: "flex", alignItems: "center", gap: "0.6rem",
-              fontFamily: "'Mirza', serif",
-              fontSize: "0.75rem", letterSpacing: "0.04em",
-              color: "#1F3929",
+              display: "inline-flex", alignItems: "center", gap: "0.5rem",
+              fontFamily: "'Mirza', serif", fontSize: "0.85rem",
+              color: "#1F3929", border: "1px solid rgba(31,57,41,0.35)",
+              padding: "0.6rem 1.25rem", transition: "all 0.2s",
             }}>
-              عرض الكل <ArrowLeft size={14} strokeWidth={1.5} />
+              عرض جميع المنتجات <ArrowLeft size={14} strokeWidth={1.5} />
             </Link>
           </div>
 
+          {/* Products grid */}
           {products?.length > 0 ? (
             <div className="grid-products">
-              {products.slice(0, 4).map((p: any) => <ProductCard key={p._id} product={p} />)}
+              {products.slice(0, 6).map((p: any) => <ProductCard key={p._id} product={p} />)}
             </div>
           ) : (
-            <div className="grid-3col" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1.5rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "1.5rem" }}>
               {[
-                { name: "ماتشا احتفالية", sub: "Ceremonial Matcha Tin", price: "89", img: "/assets/packaging/uji-tin-front-transparent.png" },
-                { name: "مخفقة الخيزران", sub: "Bamboo Whisk", price: "45", img: "/assets/products/uji-product-bamboo-whisk-transparent.png" },
-                { name: "طقم البداية", sub: "Starter Set", price: "149", img: "/assets/packaging/uji-tin-open-transparent.png" },
+                { name: "ماتشا احتفالية", sub: "Ceremonial Matcha", price: "89", img: "/assets/packaging/uji-tin-front-transparent.png" },
+                { name: "مخفقة الخيزران", sub: "Bamboo Whisk",      price: "45", img: "/assets/products/uji-product-bamboo-whisk-transparent.png" },
+                { name: "طقم البداية",   sub: "Starter Set",        price: "149", img: "/assets/packaging/uji-tin-open-transparent.png" },
               ].map(({ name, sub, price, img }) => (
                 <div key={name} style={{ background: "#F7F2E8", border: "1px solid rgba(200,187,164,0.25)" }}>
-                  <div style={{ aspectRatio: "3/4", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", background: "#F2EADB" }}>
-                    <img src={img} alt={name} style={{ width: "70%", height: "70%", objectFit: "contain" }} />
+                  <div style={{ aspectRatio: "1/1", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", background: "#F2EADB" }}>
+                    <img src={img} alt={name} style={{ width: "75%", height: "75%", objectFit: "contain" }} />
                   </div>
                   <div style={{ padding: "1.25rem 1.5rem 1.75rem" }}>
-                    <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#9BA17B", textTransform: "uppercase", marginBottom: "0.5rem" }}>MATCHA</p>
-                    <h3 style={{ fontFamily: "'Mirza', serif", fontSize: "0.95rem", fontWeight: 400, color: "#1C201B", marginBottom: "0.25rem" }}>{name}</h3>
-                    <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.65rem", color: "#C8BBA4", letterSpacing: "0.08em", marginBottom: "1rem" }}>{sub}</p>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "1rem", borderTop: "1px solid rgba(200,187,164,0.25)" }}>
+                    <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.55rem", letterSpacing: "0.2em", color: "#9BA17B", textTransform: "uppercase", marginBottom: "0.4rem" }}>{sub}</p>
+                    <h3 style={{ fontFamily: "'Mirza', serif", fontSize: "1rem", fontWeight: 500, color: "#1C201B", marginBottom: "1rem" }}>{name}</h3>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "0.75rem", borderTop: "1px solid rgba(200,187,164,0.25)" }}>
                       <span style={{ fontFamily: "'Mirza', serif", fontSize: "1.1rem", color: "#1F3929" }}>{price} <span style={{ fontSize: "0.7rem", fontFamily: "'Cascadia Code', monospace" }}>ر.س</span></span>
-                      <Link href="/products" className="btn-outline" style={{ height: 36, padding: "0 1rem", fontSize: "0.75rem" }}>أضف</Link>
+                      <Link href="/products" className="btn-primary" style={{ height: 36, padding: "0 1.25rem", fontSize: "0.8rem" }}>تسوق</Link>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
           )}
-        </div>
-      </section>
 
-      {/* ══════════════════════════════════════════════
-          TAGLINE BREAK
-      ══════════════════════════════════════════════ */}
-      <section style={{
-        background: "#F7F2E8",
-        padding: "6rem 0",
-        textAlign: "center",
-        borderTop: "1px solid rgba(200,187,164,0.3)",
-        borderBottom: "1px solid rgba(200,187,164,0.3)",
-      }}>
-        <div className="container">
-          <p style={{
-            fontFamily: "'Mirza', serif",
-            fontSize: "clamp(1.8rem, 3.5vw, 3rem)",
-            fontWeight: 300,
-            color: "#1C201B", lineHeight: 1.4,
-            marginBottom: "1.5rem",
-          }}>
-            ماتشا مختارة بعناية<br />من اليابان إلى كوبك.
-          </p>
-          <p style={{
-            fontFamily: "'Mirza', serif",
-            fontSize: "0.85rem", color: "#9BA17B",
-            letterSpacing: "0.04em", lineHeight: 1.8,
-          }}>
-            من مزارع شيزوكا اليابانية إلى يديك. لكل تحضير صنف، ولكل لحظة نكهة.
-          </p>
+          {/* Mobile CTA */}
+          <div style={{ textAlign: "center", marginTop: "3rem" }}>
+            <Link href="/products" className="btn-primary" style={{ display: "inline-flex", gap: "0.5rem", alignItems: "center" }}>
+              تسوق جميع منتجات UJI <ArrowLeft size={15} strokeWidth={1.5} />
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -573,37 +519,23 @@ export default function HomePage() {
         <div className="container">
           <SectionLabel num="05" en="THE RITUAL" />
 
-          <div className="grid-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5rem", alignItems: "center" }}>
-            <div>
-              <p style={{
-                fontFamily: "'Mirza', serif",
-                fontSize: "clamp(2rem, 3vw, 2.8rem)",
-                fontWeight: 300,
-                color: "#4C5734", lineHeight: 1.3, marginBottom: "2rem",
-              }}>
-                تباطأ. تذوّق الماتشا.
-              </p>
-              <p style={{
-                fontFamily: "'Mirza', serif",
-                fontSize: "0.85rem", lineHeight: 1.9, color: "#9BA17B",
-                marginBottom: "3rem",
-              }}>
-                الماتشا ليست مجرد مشروب. إنها لحظة تتوقف فيها عن كل شيء وتحضر في اللحظة الراهنة. من تحضير المسحوق إلى أول رشفة دافئة.
-              </p>
-              <Link href="/ritual" className="btn-outline">دليل الريتشوال</Link>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", height: 520 }}>
-              <img src="/assets/lifestyle/uji-lifestyle-hijabi-bag.png" alt="أسلوب حياة UJI" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-              <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                <img src="/assets/lifestyle/uji-lifestyle-car-window-01.png" alt="كوب UJI" style={{ width: "100%", height: "60%", objectFit: "cover" }} />
-                <div style={{ flex: 1, background: "#16281D", display: "flex", alignItems: "center", justifyContent: "center", padding: "1.5rem" }}>
-                  <p style={{ fontFamily: "'Mirza', serif", fontSize: "1.3rem", fontWeight: 300, color: "#9BA17B", textAlign: "center", lineHeight: 1.4 }}>
-                    صُنعت<br />لريتشوالك.
-                  </p>
-                </div>
-              </div>
-            </div>
+          <div style={{ maxWidth: 580, margin: "0 auto", textAlign: "center" }}>
+            <p style={{
+              fontFamily: "'Mirza', serif",
+              fontSize: "clamp(2rem, 3vw, 2.8rem)",
+              fontWeight: 300,
+              color: "#4C5734", lineHeight: 1.3, marginBottom: "2rem",
+            }}>
+              تباطأ. تذوّق الماتشا.
+            </p>
+            <p style={{
+              fontFamily: "'Mirza', serif",
+              fontSize: "0.85rem", lineHeight: 1.9, color: "#9BA17B",
+              marginBottom: "3rem",
+            }}>
+              الماتشا ليست مجرد مشروب. إنها لحظة تتوقف فيها عن كل شيء وتحضر في اللحظة الراهنة. من تحضير المسحوق إلى أول رشفة دافئة.
+            </p>
+            <Link href="/ritual" className="btn-outline">دليل الريتشوال</Link>
           </div>
         </div>
       </section>
