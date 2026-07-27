@@ -307,6 +307,65 @@ router.get("/orders/:id", async (req, res) => {
   } catch (e: any) { res.status(500).json({ message: e.message }); }
 });
 
+/* ─── Update my profile ────────────────────────────────────────── */
+router.put("/me/profile", requireEmployee, async (req: any, res) => {
+  try {
+    const u = req.user as any;
+    const allowed = ["name", "email", "accountType", "businessName", "vatNumber", "commercialRegister"];
+    const update: Record<string, any> = {};
+    allowed.forEach(k => { if (req.body[k] !== undefined) update[k] = req.body[k]; });
+    const updated = await Customer.findByIdAndUpdate(u._id, update, { new: true });
+    if (!updated) return res.status(404).json({ message: "المستخدم غير موجود" });
+    res.json({ ok: true, name: updated.name, email: updated.email });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+/* ─── Address management ───────────────────────────────────────── */
+router.get("/me/addresses", requireEmployee, async (req: any, res) => {
+  try {
+    const u = await Customer.findById((req.user as any)._id).select("addresses");
+    res.json(u?.addresses ?? []);
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+router.post("/me/addresses", requireEmployee, async (req: any, res) => {
+  try {
+    const u = req.user as any;
+    const doc = await Customer.findById(u._id);
+    if (!doc) return res.status(404).json({ message: "غير موجود" });
+    const newAddr = req.body;
+    if (newAddr.isDefault) {
+      (doc.addresses as any[]).forEach((a: any) => { a.isDefault = false; });
+    }
+    (doc.addresses as any[]).push(newAddr);
+    await doc.save();
+    res.json({ ok: true, addresses: doc.addresses });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+router.put("/me/addresses/:addrId", requireEmployee, async (req: any, res) => {
+  try {
+    const doc = await Customer.findById((req.user as any)._id);
+    if (!doc) return res.status(404).json({ message: "غير موجود" });
+    const addr = (doc.addresses as any[]).id(req.params.addrId);
+    if (!addr) return res.status(404).json({ message: "العنوان غير موجود" });
+    if (req.body.isDefault) (doc.addresses as any[]).forEach((a: any) => { a.isDefault = false; });
+    Object.assign(addr, req.body);
+    await doc.save();
+    res.json({ ok: true, addresses: doc.addresses });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+router.delete("/me/addresses/:addrId", requireEmployee, async (req: any, res) => {
+  try {
+    const doc = await Customer.findById((req.user as any)._id);
+    if (!doc) return res.status(404).json({ message: "غير موجود" });
+    (doc.addresses as any[]).pull({ _id: req.params.addrId });
+    await doc.save();
+    res.json({ ok: true, addresses: doc.addresses });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
 router.get("/me/orders", requireEmployee, async (req: any, res) => {
   try {
     const orders = await Order.find({ customerId: req.user._id }).sort({ createdAt: -1 });

@@ -50,6 +50,16 @@ const OrderSchema = new Schema({
 export const Order = mongoose.model("Order", OrderSchema);
 
 /* ─── Customer ───────────────────────────────────────────────────── */
+const AddressSchema = new Schema({
+  label:    { type: String, default: "المنزل" },
+  city:     String,
+  district: String,
+  street:   String,
+  building: String,
+  zipCode:  String,
+  isDefault:{ type: Boolean, default: false },
+}, { _id: true });
+
 const CustomerSchema = new Schema({
   name: String,
   phone: { type: String, unique: true },
@@ -65,6 +75,13 @@ const CustomerSchema = new Schema({
   totalSpent: { type: Number, default: 0 },
   resetOtp: String,
   resetOtpExpiry: Date,
+  /* business / institutional info */
+  accountType:        { type: String, enum: ["individual", "business"], default: "individual" },
+  businessName:       String,
+  vatNumber:          String,
+  commercialRegister: String,
+  /* saved addresses */
+  addresses:          { type: [AddressSchema], default: [] },
 }, { timestamps: true });
 export const Customer = mongoose.model("Customer", CustomerSchema);
 

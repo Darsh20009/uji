@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { useCart } from "../hooks/useCart";
-import { ShoppingBag, Search, AlignJustify, X } from "lucide-react";
+import { useAuth } from "../hooks/useAuth";
+import { useAuthModal } from "../context/AuthModalContext";
+import { ShoppingBag, Search, AlignJustify, X, User } from "lucide-react";
 
 export default function Navbar() {
   const { items } = useCart();
   const [location] = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user } = useAuth();
+  const { openAuth } = useAuthModal();
   const cartCount = items.reduce((s, i) => s + i.qty, 0);
 
-  // Detect if we're on the homepage (transparent header)
   const isHome = location === "/";
 
   useEffect(() => {
@@ -45,34 +48,26 @@ export default function Navbar() {
           transition: "height 0.3s ease",
           direction: "rtl",
         }}>
-          {/* Right side: menu toggle + nav links */}
+          {/* Right: menu + links */}
           <div style={{ display: "flex", alignItems: "center", gap: "2rem" }}>
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              style={{
-                background: "none", border: "none", padding: 0,
-                display: "flex", alignItems: "center", gap: "0.5rem",
-                color: textColor, cursor: "pointer",
-                transition: "color 0.3s",
-              }}
+              style={{ background: "none", border: "none", padding: 0, display: "flex", alignItems: "center", gap: "0.5rem", color: textColor, cursor: "pointer", transition: "color 0.3s" }}
               aria-label="القائمة"
             >
               <AlignJustify size={18} strokeWidth={1.5} />
             </button>
 
-            {/* Desktop nav links */}
             <div style={{ display: "flex", alignItems: "center", gap: "1.75rem" }} className="desktop-nav">
               {[
                 { href: "/products", label: "المنتجات" },
-                { href: "/about", label: "قصتنا" },
-                { href: "/ritual", label: "الريتشوال" },
-                { href: "/magazine", label: "المجلة" },
+                { href: "/about",    label: "قصتنا"   },
+                { href: "/ritual",   label: "الريتشوال"},
+                { href: "/magazine", label: "المجلة"  },
               ].map(({ href, label }) => (
                 <Link key={href} href={href} style={{
-                  color: textColor, fontSize: "0.75rem",
-                  fontFamily: "'Mirza', serif",
-                  letterSpacing: "0.04em", fontWeight: 400,
-                  opacity: 0.85, transition: "opacity 0.2s",
+                  color: textColor, fontSize: "0.75rem", fontFamily: "'Mirza', serif",
+                  letterSpacing: "0.04em", fontWeight: 400, opacity: 0.85, transition: "opacity 0.2s",
                 }}>
                   {label}
                 </Link>
@@ -87,21 +82,21 @@ export default function Navbar() {
               fontSize: scrolled ? "1.5rem" : "1.85rem",
               fontWeight: 400, letterSpacing: "0.22em",
               color: transparent ? "#F2EADB" : "#1C201B",
-              lineHeight: 1,
-              transition: "font-size 0.3s ease, color 0.3s ease",
+              lineHeight: 1, transition: "font-size 0.3s ease, color 0.3s ease",
             }}>UJI</span>
             <span style={{
-              fontFamily: "'Cascadia Code', monospace",
-              fontSize: "0.45rem", letterSpacing: "0.35em",
-              color: transparent ? "rgba(242,234,219,0.55)" : "rgba(28,32,27,0.45)",
-              textTransform: "uppercase",
-              transition: "color 0.3s ease",
+              fontFamily: "'Cascadia Code', monospace", fontSize: "0.45rem",
+              letterSpacing: "0.35em", color: transparent ? "rgba(242,234,219,0.55)" : "rgba(28,32,27,0.45)",
+              textTransform: "uppercase", transition: "color 0.3s ease",
             }}>MATCHA</span>
           </Link>
 
-          {/* Left side: icons + lang */}
+          {/* Left: icons */}
           <div style={{ display: "flex", alignItems: "center", gap: "1.25rem", justifyContent: "flex-end" }}>
-            <button style={{ background: "none", border: "none", padding: 4, color: textColor, transition: "color 0.3s", display: "flex", alignItems: "center" }} aria-label="بحث">
+            <button
+              style={{ background: "none", border: "none", padding: 4, color: textColor, transition: "color 0.3s", display: "flex", alignItems: "center" }}
+              aria-label="بحث"
+            >
               <Search size={17} strokeWidth={1.5} />
             </button>
 
@@ -118,20 +113,36 @@ export default function Navbar() {
               )}
             </Link>
 
-            {/* Language toggle (decorative for now) */}
-            <span style={{
-              color: textColor, fontSize: "0.65rem",
-              fontFamily: "'Cascadia Code', monospace",
-              letterSpacing: "0.12em", opacity: 0.5,
-            }}>
+            {/* ─── User icon: login or profile ─── */}
+            {user ? (
+              <Link href="/profile" style={{ color: textColor, display: "flex", alignItems: "center", padding: 4, transition: "color 0.3s", position: "relative" }}>
+                <User size={17} strokeWidth={1.5} />
+                {/* green dot = logged in */}
+                <span style={{
+                  position: "absolute", bottom: 2, right: 2,
+                  width: 6, height: 6, borderRadius: "50%",
+                  background: "#78933C", border: "1.5px solid",
+                  borderColor: transparent ? "#1C281A" : "#F2EADB",
+                }} />
+              </Link>
+            ) : (
+              <button
+                onClick={() => openAuth("login")}
+                style={{ background: "none", border: "none", padding: 4, color: textColor, cursor: "pointer", display: "flex", alignItems: "center", transition: "color 0.3s" }}
+                aria-label="تسجيل الدخول"
+              >
+                <User size={17} strokeWidth={1.5} />
+              </button>
+            )}
+
+            <span style={{ color: textColor, fontSize: "0.65rem", fontFamily: "'Cascadia Code', monospace", letterSpacing: "0.12em", opacity: 0.5 }}>
               AR/EN
             </span>
-
           </div>
         </div>
       </nav>
 
-      {/* Mobile / fullscreen menu overlay */}
+      {/* Mobile / fullscreen menu */}
       {menuOpen && (
         <div style={{
           position: "fixed", inset: 0, zIndex: 1100,
@@ -148,29 +159,36 @@ export default function Navbar() {
 
           <nav style={{ display: "flex", flexDirection: "column", gap: "2.5rem" }}>
             {[
-              { href: "/", label: "الرئيسية", en: "Home" },
-              { href: "/products", label: "المنتجات", en: "Shop" },
-              { href: "/about", label: "قصتنا", en: "Our Story" },
-              { href: "/ritual", label: "الريتشوال", en: "Ritual" },
-              { href: "/magazine", label: "المجلة", en: "Journal" },
-              { href: "/cart", label: "السلة", en: "Cart" },
+              { href: "/",        label: "الرئيسية", en: "Home"      },
+              { href: "/products",label: "المنتجات", en: "Shop"      },
+              { href: "/about",   label: "قصتنا",    en: "Our Story" },
+              { href: "/ritual",  label: "الريتشوال",en: "Ritual"    },
+              { href: "/magazine",label: "المجلة",   en: "Journal"   },
+              { href: "/cart",    label: "السلة",    en: "Cart"      },
+              ...(user
+                ? [{ href: "/profile", label: "حسابي", en: "Account" }]
+                : [{ href: null as any, label: "تسجيل الدخول", en: "Login" }]
+              ),
             ].map(({ href, label, en }) => (
-              <Link
-                key={href} href={href}
-                onClick={() => setMenuOpen(false)}
-                style={{ display: "flex", alignItems: "baseline", gap: "1rem" }}
-              >
-                <span style={{
-                  fontFamily: "'Cascadia Code', monospace",
-                  fontSize: "2.5rem", fontWeight: 300,
-                  color: "#F2EADB", lineHeight: 1,
-                }}>{label}</span>
-                <span style={{
-                  fontFamily: "'Cascadia Code', monospace",
-                  fontSize: "0.7rem", letterSpacing: "0.18em",
-                  color: "#9BA17B", textTransform: "uppercase",
-                }}>{en}</span>
-              </Link>
+              href ? (
+                <Link
+                  key={href} href={href}
+                  onClick={() => setMenuOpen(false)}
+                  style={{ display: "flex", alignItems: "baseline", gap: "1rem" }}
+                >
+                  <span style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "2.5rem", fontWeight: 300, color: "#F2EADB", lineHeight: 1 }}>{label}</span>
+                  <span style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.7rem", letterSpacing: "0.18em", color: "#9BA17B", textTransform: "uppercase" }}>{en}</span>
+                </Link>
+              ) : (
+                <button
+                  key={label}
+                  onClick={() => { setMenuOpen(false); openAuth("login"); }}
+                  style={{ background: "none", border: "none", display: "flex", alignItems: "baseline", gap: "1rem", cursor: "pointer", padding: 0 }}
+                >
+                  <span style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "2.5rem", fontWeight: 300, color: "#F2EADB", lineHeight: 1 }}>{label}</span>
+                  <span style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.7rem", letterSpacing: "0.18em", color: "#9BA17B", textTransform: "uppercase" }}>{en}</span>
+                </button>
+              )
             ))}
           </nav>
 

@@ -18,6 +18,7 @@ import ProductDetailPage from "./pages/ProductDetailPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import AdminPage from "./pages/AdminPage";
+import ProfilePage from "./pages/ProfilePage";
 import PolicyPage from "./pages/PolicyPage";
 import WholesalePage from "./pages/WholesalePage";
 import RitualPage from "./pages/RitualPage";
@@ -113,6 +114,7 @@ export default function App() {
                   <Route path="/returns">
                     {() => { window.location.href = "/policy"; return null; }}
                   </Route>
+                  <Route path="/profile" component={ProfilePage} />
                   <Route path="/admin" component={AdminPage} />
                   <Route path="/admin/:tab" component={AdminPage} />
                   <Route>
