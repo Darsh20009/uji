@@ -98,6 +98,13 @@ const SettingsSchema = new Schema({
 });
 export const Settings = mongoose.model("Settings", SettingsSchema);
 
+/* ─── SiteContent (visual editor CMS) ───────────────────────────── */
+const SiteContentSchema = new Schema({
+  key:   { type: String, unique: true, required: true },
+  value: { type: String, default: "" },
+});
+export const SiteContent = mongoose.model("SiteContent", SiteContentSchema);
+
 /* ─── Back office records ───────────────────────────────────────── */
 const InvoiceSchema = new Schema({
   invoiceNumber: { type: String, unique: true },

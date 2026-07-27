@@ -8,6 +8,9 @@ import AuthModal from "./components/AuthModal";
 import MobileBottomNav from "./components/MobileBottomNav";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { AuthModalProvider } from "./context/AuthModalContext";
+import { SiteContentProvider } from "./context/SiteContentContext";
+import { EditModeProvider } from "./context/EditModeContext";
+import { EditToolbar } from "./components/editor/EditToolbar";
 import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
@@ -28,7 +31,6 @@ export default function App() {
   const isAdmin = location.startsWith("/admin");
   const prevLocation = useRef(location);
 
-  /* Page transition loader + scroll to top */
   useEffect(() => {
     if (location === prevLocation.current) return;
     prevLocation.current = location;
@@ -81,60 +83,64 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <AuthModalProvider>
-        <PageLoader visible={loading} />
-        <div style={{
-          minHeight: "100vh", display: "flex", flexDirection: "column",
-          background: "#F2EADB",
-          // Bottom padding for mobile nav
-          paddingBottom: isAdmin ? 0 : "env(safe-area-inset-bottom, 0px)",
-        }}>
-          {!isAdmin && <Navbar />}
-          <main style={{ flex: 1 }}>
-            <Switch>
-              <Route path="/" component={HomePage} />
-              <Route path="/products" component={ProductsPage} />
-              <Route path="/products/:id" component={ProductDetailPage} />
-              <Route path="/cart" component={CartPage} />
-              <Route path="/checkout" component={CheckoutPage} />
-              <Route path="/policy" component={PolicyPage} />
-              <Route path="/wholesale" component={WholesalePage} />
-              <Route path="/ritual" component={RitualPage} />
-              <Route path="/magazine" component={MagazinePage} />
-              <Route path="/about" component={OurStoryPage} />
-              <Route path="/story" component={OurStoryPage} />
-              <Route path="/shipping">
-                {() => { window.location.href = "/policy"; return null; }}
-              </Route>
-              <Route path="/returns">
-                {() => { window.location.href = "/policy"; return null; }}
-              </Route>
-              <Route path="/admin" component={AdminPage} />
-              <Route path="/admin/:tab" component={AdminPage} />
-              {/* Catch-all 404 */}
-              <Route>
-                <div style={{
-                  minHeight: "80vh", display: "flex", alignItems: "center",
-                  justifyContent: "center", flexDirection: "column", gap: "2rem",
-                  background: "#F2EADB",
-                }}>
-                  <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "8rem", fontWeight: 300, color: "#C8BBA4", lineHeight: 1 }}>404</p>
-                  <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.9rem", color: "#9BA17B" }}>الصفحة غير موجودة</p>
-                  <Link href="/" style={{
-                    background: "#1F3929", color: "#F2EADB",
-                    padding: "0.875rem 2.5rem", textDecoration: "none",
-                    fontFamily: "'Mirza', serif", fontSize: "0.9rem",
-                  }}>العودة للرئيسية</Link>
-                </div>
-              </Route>
-            </Switch>
-          </main>
+      <SiteContentProvider>
+        <EditModeProvider>
+          <AuthModalProvider>
+            <PageLoader visible={loading} />
+            <div style={{
+              minHeight: "100vh", display: "flex", flexDirection: "column",
+              background: "#F2EADB",
+              paddingBottom: isAdmin ? 0 : "env(safe-area-inset-bottom, 0px)",
+            }}>
+              {!isAdmin && <Navbar />}
+              <main style={{ flex: 1 }}>
+                <Switch>
+                  <Route path="/" component={HomePage} />
+                  <Route path="/products" component={ProductsPage} />
+                  <Route path="/products/:id" component={ProductDetailPage} />
+                  <Route path="/cart" component={CartPage} />
+                  <Route path="/checkout" component={CheckoutPage} />
+                  <Route path="/policy" component={PolicyPage} />
+                  <Route path="/wholesale" component={WholesalePage} />
+                  <Route path="/ritual" component={RitualPage} />
+                  <Route path="/magazine" component={MagazinePage} />
+                  <Route path="/about" component={OurStoryPage} />
+                  <Route path="/story" component={OurStoryPage} />
+                  <Route path="/shipping">
+                    {() => { window.location.href = "/policy"; return null; }}
+                  </Route>
+                  <Route path="/returns">
+                    {() => { window.location.href = "/policy"; return null; }}
+                  </Route>
+                  <Route path="/admin" component={AdminPage} />
+                  <Route path="/admin/:tab" component={AdminPage} />
+                  <Route>
+                    <div style={{
+                      minHeight: "80vh", display: "flex", alignItems: "center",
+                      justifyContent: "center", flexDirection: "column", gap: "2rem",
+                      background: "#F2EADB",
+                    }}>
+                      <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "8rem", fontWeight: 300, color: "#C8BBA4", lineHeight: 1 }}>404</p>
+                      <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.9rem", color: "#9BA17B" }}>الصفحة غير موجودة</p>
+                      <Link href="/" style={{
+                        background: "#1F3929", color: "#F2EADB",
+                        padding: "0.875rem 2.5rem", textDecoration: "none",
+                        fontFamily: "'Mirza', serif", fontSize: "0.9rem",
+                      }}>العودة للرئيسية</Link>
+                    </div>
+                  </Route>
+                </Switch>
+              </main>
 
-          {!isAdmin && <Footer />}
-          {!isAdmin && <MobileBottomNav />}
-          {!isAdmin && <AuthModal />}
-        </div>
-      </AuthModalProvider>
+              {!isAdmin && <Footer />}
+              {!isAdmin && <MobileBottomNav />}
+              {!isAdmin && <AuthModal />}
+              {/* Visual editor toolbar — shown to admins on all pages */}
+              {!isAdmin && <EditToolbar />}
+            </div>
+          </AuthModalProvider>
+        </EditModeProvider>
+      </SiteContentProvider>
     </ErrorBoundary>
   );
 }

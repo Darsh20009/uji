@@ -3,7 +3,7 @@ import passport from "passport";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { Product, Order, Customer, Settings, Review, Coupon, Invoice, Quote, Expense, Campaign, hashPass } from "./models";
+import { Product, Order, Customer, Settings, SiteContent, Review, Coupon, Invoice, Quote, Expense, Campaign, hashPass } from "./models";
 import { requireAuth } from "./auth";
 import { sendOrderConfirmation, sendAdminOrderAlert, sendNewsletterWelcome, sendTestEmail, verifyEmailTransport, emailAttachments, layout, sendInvoiceEmail, sendQuoteEmail } from "./email";
 import { createGeideaSession, verifyGeideaCallback, geideaEnabled } from "./geidea";
@@ -852,6 +852,34 @@ router.put("/admin/settings", requireAdmin, async (req, res) => {
 router.get("/admin/newsletter", requireAdmin, async (_req, res) => {
   const s = await Settings.findOne({ key: "newsletter_subscribers" });
   res.json({ count: (s?.value as string[] || []).length, emails: s?.value || [] });
+});
+
+/* ─── Site Content (Visual Editor CMS) ─────────────────────────── */
+router.get("/site-content", async (_req, res) => {
+  try {
+    const items = await SiteContent.find({});
+    const obj: Record<string, string> = {};
+    items.forEach(i => { obj[i.key] = i.value; });
+    res.json(obj);
+  } catch { res.json({}); }
+});
+
+router.put("/admin/site-content", requireAdmin, async (req, res) => {
+  try {
+    const entries = Object.entries(req.body as Record<string, string>);
+    if (!entries.length) return res.json({ ok: true });
+    await Promise.all(
+      entries.map(([key, value]) =>
+        SiteContent.findOneAndUpdate({ key }, { key, value }, { upsert: true, new: true })
+      )
+    );
+    res.json({ ok: true });
+  } catch (e: any) { res.status(500).json({ message: e.message }); }
+});
+
+router.post("/admin/site-content/image", requireAdmin, upload.single("image"), async (req: any, res) => {
+  if (!req.file) return res.status(400).json({ message: "no file" });
+  res.json({ url: `/uploads/${req.file.filename}` });
 });
 
 /* ─── Public Settings ───────────────────────────────────────────── */
