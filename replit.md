@@ -27,6 +27,7 @@ The workflow **Start application** runs `npm run dev` and serves on port 5000.
 | `SESSION_SECRET` | Express session secret (stored as a Replit Secret) |
 | `ADMIN_PHONE` | Phone number used to log in to `/admin` |
 | `PORT` | Port to listen on (default: 5000) |
+| `APP_VERSION` | Current client/server release version (default: `1.0.0`); bump it to reset old browser cookies and cached app state |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Optional Google OAuth |
 | `APPLE_CLIENT_ID` | Optional Apple OAuth |
 

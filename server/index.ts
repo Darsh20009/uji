@@ -8,12 +8,14 @@ import helmet from "helmet";
 import fs from "fs";
 import { Product, Settings } from "./models";
 import { trackVisit } from "./visitors";
+import { setupVersionGuard } from "./version";
 
 const app = express();
 app.set("trust proxy", 1);
 app.use(helmet({ contentSecurityPolicy: false, crossOriginEmbedderPolicy: false }));
 app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true, limit: "5mb" }));
+setupVersionGuard(app);
 
 // Uploads directory
 const uploadsDir = path.join(process.cwd(), "uploads");

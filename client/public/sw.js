@@ -1,4 +1,4 @@
-const CACHE = "uji-v1";
+const CACHE = "uji-v2";
 const OFFLINE_URL = "/";
 
 const STATIC = [
@@ -27,6 +27,22 @@ self.addEventListener("activate", (e) => {
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET") return;
   const url = new URL(e.request.url);
+  // Always check the network for document navigations so a new app version
+  // cannot be hidden behind an old cached index.html.
+  if (e.request.mode === "navigate") {
+    e.respondWith(
+      fetch(e.request)
+        .then((res) => {
+          if (res.ok) {
+            const clone = res.clone();
+            caches.open(CACHE).then((c) => c.put(e.request, clone));
+          }
+          return res;
+        })
+        .catch(() => caches.match(OFFLINE_URL)),
+    );
+    return;
+  }
   // API calls: network-first, no cache
   if (url.pathname.startsWith("/api/")) {
     e.respondWith(fetch(e.request).catch(() => new Response(JSON.stringify({ message: "لا يوجد اتصال بالإنترنت" }), { headers: { "Content-Type": "application/json" } })));

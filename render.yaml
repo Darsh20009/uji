@@ -12,6 +12,8 @@ services:
         value: production
       - key: PORT
         value: 10000
+      - key: APP_VERSION
+        value: 1.0.0
       - key: MONGODB_URI
         sync: false   # تُدخله يدوياً في Render dashboard
       - key: SESSION_SECRET
