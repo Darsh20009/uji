@@ -371,7 +371,15 @@ router.post("/auth/logout", (req, res) => { req.logout(() => {}); res.json({ ok:
 router.get("/auth/me", (req, res) => {
   if (!req.isAuthenticated()) return res.status(401).json({ message: "غير مسجل" });
   const u = req.user as any;
-  res.json({ id: u._id, name: u.name, phone: u.phone, email: u.email, role: u.role, loyaltyPoints: u.loyaltyPoints, loyaltyTier: u.loyaltyTier, totalSpent: u.totalSpent, jobTitle: u.jobTitle });
+  const admin = u?.phone === ADMIN_PHONE || u?.role === "admin" || u?.role === "employee";
+  res.json({ id: u._id, name: u.name, phone: u.phone, email: u.email, role: u.role, isAdmin: admin, loyaltyPoints: u.loyaltyPoints, loyaltyTier: u.loyaltyTier, totalSpent: u.totalSpent, jobTitle: u.jobTitle });
+});
+
+router.get("/auth/is-admin", (req: any, res) => {
+  if (!req.isAuthenticated()) return res.json({ isAdmin: false });
+  const u = req.user as any;
+  const admin = u?.phone === ADMIN_PHONE || u?.role === "admin" || u?.role === "employee";
+  res.json({ isAdmin: admin });
 });
 
 router.post("/auth/forgot-password", async (req, res) => {

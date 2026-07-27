@@ -10,7 +10,8 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { AuthModalProvider } from "./context/AuthModalContext";
 import { SiteContentProvider } from "./context/SiteContentContext";
 import { EditModeProvider } from "./context/EditModeContext";
-import { EditToolbar } from "./components/editor/EditToolbar";
+import { AdminToggle } from "./components/cms/AdminToggle";
+import { CmsSidebar } from "./components/cms/CmsSidebar";
 import HomePage from "./pages/HomePage";
 import ProductsPage from "./pages/ProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
@@ -135,8 +136,9 @@ export default function App() {
               {!isAdmin && <Footer />}
               {!isAdmin && <MobileBottomNav />}
               {!isAdmin && <AuthModal />}
-              {/* Visual editor toolbar — shown to admins on all pages */}
-              {!isAdmin && <EditToolbar />}
+              {/* CMS editor — only renders for logged-in admins */}
+              {!isAdmin && <AdminToggle />}
+              {!isAdmin && <CmsSidebar />}
             </div>
           </AuthModalProvider>
         </EditModeProvider>
