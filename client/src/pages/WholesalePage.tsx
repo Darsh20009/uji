@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
+import { EditableText } from "../components/editor/EditableText";
 
 export default function WholesalePage() {
   const { data: settings } = useQuery({
@@ -29,6 +30,30 @@ export default function WholesalePage() {
     return () => clearTimeout(t);
   }, [waUrl]);
 
+  const pillars = [
+    {
+      numKey: "٠١",
+      titleKey: "wholesale.pillar.0.title",
+      bodyKey: "wholesale.pillar.0.body",
+      defaultTitle: "ماتشا احتفالية",
+      defaultBody: "ماتشا يابانية من أعلى الدرجات، مناسبة للمشروبات الراقية والقوائم المميزة.",
+    },
+    {
+      numKey: "٠٢",
+      titleKey: "wholesale.pillar.1.title",
+      bodyKey: "wholesale.pillar.1.body",
+      defaultTitle: "وصفات وتدريب",
+      defaultBody: "نقدم وصفات جاهزة وتدريباً لفريقك حتى تُقدَّم كل كوب بالطريقة الصحيحة.",
+    },
+    {
+      numKey: "٠٣",
+      titleKey: "wholesale.pillar.2.title",
+      bodyKey: "wholesale.pillar.2.body",
+      defaultTitle: "دعم متواصل",
+      defaultBody: "لا تختفي بعد أول طلب، نبقى معك في كل مرحلة من مراحل نمو مشروعك.",
+    },
+  ];
+
   return (
     <div style={{ background: "#F2EADB", minHeight: "100vh", direction: "rtl" }}>
 
@@ -38,38 +63,48 @@ export default function WholesalePage() {
         padding: "120px 24px 80px",
         textAlign: "center",
       }}>
-        <p style={{
-          fontFamily: "'Cascadia Code', monospace",
-          fontSize: "0.6rem",
-          letterSpacing: "0.4em",
-          textTransform: "uppercase",
-          color: "#9BA17B",
-          marginBottom: "1.75rem",
-        }}>للمقاهي والمشاريع</p>
+        <EditableText
+          contentKey="wholesale.hero.eyebrow"
+          defaultValue="للمقاهي والمشاريع"
+          as="p"
+          style={{
+            fontFamily: "'Cascadia Code', monospace",
+            fontSize: "0.6rem",
+            letterSpacing: "0.4em",
+            textTransform: "uppercase",
+            color: "#9BA17B",
+            marginBottom: "1.75rem",
+          }}
+        />
 
-        <h1 style={{
-          fontFamily: "'Mirza', serif",
-          fontSize: "clamp(2.6rem, 6vw, 4.5rem)",
-          fontWeight: 700,
-          color: "#F2EADB",
-          lineHeight: 1.25,
-          marginBottom: "1.5rem",
-          letterSpacing: "0.02em",
-        }}>
-          نقدم الماتشا<br />
-          <span style={{ color: "#9BA17B" }}>كما يستحق عميلك</span>
-        </h1>
+        <EditableText
+          contentKey="wholesale.hero.title"
+          defaultValue={"نقدم الماتشا\nكما يستحق عميلك"}
+          as="h1"
+          style={{
+            fontFamily: "'Mirza', serif",
+            fontSize: "clamp(2.6rem, 6vw, 4.5rem)",
+            fontWeight: 700,
+            color: "#F2EADB",
+            lineHeight: 1.25,
+            marginBottom: "1.5rem",
+            letterSpacing: "0.02em",
+          }}
+        />
 
-        <p style={{
-          fontFamily: "'Mirza', serif",
-          fontSize: "0.95rem",
-          lineHeight: 2,
-          color: "rgba(242,234,219,0.7)",
-          maxWidth: 480,
-          margin: "0 auto 2.5rem",
-        }}>
-          من الوصفات الجاهزة إلى تدريب فريقك، نبني معك تجربة ماتشا تجعل عميلك يعود.
-        </p>
+        <EditableText
+          contentKey="wholesale.hero.description"
+          defaultValue="من الوصفات الجاهزة إلى تدريب فريقك، نبني معك تجربة ماتشا تجعل عميلك يعود."
+          as="p"
+          style={{
+            fontFamily: "'Mirza', serif",
+            fontSize: "0.95rem",
+            lineHeight: 2,
+            color: "rgba(242,234,219,0.7)",
+            maxWidth: 480,
+            margin: "0 auto 2.5rem",
+          }}
+        />
 
         <a
           href={waUrl}
@@ -92,17 +127,23 @@ export default function WholesalePage() {
           onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "#fff"; }}
           onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "#F2EADB"; }}
         >
-          تواصل معنا ←
+          <EditableText
+            contentKey="wholesale.hero.btn"
+            defaultValue="تواصل معنا ←"
+          />
         </a>
 
-        <p style={{
-          fontFamily: "'Mirza', serif",
-          fontSize: "0.75rem",
-          color: "rgba(155,161,123,0.6)",
-          marginTop: "1rem",
-        }}>
-          سيتم توجيهك تلقائياً خلال ثوانٍ
-        </p>
+        <EditableText
+          contentKey="wholesale.hero.redirect"
+          defaultValue="سيتم توجيهك تلقائياً خلال ثوانٍ"
+          as="p"
+          style={{
+            fontFamily: "'Mirza', serif",
+            fontSize: "0.75rem",
+            color: "rgba(155,161,123,0.6)",
+            marginTop: "1rem",
+          }}
+        />
       </div>
 
       {/* ── Three pillars ── */}
@@ -114,25 +155,9 @@ export default function WholesalePage() {
           background: "rgba(200,187,164,0.25)",
           border: "1px solid rgba(200,187,164,0.25)",
         }}>
-          {[
-            {
-              num: "٠١",
-              title: "ماتشا احتفالية",
-              body: "ماتشا يابانية من أعلى الدرجات، مناسبة للمشروبات الراقية والقوائم المميزة.",
-            },
-            {
-              num: "٠٢",
-              title: "وصفات وتدريب",
-              body: "نقدم وصفات جاهزة وتدريباً لفريقك حتى تُقدَّم كل كوب بالطريقة الصحيحة.",
-            },
-            {
-              num: "٠٣",
-              title: "دعم متواصل",
-              body: "لا تختفي بعد أول طلب، نبقى معك في كل مرحلة من مراحل نمو مشروعك.",
-            },
-          ].map(({ num, title, body }) => (
+          {pillars.map(({ numKey, titleKey, bodyKey, defaultTitle, defaultBody }) => (
             <div
-              key={num}
+              key={numKey}
               style={{
                 background: "#FDFAF5",
                 padding: "2.5rem 2rem",
@@ -145,21 +170,31 @@ export default function WholesalePage() {
                 letterSpacing: "0.35em",
                 color: "#9BA17B",
                 marginBottom: "1.25rem",
-              }}>{num}</div>
-              <h3 style={{
-                fontFamily: "'Mirza', serif",
-                fontSize: "1.5rem",
-                fontWeight: 700,
-                color: "#16281D",
-                marginBottom: "0.75rem",
-                lineHeight: 1.3,
-              }}>{title}</h3>
-              <p style={{
-                fontFamily: "'Mirza', serif",
-                fontSize: "0.85rem",
-                color: "#9BA17B",
-                lineHeight: 1.9,
-              }}>{body}</p>
+              }}>{numKey}</div>
+              <EditableText
+                contentKey={titleKey}
+                defaultValue={defaultTitle}
+                as="h3"
+                style={{
+                  fontFamily: "'Mirza', serif",
+                  fontSize: "1.5rem",
+                  fontWeight: 700,
+                  color: "#16281D",
+                  marginBottom: "0.75rem",
+                  lineHeight: 1.3,
+                }}
+              />
+              <EditableText
+                contentKey={bodyKey}
+                defaultValue={defaultBody}
+                as="p"
+                style={{
+                  fontFamily: "'Mirza', serif",
+                  fontSize: "0.85rem",
+                  color: "#9BA17B",
+                  lineHeight: 1.9,
+                }}
+              />
             </div>
           ))}
         </div>
@@ -176,22 +211,30 @@ export default function WholesalePage() {
           flexWrap: "wrap",
         }}>
           <div>
-            <p style={{
-              fontFamily: "'Mirza', serif",
-              fontSize: "1.6rem",
-              fontWeight: 700,
-              color: "#F2EADB",
-              marginBottom: "0.5rem",
-              lineHeight: 1.3,
-            }}>أرسل لنا معلومات مشروعك</p>
-            <p style={{
-              fontFamily: "'Mirza', serif",
-              fontSize: "0.82rem",
-              color: "#9BA17B",
-              lineHeight: 1.9,
-            }}>
-              اسم المشروع · قطاع النشاط · الاستخدام المتوقع
-            </p>
+            <EditableText
+              contentKey="wholesale.cta.title"
+              defaultValue="أرسل لنا معلومات مشروعك"
+              as="p"
+              style={{
+                fontFamily: "'Mirza', serif",
+                fontSize: "1.6rem",
+                fontWeight: 700,
+                color: "#F2EADB",
+                marginBottom: "0.5rem",
+                lineHeight: 1.3,
+              }}
+            />
+            <EditableText
+              contentKey="wholesale.cta.body"
+              defaultValue="اسم المشروع · قطاع النشاط · الاستخدام المتوقع"
+              as="p"
+              style={{
+                fontFamily: "'Mirza', serif",
+                fontSize: "0.82rem",
+                color: "#9BA17B",
+                lineHeight: 1.9,
+              }}
+            />
           </div>
           <a
             href={waUrl}

@@ -1,3 +1,5 @@
+import { EditableText } from "../components/editor/EditableText";
+
 export default function PolicyPage() {
   const sectionStyle: React.CSSProperties = {
     marginBottom: "3rem",
@@ -46,11 +48,19 @@ export default function PolicyPage() {
 
         {/* Return Policy */}
         <div style={sectionStyle}>
-          <h2 style={h2Style}>سياسة الاستبدال والاسترجاع</h2>
+          <EditableText
+            contentKey="policy.return.title"
+            defaultValue="سياسة الاستبدال والاسترجاع"
+            as="h2"
+            style={h2Style}
+          />
 
-          <p style={pStyle}>
-            حرصاً منا على سلامتكم فإننا نعتذر عن استرجاع أو استبدال المنتجات الغذائية لسلامتكم جميعاً .. باستثناء المنتجات التي تصل إليكم تالفة، بشرط أن لا يتم استخدامها أو فتحها وأن تكون بحالتها الأصلية كما تم استلامها.
-          </p>
+          <EditableText
+            contentKey="policy.return.intro"
+            defaultValue="حرصاً منا على سلامتكم فإننا نعتذر عن استرجاع أو استبدال المنتجات الغذائية لسلامتكم جميعاً .. باستثناء المنتجات التي تصل إليكم تالفة، بشرط أن لا يتم استخدامها أو فتحها وأن تكون بحالتها الأصلية كما تم استلامها."
+            as="p"
+            style={pStyle}
+          />
 
           <div style={{ background: "#F7F2E8", border: "1px solid rgba(200,187,164,0.3)", padding: "2rem", marginTop: "1.5rem" }}>
             <h3 style={{ ...h3Style, marginTop: 0 }}>الأسئلة الشائعة</h3>
@@ -92,29 +102,46 @@ export default function PolicyPage() {
             ))}
 
             <div style={{ background: "rgba(31,57,41,0.06)", border: "1px solid rgba(31,57,41,0.12)", padding: "1rem 1.25rem", marginTop: "0.5rem" }}>
-              <p style={{ ...pStyle, marginBottom: 0, color: "#1F3929", fontWeight: 500 }}>
-                ملاحظة: حالات التلف يتم النظر فيها وإثباتها من قبل الجهة المختصة.
-              </p>
+              <EditableText
+                contentKey="policy.return.note"
+                defaultValue="ملاحظة: حالات التلف يتم النظر فيها وإثباتها من قبل الجهة المختصة."
+                as="p"
+                style={{ ...pStyle, marginBottom: 0, color: "#1F3929", fontWeight: 500 }}
+              />
             </div>
           </div>
         </div>
 
         {/* Privacy Policy */}
         <div style={sectionStyle}>
-          <h2 style={h2Style}>سياسة الخصوصية</h2>
-          <p style={pStyle}>
-            هذه السياسة للخصوصية توضح المعلومات التي نجمعها عنك وكيفية استخدامها والخطوات التي نتخذها لضمان الحفاظ عليها آمنة.
-          </p>
+          <EditableText
+            contentKey="policy.privacy.title"
+            defaultValue="سياسة الخصوصية"
+            as="h2"
+            style={h2Style}
+          />
+          <EditableText
+            contentKey="policy.privacy.intro"
+            defaultValue="هذه السياسة للخصوصية توضح المعلومات التي نجمعها عنك وكيفية استخدامها والخطوات التي نتخذها لضمان الحفاظ عليها آمنة."
+            as="p"
+            style={pStyle}
+          />
 
           <h3 style={h3Style}>ما المعلومات التي نجمعها؟</h3>
-          <p style={pStyle}>
-            عند فتح حساب جديد، نقوم بجمع معلومات التسجيل للعميل مثل الاسم، البريد الإلكتروني، عنوان الشحن، رقم الجوال، علماً أنه يتوجب تعبئة هذه المعلومات لإكمال عملية التسجيل. كما نقوم بجمع بيانات العمليات الشرائية والمفضلة.
-          </p>
+          <EditableText
+            contentKey="policy.privacy.whatinfo"
+            defaultValue="عند فتح حساب جديد، نقوم بجمع معلومات التسجيل للعميل مثل الاسم، البريد الإلكتروني، عنوان الشحن، رقم الجوال، علماً أنه يتوجب تعبئة هذه المعلومات لإكمال عملية التسجيل. كما نقوم بجمع بيانات العمليات الشرائية والمفضلة."
+            as="p"
+            style={pStyle}
+          />
 
           <h3 style={h3Style}>كيف سنستخدم معلوماتك؟</h3>
-          <p style={pStyle}>
-            جميع المعلومات الشخصية التي نحصل عليها عنك سيتم تسجيلها واستخدامها وحمايتها بمعرفتنا طبقاً لقانون حماية البيانات الحالي وهذه السياسة للخصوصية. سنستخدم معلوماتك الشخصية في الأساس لتقديم منتجاتنا وخدماتنا لك وعلى سبيل المثال:
-          </p>
+          <EditableText
+            contentKey="policy.privacy.howuse"
+            defaultValue="جميع المعلومات الشخصية التي نحصل عليها عنك سيتم تسجيلها واستخدامها وحمايتها بمعرفتنا طبقاً لقانون حماية البيانات الحالي وهذه السياسة للخصوصية. سنستخدم معلوماتك الشخصية في الأساس لتقديم منتجاتنا وخدماتنا لك وعلى سبيل المثال:"
+            as="p"
+            style={pStyle}
+          />
           <ul style={{ listStyle: "none", padding: 0, margin: "0 0 1rem" }}>
             {[
               "إدارة وتقديم المنتجات والخدمات التي تطلبها",
@@ -128,28 +155,40 @@ export default function PolicyPage() {
               </li>
             ))}
           </ul>
-          <p style={pStyle}>
-            هذه المعلومات تحتفظ بشكل آمن ولن يتم مشاركتها أو بيعها لأي جهة خارجية.
-          </p>
+          <EditableText
+            contentKey="policy.privacy.secure"
+            defaultValue="هذه المعلومات تحتفظ بشكل آمن ولن يتم مشاركتها أو بيعها لأي جهة خارجية."
+            as="p"
+            style={pStyle}
+          />
 
           <h3 style={h3Style}>الكوكيز</h3>
-          <p style={pStyle}>
-            كإجراء شائع لدى العديد من مشغلي المواقع الإلكترونية الأخرى، قد نستخدم تكنولوجيا قياسية تسمى "الكوكيز" على هذا الموقع. الكوكيز هي معلومات صغيرة يتم تسجيلها من قبل برنامجك للتصفح على القرص الصلب لحاسبك الآلي وتستخدم لتسجيل كيفية تصفحك لهذا الموقع الإلكتروني في كل زيارة. تستخدم الكوكيز الخاصة بنا لتمكيننا من تطوير موقعنا الإلكتروني.
-          </p>
+          <EditableText
+            contentKey="policy.privacy.cookies"
+            defaultValue='كإجراء شائع لدى العديد من مشغلي المواقع الإلكترونية الأخرى، قد نستخدم تكنولوجيا قياسية تسمى "الكوكيز" على هذا الموقع. الكوكيز هي معلومات صغيرة يتم تسجيلها من قبل برنامجك للتصفح على القرص الصلب لحاسبك الآلي وتستخدم لتسجيل كيفية تصفحك لهذا الموقع الإلكتروني في كل زيارة. تستخدم الكوكيز الخاصة بنا لتمكيننا من تطوير موقعنا الإلكتروني.'
+            as="p"
+            style={pStyle}
+          />
 
           <h3 style={h3Style}>التغييرات على سياسة الخصوصية</h3>
-          <p style={pStyle}>
-            نحن نحتفظ بجميع الحقوق في تغيير أمننا وسياسات الخصوصية في أي وقت، لذلك فإننا نوصي بأن تقوم بمراجعة هذه الصفحة دائماً لتكون على علم بسياساتنا الحالية.
-          </p>
+          <EditableText
+            contentKey="policy.privacy.changes"
+            defaultValue="نحن نحتفظ بجميع الحقوق في تغيير أمننا وسياسات الخصوصية في أي وقت، لذلك فإننا نوصي بأن تقوم بمراجعة هذه الصفحة دائماً لتكون على علم بسياساتنا الحالية."
+            as="p"
+            style={pStyle}
+          />
 
           <div style={{
             background: "#F7F2E8", border: "1px solid rgba(200,187,164,0.3)",
             padding: "1.25rem 1.5rem", marginTop: "2rem",
             borderRight: "3px solid #9BA17B",
           }}>
-            <p style={{ ...pStyle, marginBottom: 0, fontSize: "0.82rem", color: "#9BA17B" }}>
-              يتبع هذا الموقع لسياسة الخصوصية للجهة المعالجة، شركة القدرة التقنية لتقنية المعلومات والاتصالات المحدودة (زد).
-            </p>
+            <EditableText
+              contentKey="policy.privacy.footer"
+              defaultValue="يتبع هذا الموقع لسياسة الخصوصية للجهة المعالجة، شركة القدرة التقنية لتقنية المعلومات والاتصالات المحدودة (زد)."
+              as="p"
+              style={{ ...pStyle, marginBottom: 0, fontSize: "0.82rem", color: "#9BA17B" }}
+            />
           </div>
         </div>
 
@@ -158,12 +197,18 @@ export default function PolicyPage() {
           textAlign: "center", padding: "3rem",
           background: "#1F3929", marginTop: "3rem",
         }}>
-          <p style={{ fontFamily: "'Mirza', serif", fontSize: "1.4rem", fontWeight: 300, color: "#F2EADB", marginBottom: "0.75rem" }}>
-            هل لديك استفسار؟
-          </p>
-          <p style={{ ...pStyle, color: "rgba(155,161,123,0.85)", marginBottom: "1.5rem" }}>
-            فريقنا جاهز للمساعدة في أي وقت
-          </p>
+          <EditableText
+            contentKey="policy.cta.title"
+            defaultValue="هل لديك استفسار؟"
+            as="p"
+            style={{ fontFamily: "'Mirza', serif", fontSize: "1.4rem", fontWeight: 300, color: "#F2EADB", marginBottom: "0.75rem" }}
+          />
+          <EditableText
+            contentKey="policy.cta.body"
+            defaultValue="فريقنا جاهز للمساعدة في أي وقت"
+            as="p"
+            style={{ ...pStyle, color: "rgba(155,161,123,0.85)", marginBottom: "1.5rem" }}
+          />
           <a
             href="https://wa.me/966552469643"
             target="_blank" rel="noopener"
@@ -174,7 +219,10 @@ export default function PolicyPage() {
               fontFamily: "'Mirza', serif", fontSize: "0.88rem",
             }}
           >
-            تواصل عبر واتساب
+            <EditableText
+              contentKey="policy.cta.btn"
+              defaultValue="تواصل عبر واتساب"
+            />
           </a>
         </div>
       </div>

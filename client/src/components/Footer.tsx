@@ -1,6 +1,8 @@
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
+import { useLang } from "../context/LanguageContext";
+import { t } from "../lib/translations";
 
 const DEFAULT_SOCIAL = {
   instagram: "https://instagram.com/uji__sa",
@@ -11,6 +13,7 @@ const DEFAULT_SOCIAL = {
 };
 
 export default function Footer() {
+  const { lang } = useLang();
   const { data: settings } = useQuery({
     queryKey: ["settings"],
     queryFn: () => api.get("/settings"),
@@ -18,8 +21,50 @@ export default function Footer() {
   });
   const social = { ...DEFAULT_SOCIAL, ...(settings as any)?.social };
 
+  const sections = [
+    {
+      titleKey: "footer.section.shop" as const,
+      en: "SHOP",
+      links: [
+        { labelKey: "footer.link.pouch"       as const, href: "/products" },
+        { labelKey: "footer.link.allproducts" as const, href: "/products" },
+        { labelKey: "footer.link.offers"      as const, href: "/products" },
+      ],
+    },
+    {
+      titleKey: "footer.section.company" as const,
+      en: "COMPANY",
+      links: [
+        { labelKey: "footer.link.about"     as const, href: "/about"     },
+        { labelKey: "footer.link.ritual"    as const, href: "/ritual"    },
+        { labelKey: "footer.link.magazine"  as const, href: "/magazine"  },
+        { labelKey: "footer.link.wholesale" as const, href: "/wholesale" },
+      ],
+    },
+    {
+      titleKey: "footer.section.help" as const,
+      en: "HELP",
+      links: [
+        { labelKey: "footer.link.contact"   as const, href: "/wholesale" },
+        { labelKey: "footer.link.shipping"  as const, href: "/policy"    },
+        { labelKey: "footer.link.returns"   as const, href: "/policy"    },
+        { labelKey: "footer.link.privacy"   as const, href: "/policy"    },
+      ],
+    },
+  ];
+
+  const bottomLinks = [
+    { labelKey: "footer.link.privacy"   as const, href: "/policy"    },
+    { labelKey: "footer.link.returns"   as const, href: "/policy"    },
+    { labelKey: "footer.link.wholesale" as const, href: "/wholesale" },
+  ];
+
   return (
-    <footer style={{ background: "#16281D", color: "#F2EADB", position: "relative", overflow: "hidden", paddingBottom: 80 }} className="lg:pb-0">
+    <footer
+      style={{ background: "#16281D", color: "#F2EADB", position: "relative", overflow: "hidden", paddingBottom: 80 }}
+      className="lg:pb-0"
+      dir={lang === "ar" ? "rtl" : "ltr"}
+    >
       {/* Big watermark wordmark */}
       <div style={{
         position: "absolute", bottom: -40, left: "50%", transform: "translateX(-50%)",
@@ -43,14 +88,16 @@ export default function Footer() {
             <img
               src="/assets/brand/uji-logo-forest-green-transparent.png"
               alt="UJI MATCHA"
-              style={{ height: 56, objectFit: "contain", objectPosition: "right" }}
+              style={{ height: 56, objectFit: "contain", objectPosition: lang === "ar" ? "right" : "left" }}
             />
             <p style={{
               fontFamily: "'Mirza', serif",
               fontSize: "0.8rem", lineHeight: 1.8,
               color: "rgba(155,161,123,0.85)",
             }}>
-              ماتشا يابانية احتفالية<br />من قلب زراعة الشاي الياباني
+              {t("footer.tagline", lang).split("\n").map((line, i) => (
+                <span key={i}>{line}{i === 0 && <br />}</span>
+              ))}
             </p>
             <div style={{ display: "flex", gap: "1.1rem", alignItems: "center", flexWrap: "wrap" }}>
               {/* Instagram */}
@@ -88,27 +135,9 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Links */}
-          {[
-            { title: "المتجر", en: "SHOP", links: [
-              { label: "ماتشا الكيس", href: "/products" },
-              { label: "جميع المنتجات", href: "/products" },
-              { label: "العروض", href: "/products" },
-            ]},
-            { title: "الشركة", en: "COMPANY", links: [
-              { label: "قصتنا", href: "/about" },
-              { label: "دليل الريتشوال", href: "/ritual" },
-              { label: "المجلة", href: "/magazine" },
-              { label: "مبيعات الجملة", href: "/wholesale" },
-            ]},
-            { title: "المساعدة", en: "HELP", links: [
-              { label: "تواصل معنا", href: "/wholesale" },
-              { label: "الشحن والتوصيل", href: "/policy" },
-              { label: "سياسة الإرجاع", href: "/policy" },
-              { label: "سياسة الخصوصية", href: "/policy" },
-            ]},
-          ].map(({ title, en, links }) => (
-            <div key={title}>
+          {/* Link sections */}
+          {sections.map(({ titleKey, en, links }) => (
+            <div key={titleKey}>
               <div style={{ marginBottom: "1.5rem" }}>
                 <p style={{
                   fontFamily: "'Cascadia Code', monospace",
@@ -118,15 +147,15 @@ export default function Footer() {
                 <p style={{
                   fontFamily: "'Mirza', serif",
                   fontSize: "0.85rem", color: "rgba(242,234,219,0.6)",
-                }}>{title}</p>
+                }}>{t(titleKey, lang)}</p>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "0.875rem" }}>
-                {links.map(l => (
-                  <Link key={l.label} href={l.href} style={{
+                {links.map(({ labelKey, href }) => (
+                  <Link key={labelKey} href={href} style={{
                     fontFamily: "'Mirza', serif",
                     fontSize: "0.82rem", color: "rgba(155,161,123,0.8)",
                     transition: "color 0.2s", textDecoration: "none",
-                  }}>{l.label}</Link>
+                  }}>{t(labelKey, lang)}</Link>
                 ))}
               </div>
             </div>
@@ -142,19 +171,15 @@ export default function Footer() {
             fontFamily: "'Cascadia Code', monospace", fontSize: "0.65rem",
             letterSpacing: "0.1em", color: "rgba(155,161,123,0.5)",
           }}>
-            © 2026 UJI MATCHA. ريتشوالك اليومي
+            © 2026 UJI MATCHA. {t("footer.copyright", lang)}
           </p>
           <div style={{ display: "flex", gap: "2rem" }}>
-            {[
-              { label: "سياسة الخصوصية", href: "/policy" },
-              { label: "سياسة الاسترجاع", href: "/policy" },
-              { label: "مبيعات الجملة", href: "/wholesale" },
-            ].map(({ label, href }) => (
-              <Link key={label} href={href} style={{
+            {bottomLinks.map(({ labelKey, href }) => (
+              <Link key={labelKey} href={href} style={{
                 fontFamily: "'Mirza', serif",
                 fontSize: "0.65rem", color: "rgba(155,161,123,0.4)",
                 transition: "color 0.2s", textDecoration: "none",
-              }}>{label}</Link>
+              }}>{t(labelKey, lang)}</Link>
             ))}
           </div>
         </div>
@@ -172,15 +197,13 @@ export default function Footer() {
             color: "rgba(155,161,123,0.45)", letterSpacing: "0.05em",
             flexShrink: 0,
           }}>
-            مرخّص ومسجّل لدى
+            {t("footer.licensed", lang)}
           </p>
-          {/* Ministry of Commerce */}
           <img
             src="/assets/brand/logo-moc-real.png"
             alt="وزارة التجارة"
             style={{ height: 48, objectFit: "contain", opacity: 0.75 }}
           />
-          {/* Saudi Business Center */}
           <img
             src="/assets/brand/logo-sbc-real.png"
             alt="المركز السعودي للأعمال"
@@ -189,7 +212,7 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Made by Qirox Studio — full-width bottom strip */}
+      {/* Made by Qirox Studio */}
       <div className="footer-credit" style={{
         background: "rgba(0,0,0,0.35)",
         borderTop: "1px solid rgba(155,161,123,0.1)",
@@ -210,7 +233,7 @@ export default function Footer() {
           color: "rgba(242,234,219,0.72)", letterSpacing: "0.05em",
           margin: 0,
         }}>
-          صُنع بواسطة{" "}
+          {t("footer.madeby", lang)}{" "}
           <a
             href="https://qiroxstudio.online"
             target="_blank"

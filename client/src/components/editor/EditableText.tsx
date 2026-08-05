@@ -1,24 +1,30 @@
 import { CSSProperties, ElementType } from "react";
 import { useEditMode } from "../../context/EditModeContext";
 import { useSiteContent } from "../../context/SiteContentContext";
+import { useLang } from "../../context/LanguageContext";
+import { t } from "../../lib/translations";
 
 interface Props {
   contentKey: string;
   defaultValue: string;
   as?: ElementType;
-  multiline?: boolean;   // kept for API compatibility — not used for modal anymore
+  multiline?: boolean;
   style?: CSSProperties;
   className?: string;
-  label?: string;        // kept for API compatibility
+  label?: string;
 }
 
 export function EditableText({ contentKey, defaultValue, as: Tag = "span", style, className }: Props) {
   const { editMode, activeKey, setActiveKey } = useEditMode();
   const { getContent } = useSiteContent();
+  const { lang } = useLang();
 
   const value = getContent(contentKey, defaultValue);
 
-  const isActive = editMode && activeKey === contentKey;
+  // In English edit mode, clicking targets the .en suffixed key so the sidebar
+  // field name reflects the English content slot.
+  const editKey = editMode && lang === "en" ? contentKey + ".en" : contentKey;
+  const isActive = editMode && (activeKey === contentKey || activeKey === editKey);
 
   const editStyle: CSSProperties = editMode
     ? {
@@ -38,9 +44,9 @@ export function EditableText({ contentKey, defaultValue, as: Tag = "span", style
       onClick={(e: React.MouseEvent) => {
         if (!editMode) return;
         e.stopPropagation();
-        setActiveKey(isActive ? null : contentKey);
+        setActiveKey(isActive ? null : editKey);
       }}
-      title={editMode ? `انقر للتعديل في اللوحة الجانبية` : undefined}
+      title={editMode ? t("cms.click-hint", lang) : undefined}
       dangerouslySetInnerHTML={{ __html: value.replace(/\n/g, "<br/>") }}
     />
   );

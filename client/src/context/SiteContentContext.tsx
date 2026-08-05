@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useRef, useCallback, useEffect, ReactNode } from "react";
+import { useLang } from "./LanguageContext";
 
 interface SiteContentCtx {
   content: Record<string, string>;
@@ -17,6 +18,7 @@ const Ctx = createContext<SiteContentCtx>({
 });
 
 export function SiteContentProvider({ children }: { children: ReactNode }) {
+  const { lang } = useLang();
   const [content, setContent] = useState<Record<string, string>>({});
   const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const pending = useRef<Record<string, string>>({});
@@ -56,8 +58,13 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   }, [doSave]);
 
   const getContent = useCallback((key: string, def: string): string => {
+    // In English mode: try key.en first, then fall back to key (Arabic), then def
+    if (lang === "en") {
+      const enKey = key + ".en";
+      if (enKey in content) return content[enKey];
+    }
     return key in content ? content[key] : def;
-  }, [content]);
+  }, [content, lang]);
 
   return (
     <Ctx.Provider value={{ content, getContent, updateContent, saveStatus, forceSave: doSave }}>

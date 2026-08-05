@@ -1,6 +1,8 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import { useEditMode } from "../../context/EditModeContext";
 import { useSiteContent } from "../../context/SiteContentContext";
+import { useLang } from "../../context/LanguageContext";
+import { t } from "../../lib/translations";
 import { CONTENT_REGISTRY, ContentField } from "./ContentRegistry";
 
 /* ─── Image upload helper ──────────────────────────────────────── */
@@ -193,10 +195,10 @@ function GroupBlock({ group, query, activeKey, onFieldClick }: {
 }
 
 /* ─── Shortcuts help ───────────────────────────────────────────── */
-const SHORTCUTS = [
-  { key: "Ctrl + E",   label: "تفعيل/إيقاف التعديل" },
-  { key: "Ctrl + S",   label: "حفظ يدوي" },
-  { key: "Esc",        label: "إغلاق الشريط" },
+const SHORTCUT_KEYS = [
+  { key: "Ctrl + E",   tKey: "cms.shortcut.toggle" as const },
+  { key: "Ctrl + S",   tKey: "cms.shortcut.save"   as const },
+  { key: "Esc",        tKey: "cms.shortcut.close"  as const },
 ];
 
 /* ══════════════════════════════════════════════════════════════════
@@ -205,6 +207,7 @@ const SHORTCUTS = [
 export function CmsSidebar() {
   const { editMode, setEditMode, activeKey, setActiveKey } = useEditMode();
   const { saveStatus, forceSave } = useSiteContent();
+  const { lang, setLang } = useLang();
   const [query, setQuery] = useState("");
 
   // Keyboard shortcuts
@@ -221,7 +224,9 @@ export function CmsSidebar() {
   if (!editMode) return null;
 
   const statusColor = { idle: "transparent", saving: "#C89B5A", saved: "#78933C", error: "#c0392b" }[saveStatus];
-  const statusLabel = { idle: "", saving: "حفظ...", saved: "✓ محفوظ", error: "⚠ خطأ" }[saveStatus];
+  const statusLabel = {
+    idle: "", saving: t("cms.saving", lang), saved: t("cms.saved", lang), error: t("cms.error", lang),
+  }[saveStatus];
 
   return (
     <div
@@ -247,13 +252,26 @@ export function CmsSidebar() {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
             <span style={{ fontFamily: "monospace", fontSize: "0.65rem", color: "#9BA17B", letterSpacing: "0.15em" }}>UJI</span>
-            <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.88rem", color: "#F2EADB", fontWeight: 500 }}>محرر المحتوى</span>
+            <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.88rem", color: "#F2EADB", fontWeight: 500 }}>{t("cms.editor", lang)}</span>
           </div>
-          <button
-            onClick={() => setEditMode(false)}
-            title="إغلاق (Esc)"
-            style={{ background: "none", border: "none", color: "rgba(242,234,219,0.4)", cursor: "pointer", fontSize: "1.1rem", lineHeight: 1, padding: "0.15rem" }}
-          >✕</button>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            {/* Language toggle inside CMS sidebar */}
+            {(["ar", "en"] as const).map(l => (
+              <button key={l} onClick={() => setLang(l)} style={{
+                background: lang === l ? "rgba(155,161,123,0.2)" : "none",
+                border: `1px solid ${lang === l ? "#9BA17B" : "rgba(155,161,123,0.2)"}`,
+                borderRadius: 3, padding: "0.15rem 0.4rem",
+                color: lang === l ? "#9BA17B" : "rgba(155,161,123,0.35)",
+                fontFamily: "monospace", fontSize: "0.55rem", letterSpacing: "0.1em",
+                cursor: "pointer", transition: "all 0.2s",
+              }}>{l.toUpperCase()}</button>
+            ))}
+            <button
+              onClick={() => setEditMode(false)}
+              title={`${t("cms.shortcut.close", lang)} (Esc)`}
+              style={{ background: "none", border: "none", color: "rgba(242,234,219,0.4)", cursor: "pointer", fontSize: "1.1rem", lineHeight: 1, padding: "0.15rem" }}
+            >✕</button>
+          </div>
         </div>
 
         {/* Save status */}
@@ -268,7 +286,7 @@ export function CmsSidebar() {
               display: "flex", alignItems: "center", justifyContent: "center", gap: "0.35rem",
             }}
           >
-            💾 حفظ الكل
+            {t("cms.saveall", lang)}
           </button>
           {saveStatus !== "idle" && (
             <span style={{ fontSize: "0.75rem", color: statusColor, whiteSpace: "nowrap" }}>
@@ -282,7 +300,7 @@ export function CmsSidebar() {
       <div style={{ padding: "0.65rem 1rem", borderBottom: "1px solid rgba(200,187,164,0.08)", flexShrink: 0 }}>
         <input
           type="text"
-          placeholder="🔍 بحث في الحقول..."
+          placeholder={t("cms.search", lang)}
           value={query}
           onChange={e => setQuery(e.target.value)}
           dir="rtl"
@@ -312,11 +330,11 @@ export function CmsSidebar() {
       {/* ─ Shortcuts footer ─ */}
       <div style={{ padding: "0.75rem 1rem", borderTop: "1px solid rgba(200,187,164,0.08)", flexShrink: 0 }}>
         <p style={{ fontFamily: "monospace", fontSize: "0.55rem", color: "rgba(155,161,123,0.4)", marginBottom: "0.4rem", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-          اختصارات لوحة المفاتيح
+          {t("cms.shortcuts", lang)}
         </p>
-        {SHORTCUTS.map(s => (
+        {SHORTCUT_KEYS.map(s => (
           <div key={s.key} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.2rem" }}>
-            <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.72rem", color: "rgba(242,234,219,0.4)" }}>{s.label}</span>
+            <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.72rem", color: "rgba(242,234,219,0.4)" }}>{t(s.tKey, lang)}</span>
             <kbd style={{ fontFamily: "monospace", fontSize: "0.55rem", color: "#9BA17B", background: "rgba(155,161,123,0.12)", padding: "0.15rem 0.4rem", borderRadius: 3, border: "1px solid rgba(155,161,123,0.2)" }}>
               {s.key}
             </kbd>

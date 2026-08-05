@@ -1,4 +1,7 @@
+import { EditableText } from "../components/editor/EditableText";
+
 export default function OurStoryPage() {
+
   const values = [
     {
       ar: "الأصالة",
@@ -48,25 +51,36 @@ export default function OurStoryPage() {
           }}
         />
         <div style={{ position: "relative", zIndex: 1, maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
-          <p style={{
-            fontFamily: "'Cascadia Code', monospace", fontSize: "0.58rem",
-            letterSpacing: "0.4em", color: "#9BA17B", marginBottom: "1.5rem",
-          }}>قصتنا</p>
-          <h1 style={{
-            fontFamily: "'Mirza', serif",
-            fontSize: "clamp(2.8rem,6vw,4.5rem)",
-            fontWeight: 700, color: "#F2EADB",
-            lineHeight: 1.2, marginBottom: "1.5rem",
-          }}>
-            من شيزوكا اليابانية<br />إلى كوبك
-          </h1>
-          <p style={{
-            fontFamily: "'Mirza', serif",
-            fontSize: "1rem", color: "rgba(242,234,219,0.7)",
-            lineHeight: 1.95, maxWidth: 520, margin: "0 auto",
-          }}>
-            بدأ الأمر بسؤال بسيط: لماذا لا تتوفر ماتشا يابانية حقيقية في المنطقة العربية؟ كل ما في الأسواق كان إما ماتشا طهي في أكياس فاخرة، أو مساحيق مجهولة المصدر. قررنا أن نغيّر ذلك.
-          </p>
+          <EditableText
+            contentKey="story.hero.eyebrow"
+            defaultValue="قصتنا"
+            as="p"
+            style={{
+              fontFamily: "'Cascadia Code', monospace", fontSize: "0.58rem",
+              letterSpacing: "0.4em", color: "#9BA17B", marginBottom: "1.5rem",
+            }}
+          />
+          <EditableText
+            contentKey="story.hero.title"
+            defaultValue={"من شيزوكا اليابانية\nإلى كوبك"}
+            as="h1"
+            style={{
+              fontFamily: "'Mirza', serif",
+              fontSize: "clamp(2.8rem,6vw,4.5rem)",
+              fontWeight: 700, color: "#F2EADB",
+              lineHeight: 1.2, marginBottom: "1.5rem",
+            }}
+          />
+          <EditableText
+            contentKey="story.hero.description"
+            defaultValue="بدأ الأمر بسؤال بسيط: لماذا لا تتوفر ماتشا يابانية حقيقية في المنطقة العربية؟ كل ما في الأسواق كان إما ماتشا طهي في أكياس فاخرة، أو مساحيق مجهولة المصدر. قررنا أن نغيّر ذلك."
+            as="p"
+            style={{
+              fontFamily: "'Mirza', serif",
+              fontSize: "1rem", color: "rgba(242,234,219,0.7)",
+              lineHeight: 1.95, maxWidth: 520, margin: "0 auto",
+            }}
+          />
         </div>
       </div>
 
@@ -78,22 +92,28 @@ export default function OurStoryPage() {
             letterSpacing: "0.4em", color: "#9BA17B",
             marginBottom: "1rem", textAlign: "center",
           }}>لماذا وُجدنا</p>
-          <h2 style={{
-            fontFamily: "'Mirza', serif",
-            fontSize: "clamp(2rem,4vw,3rem)", fontWeight: 700,
-            color: "#1C201B", textAlign: "center",
-            lineHeight: 1.25, marginBottom: "1rem",
-          }}>
-            لماذا لا تتوفر ماتشا<br />حقيقية في السوق السعودي؟
-          </h2>
-          <p style={{
-            fontFamily: "'Mirza', serif",
-            fontSize: "0.9rem", color: "#9BA17B",
-            lineHeight: 1.9, textAlign: "center",
-            maxWidth: 580, margin: "0 auto 3.5rem",
-          }}>
-            هذا السؤال هو سبب وجودنا. جلسنا نفكر فيه طويلاً ووجدنا ثلاثة أسباب حقيقية.
-          </p>
+          <EditableText
+            contentKey="story.why.title"
+            defaultValue={"لماذا لا تتوفر ماتشا\nحقيقية في السوق السعودي؟"}
+            as="h2"
+            style={{
+              fontFamily: "'Mirza', serif",
+              fontSize: "clamp(2rem,4vw,3rem)", fontWeight: 700,
+              color: "#1C201B", textAlign: "center",
+              lineHeight: 1.25, marginBottom: "1rem",
+            }}
+          />
+          <EditableText
+            contentKey="story.why.body"
+            defaultValue="هذا السؤال هو سبب وجودنا. جلسنا نفكر فيه طويلاً ووجدنا ثلاثة أسباب حقيقية."
+            as="p"
+            style={{
+              fontFamily: "'Mirza', serif",
+              fontSize: "0.9rem", color: "#9BA17B",
+              lineHeight: 1.9, textAlign: "center",
+              maxWidth: 580, margin: "0 auto 3.5rem",
+            }}
+          />
 
           <div style={{
             display: "grid",
@@ -157,21 +177,27 @@ export default function OurStoryPage() {
               </svg>
             </div>
             <div style={{ flex: 1, minWidth: 220 }}>
-              <p style={{
-                fontFamily: "'Mirza', serif",
-                fontSize: "1.35rem", fontWeight: 400,
-                color: "#F2EADB", lineHeight: 1.55,
-                marginBottom: "0.75rem",
-              }}>
-                قررنا أن نحلّ المشكلة من جذرها، شراء مباشر من مزارع شيزوكا، توصيل مباشر إليك، وشفافية كاملة عن كل ما في العلبة.
-              </p>
-              <p style={{
-                fontFamily: "'Mirza', serif",
-                fontSize: "0.83rem", color: "rgba(155,161,123,0.85)",
-                lineHeight: 1.85,
-              }}>
-                لهذا كل منتج UJI مرفق بشهادة المصدر. لهذا نذكر اسم المزرعة. لهذا نشرح الفرق بين كل صنف. الشفافية أساس الثقة.
-              </p>
+              <EditableText
+                contentKey="story.why.solution"
+                defaultValue="قررنا أن نحلّ المشكلة من جذرها، شراء مباشر من مزارع شيزوكا، توصيل مباشر إليك، وشفافية كاملة عن كل ما في العلبة."
+                as="p"
+                style={{
+                  fontFamily: "'Mirza', serif",
+                  fontSize: "1.35rem", fontWeight: 400,
+                  color: "#F2EADB", lineHeight: 1.55,
+                  marginBottom: "0.75rem",
+                }}
+              />
+              <EditableText
+                contentKey="story.why.detail"
+                defaultValue="لهذا كل منتج UJI مرفق بشهادة المصدر. لهذا نذكر اسم المزرعة. لهذا نشرح الفرق بين كل صنف. الشفافية أساس الثقة."
+                as="p"
+                style={{
+                  fontFamily: "'Mirza', serif",
+                  fontSize: "0.83rem", color: "rgba(155,161,123,0.85)",
+                  lineHeight: 1.85,
+                }}
+              />
             </div>
           </div>
         </div>
@@ -188,17 +214,25 @@ export default function OurStoryPage() {
               fontFamily: "'Cascadia Code', monospace", fontSize: "0.58rem",
               letterSpacing: "0.35em", color: "#9BA17B", marginBottom: "1rem",
             }}>SHIZUOKA, JAPAN</p>
-            <h2 style={{
-              fontFamily: "'Mirza', serif",
-              fontSize: "1.8rem", fontWeight: 700, color: "#1C201B",
-              marginBottom: "1.25rem", lineHeight: 1.3,
-            }}>مزارع شيزوكا</h2>
-            <p style={{
-              fontFamily: "'Mirza', serif",
-              fontSize: "0.88rem", color: "#6B7280", lineHeight: 1.95,
-            }}>
-              تقع شيزوكا على سفوح جبل فوجي، من أبرز مناطق زراعة الشاي في اليابان. مناخها المعتدل وتربتها البركانية الغنية والضباب الصباحي الذي يكسو مزارعها يخلقون ماتشا ذات نكهة عميقة وجودة استثنائية.
-            </p>
+            <EditableText
+              contentKey="story.shizuoka.title"
+              defaultValue="مزارع شيزوكا"
+              as="h2"
+              style={{
+                fontFamily: "'Mirza', serif",
+                fontSize: "1.8rem", fontWeight: 700, color: "#1C201B",
+                marginBottom: "1.25rem", lineHeight: 1.3,
+              }}
+            />
+            <EditableText
+              contentKey="story.shizuoka.body"
+              defaultValue="تقع شيزوكا على سفوح جبل فوجي، من أبرز مناطق زراعة الشاي في اليابان. مناخها المعتدل وتربتها البركانية الغنية والضباب الصباحي الذي يكسو مزارعها يخلقون ماتشا ذات نكهة عميقة وجودة استثنائية."
+              as="p"
+              style={{
+                fontFamily: "'Mirza', serif",
+                fontSize: "0.88rem", color: "#6B7280", lineHeight: 1.95,
+              }}
+            />
           </div>
           <div style={{ background: "rgba(200,187,164,0.3)", alignSelf: "stretch" }} />
           <div>
@@ -206,17 +240,25 @@ export default function OurStoryPage() {
               fontFamily: "'Cascadia Code', monospace", fontSize: "0.58rem",
               letterSpacing: "0.35em", color: "#9BA17B", marginBottom: "1rem",
             }}>UJI MATCHA, SA</p>
-            <h2 style={{
-              fontFamily: "'Mirza', serif",
-              fontSize: "1.8rem", fontWeight: 700, color: "#1C201B",
-              marginBottom: "1.25rem", lineHeight: 1.3,
-            }}>علامتنا</h2>
-            <p style={{
-              fontFamily: "'Mirza', serif",
-              fontSize: "0.88rem", color: "#6B7280", lineHeight: 1.95,
-            }}>
-              UJI MATCHA ليست مجرد علامة تجارية، إنها جسر بين ثقافتين. نحمل روح الماتشا اليابانية في كل علبة: ماتشا مزروعة في شيزوكا، بنفس الجودة الاحتفالية التي يشربها اليابانيون.
-            </p>
+            <EditableText
+              contentKey="story.brand.title"
+              defaultValue="علامتنا"
+              as="h2"
+              style={{
+                fontFamily: "'Mirza', serif",
+                fontSize: "1.8rem", fontWeight: 700, color: "#1C201B",
+                marginBottom: "1.25rem", lineHeight: 1.3,
+              }}
+            />
+            <EditableText
+              contentKey="story.brand.body"
+              defaultValue="UJI MATCHA ليست مجرد علامة تجارية، إنها جسر بين ثقافتين. نحمل روح الماتشا اليابانية في كل علبة: ماتشا مزروعة في شيزوكا، بنفس الجودة الاحتفالية التي يشربها اليابانيون."
+              as="p"
+              style={{
+                fontFamily: "'Mirza', serif",
+                fontSize: "0.88rem", color: "#6B7280", lineHeight: 1.95,
+              }}
+            />
           </div>
         </div>
       </div>
@@ -305,22 +347,37 @@ export default function OurStoryPage() {
       <div style={{
         background: "#16281D", padding: "4rem 1.5rem", textAlign: "center",
       }}>
-        <h2 style={{
-          fontFamily: "'Mirza', serif",
-          fontSize: "1.8rem", fontWeight: 700,
-          color: "#F2EADB", marginBottom: "0.75rem",
-        }}>كن جزءاً من القصة</h2>
-        <p style={{
-          fontFamily: "'Mirza', serif",
-          fontSize: "0.9rem", color: "#9BA17B",
-          marginBottom: "2rem",
-        }}>اشترك في نشرتنا وكن أول من يعرف كل جديد.</p>
+        <EditableText
+          contentKey="story.cta.title"
+          defaultValue="كن جزءاً من القصة"
+          as="h2"
+          style={{
+            fontFamily: "'Mirza', serif",
+            fontSize: "1.8rem", fontWeight: 700,
+            color: "#F2EADB", marginBottom: "0.75rem",
+          }}
+        />
+        <EditableText
+          contentKey="story.cta.body"
+          defaultValue="اشترك في نشرتنا وكن أول من يعرف كل جديد."
+          as="p"
+          style={{
+            fontFamily: "'Mirza', serif",
+            fontSize: "0.9rem", color: "#9BA17B",
+            marginBottom: "2rem",
+          }}
+        />
         <a href="/products" style={{
           display: "inline-block", background: "#F2EADB", color: "#16281D",
           padding: "1rem 3rem", textDecoration: "none",
           fontFamily: "'Mirza', serif",
           fontSize: "0.95rem", fontWeight: 600,
-        }}>تسوّق الآن ←</a>
+        }}>
+          <EditableText
+            contentKey="story.cta.btn"
+            defaultValue="تسوّق الآن ←"
+          />
+        </a>
       </div>
     </div>
   );

@@ -10,6 +10,18 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { AuthModalProvider } from "./context/AuthModalContext";
 import { SiteContentProvider } from "./context/SiteContentContext";
 import { EditModeProvider } from "./context/EditModeContext";
+import { LanguageProvider, useLang } from "./context/LanguageContext";
+import { t } from "./lib/translations";
+
+function NotFoundText() {
+  const { lang } = useLang();
+  return (
+    <>
+      <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.9rem", color: "#9BA17B" }}>{t("404.message", lang)}</p>
+      <Link href="/" style={{ background: "#1F3929", color: "#F2EADB", padding: "0.875rem 2.5rem", textDecoration: "none", fontFamily: "'Mirza', serif", fontSize: "0.9rem" }}>{t("404.back", lang)}</Link>
+    </>
+  );
+}
 import { AdminToggle } from "./components/cms/AdminToggle";
 import { CmsSidebar } from "./components/cms/CmsSidebar";
 import HomePage from "./pages/HomePage";
@@ -85,6 +97,7 @@ export default function App() {
 
   return (
     <ErrorBoundary>
+      <LanguageProvider>
       <SiteContentProvider>
         <EditModeProvider>
           <AuthModalProvider>
@@ -124,12 +137,7 @@ export default function App() {
                       background: "#F2EADB",
                     }}>
                       <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "8rem", fontWeight: 300, color: "#C8BBA4", lineHeight: 1 }}>404</p>
-                      <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.9rem", color: "#9BA17B" }}>الصفحة غير موجودة</p>
-                      <Link href="/" style={{
-                        background: "#1F3929", color: "#F2EADB",
-                        padding: "0.875rem 2.5rem", textDecoration: "none",
-                        fontFamily: "'Mirza', serif", fontSize: "0.9rem",
-                      }}>العودة للرئيسية</Link>
+                      <NotFoundText />
                     </div>
                   </Route>
                 </Switch>
@@ -145,6 +153,7 @@ export default function App() {
           </AuthModalProvider>
         </EditModeProvider>
       </SiteContentProvider>
+      </LanguageProvider>
     </ErrorBoundary>
   );
 }
