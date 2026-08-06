@@ -1,6 +1,8 @@
 import { EditableText } from "../components/editor/EditableText";
+import { useLang } from "../context/LanguageContext";
 
 export default function OurStoryPage() {
+  const { isRTL } = useLang();
 
   const values = [
     {
@@ -34,7 +36,7 @@ export default function OurStoryPage() {
   ];
 
   return (
-    <div style={{ background: "#F2EADB", minHeight: "100vh", direction: "rtl" }}>
+    <div style={{ background: "#F2EADB", minHeight: "100vh", direction: isRTL ? "rtl" : "ltr" }}>
 
       {/* ── Hero ── */}
       <div style={{

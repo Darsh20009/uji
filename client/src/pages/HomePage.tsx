@@ -9,6 +9,8 @@ import { EditableText } from "../components/editor/EditableText";
 import { EditableImage } from "../components/editor/EditableImage";
 import { EditableSection } from "../components/editor/EditableSection";
 import { useSiteContent } from "../context/SiteContentContext";
+import { useLang } from "../context/LanguageContext";
+import { t } from "../lib/translations";
 
 /* ─── Section label ─── */
 function SectionLabel({ num, en }: { num: string; en: string }) {
@@ -55,6 +57,7 @@ function Newsletter() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle"|"loading"|"done"|"error">("idle");
   const [msg, setMsg] = useState("");
+  const { lang } = useLang();
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,7 +68,7 @@ function Newsletter() {
       setEmail("");
     } catch (e: any) {
       setStatus("error");
-      setMsg(e.message || "حدث خطأ");
+      setMsg(e.message || t("common.error", lang));
     }
   };
 
@@ -93,12 +96,12 @@ function Newsletter() {
         />
         {status === "done" ? (
           <p style={{ fontFamily: "'Mirza', serif", fontSize: "1.3rem", fontWeight: 300, color: "#1F3929" }}>
-            أهلاً بك في عائلة UJI
+            {t("home.newsletter.success", lang)}
           </p>
         ) : (
           <form onSubmit={submit} style={{ display: "flex", gap: "0", maxWidth: 480, margin: "0 auto" }}>
             <input
-              type="email" placeholder="بريدك الإلكتروني"
+              type="email" placeholder={t("home.newsletter.placeholder", lang)}
               value={email} onChange={e => setEmail(e.target.value)} required
               style={{
                 flex: 1, height: 52, border: "1px solid rgba(200,187,164,0.5)",
@@ -109,7 +112,7 @@ function Newsletter() {
             />
             <button type="submit" disabled={status === "loading"} className="btn-primary"
               style={{ borderRadius: 0, height: 52, flexShrink: 0, minWidth: 100 }}>
-              {status === "loading" ? "..." : "اشترك"}
+              {status === "loading" ? "..." : t("home.newsletter.subscribe", lang)}
             </button>
           </form>
         )}

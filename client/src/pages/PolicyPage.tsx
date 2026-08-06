@@ -1,6 +1,8 @@
 import { EditableText } from "../components/editor/EditableText";
+import { useLang } from "../context/LanguageContext";
 
 export default function PolicyPage() {
+  const { isRTL } = useLang();
   const sectionStyle: React.CSSProperties = {
     marginBottom: "3rem",
   };
@@ -27,7 +29,7 @@ export default function PolicyPage() {
   };
 
   return (
-    <div style={{ background: "#F2EADB", paddingTop: 100, paddingBottom: 80, direction: "rtl" }}>
+    <div style={{ background: "#F2EADB", paddingTop: 100, paddingBottom: 80, direction: isRTL ? "rtl" : "ltr" }}>
       <div className="container" style={{ maxWidth: 780 }}>
         {/* Header */}
         <div style={{ marginBottom: "4rem", borderBottom: "1px solid rgba(200,187,164,0.3)", paddingBottom: "2.5rem" }}>

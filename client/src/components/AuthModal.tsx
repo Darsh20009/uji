@@ -4,6 +4,8 @@ import { useAuth } from "../hooks/useAuth";
 import { useAuthModal } from "../context/AuthModalContext";
 import { api } from "../lib/api";
 import PhoneInput, { COUNTRIES, type Country } from "./PhoneInput";
+import { useLang } from "../context/LanguageContext";
+import { t } from "../lib/translations";
 
 /* ─────────────────────── shared micro-styles ─────────────────────── */
 const F: React.CSSProperties  = { display: "flex", flexDirection: "column", gap: 6 };
@@ -81,15 +83,19 @@ function PwdField({ label, value, onChange, placeholder, required }: {
   );
 }
 
-/* ─────────────────────── types ─────────────────────── */
 type View = "login" | "register" | "forgot" | "otp";
 
-/* ═══════════════════════════════════════════════════════════════════
-   MAIN COMPONENT
-═══════════════════════════════════════════════════════════════════ */
+const TIER_KEYS = {
+  bronze:   "auth.loyalty.tier.bronze",
+  silver:   "auth.loyalty.tier.silver",
+  gold:     "auth.loyalty.tier.gold",
+  platinum: "auth.loyalty.tier.platinum",
+} as const;
+
 export default function AuthModal() {
   const { isOpen, initialTab, closeAuth } = useAuthModal();
   const { user, login, register, logout }  = useAuth();
+  const { lang, isRTL } = useLang();
 
   const [view,       setView]       = useState<View>("login");
   const [name,       setName]       = useState("");
@@ -105,7 +111,6 @@ export default function AuthModal() {
   const [success,    setSuccess]    = useState("");
   const [busy,       setBusy]       = useState(false);
 
-  /* ── open → sync view ── */
   useEffect(() => {
     if (isOpen) {
       setView(initialTab === "register" ? "register" : "login");
@@ -113,14 +118,12 @@ export default function AuthModal() {
     }
   }, [isOpen, initialTab]);
 
-  /* ── ESC ── */
   useEffect(() => {
     const h = (e: KeyboardEvent) => { if (e.key === "Escape") closeAuth(); };
     document.addEventListener("keydown", h);
     return () => document.removeEventListener("keydown", h);
   }, [closeAuth]);
 
-  /* ── lock scroll ── */
   useEffect(() => {
     document.body.style.overflow = isOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
@@ -135,29 +138,27 @@ export default function AuthModal() {
 
   const go = (v: View) => { setView(v); setError(""); setSuccess(""); };
 
-  /* ── login ── */
   const doLogin = async (e: React.FormEvent) => {
     e.preventDefault(); setError(""); setSuccess("");
-    if (!phone.trim()) { setError("يرجى إدخال رقم الجوال"); return; }
-    if (!pass)         { setError("يرجى إدخال كلمة المرور"); return; }
+    if (!phone.trim()) { setError(t("auth.err.phone.required", lang)); return; }
+    if (!pass)         { setError(t("auth.err.password.required", lang)); return; }
     setBusy(true);
     try {
       await login.mutateAsync({ phone: phone.trim(), password: pass });
-      setSuccess("تم تسجيل الدخول بنجاح ✦");
+      setSuccess(t("auth.login.success", lang));
       setTimeout(() => { closeAuth(); clear(); }, 900);
     } catch (err: any) {
-      setError(err.message || "بيانات غير صحيحة — تحقق من الجوال وكلمة المرور");
+      setError(err.message || t("auth.err.generic", lang));
     }
     setBusy(false);
   };
 
-  /* ── register ── */
   const doRegister = async (e: React.FormEvent) => {
     e.preventDefault(); setError(""); setSuccess("");
-    if (!name.trim())    { setError("يرجى إدخال الاسم الكامل"); return; }
-    if (!phone.trim())   { setError("يرجى إدخال رقم الجوال"); return; }
-    if (pass.length < 6) { setError("كلمة المرور يجب أن تكون ٦ أحرف على الأقل"); return; }
-    if (pass !== confirm) { setError("كلمتا المرور غير متطابقتين"); return; }
+    if (!name.trim())    { setError(t("auth.err.name.required", lang)); return; }
+    if (!phone.trim())   { setError(t("auth.err.phone.required", lang)); return; }
+    if (pass.length < 6) { setError(t("auth.err.password.min", lang)); return; }
+    if (pass !== confirm) { setError(t("auth.err.password.match", lang)); return; }
     setBusy(true);
     try {
       await register.mutateAsync({
@@ -167,57 +168,55 @@ export default function AuthModal() {
         email: email.trim() || undefined,
         role: "customer",
       } as any);
-      setSuccess("تم إنشاء حسابك بنجاح — أهلاً بك في UJI MATCHA ✦");
+      setSuccess(t("auth.register.success", lang));
       setTimeout(() => { closeAuth(); clear(); }, 1200);
     } catch (err: any) {
-      setError(err.message || "حدث خطأ أثناء إنشاء الحساب");
+      setError(err.message || t("auth.err.register.generic", lang));
     }
     setBusy(false);
   };
 
-  /* ── forgot — request OTP ── */
   const doForgot = async (e: React.FormEvent) => {
     e.preventDefault(); setError(""); setSuccess("");
-    if (!phone.trim()) { setError("يرجى إدخال رقم الجوال المسجل"); return; }
+    if (!phone.trim()) { setError(t("auth.err.phone.reg", lang)); return; }
     setBusy(true);
     try {
       const res = await api.post("/auth/forgot-password", { phone: phone.trim() });
-      setSuccess((res as any).message || "تم إرسال رمز التحقق إلى بريدك");
+      setSuccess((res as any).message || t("auth.forgot.submit", lang));
       setTimeout(() => go("otp"), 1500);
     } catch (err: any) {
-      setError(err.message || "حدث خطأ — تأكد من رقم الجوال");
+      setError(err.message || t("auth.err.forgot.generic", lang));
     }
     setBusy(false);
   };
 
-  /* ── reset — verify OTP + new password ── */
   const doReset = async (e: React.FormEvent) => {
     e.preventDefault(); setError(""); setSuccess("");
-    if (!otp.trim() || otp.length < 6) { setError("أدخل رمز التحقق المكوّن من ٦ أرقام"); return; }
-    if (newPass.length < 6)  { setError("كلمة المرور يجب أن تكون ٦ أحرف على الأقل"); return; }
-    if (newPass !== newConf)  { setError("كلمتا المرور غير متطابقتين"); return; }
+    if (!otp.trim() || otp.length < 6) { setError(t("auth.err.otp.invalid", lang)); return; }
+    if (newPass.length < 6)  { setError(t("auth.err.password.min", lang)); return; }
+    if (newPass !== newConf)  { setError(t("auth.err.password.match", lang)); return; }
     setBusy(true);
     try {
       const res = await api.post("/auth/reset-password", {
         phone: phone.trim(), otp: otp.trim(), newPassword: newPass,
       });
-      setSuccess((res as any).message || "تم تغيير كلمة المرور بنجاح ✦");
+      setSuccess((res as any).message || t("auth.otp.submit", lang));
       setTimeout(() => { clear(); go("login"); }, 1500);
     } catch (err: any) {
-      setError(err.message || "رمز التحقق غير صحيح أو منتهي الصلاحية");
+      setError(err.message || t("auth.err.otp.generic", lang));
     }
     setBusy(false);
   };
 
-  /* ── logout ── */
   const doLogout = async () => { await logout.mutateAsync(); closeAuth(); };
 
   if (!isOpen) return null;
 
-  /* ════ RENDER ════ */
+  const tierKey = (user as any)?.loyaltyTier as keyof typeof TIER_KEYS | undefined;
+  const tierLabel = tierKey && TIER_KEYS[tierKey] ? t(TIER_KEYS[tierKey], lang) : "";
+
   return (
     <>
-      {/* backdrop */}
       <div
         onClick={closeAuth}
         style={{
@@ -228,7 +227,6 @@ export default function AuthModal() {
         }}
       />
 
-      {/* popup */}
       <div
         role="dialog" aria-modal="true"
         style={{
@@ -243,7 +241,7 @@ export default function AuthModal() {
           display: "flex", flexDirection: "column",
           animation: "uji-popup 0.28s cubic-bezier(0.34,1.56,0.64,1)",
           overflowY: "auto",
-          direction: "rtl",
+          direction: isRTL ? "rtl" : "ltr",
         }}
       >
 
@@ -263,7 +261,7 @@ export default function AuthModal() {
               display: "flex", alignItems: "center", justifyContent: "center",
               cursor: "pointer", color: "#9BA17B",
             }}
-            aria-label="إغلاق"
+            aria-label={t("auth.close", lang)}
           >
             <X size={14} strokeWidth={2.5} />
           </button>
@@ -290,14 +288,13 @@ export default function AuthModal() {
               <User size={28} strokeWidth={1} color="#9BA17B" />
             </div>
             <div style={{ textAlign: "center" }}>
-              <p style={{ fontFamily: "'Mirza', serif", fontSize: "1.35rem", fontWeight: 400, color: "#1C201B", margin: "0 0 4px" }}>{(user as any).name || "مرحباً"}</p>
+              <p style={{ fontFamily: "'Mirza', serif", fontSize: "1.35rem", fontWeight: 400, color: "#1C201B", margin: "0 0 4px" }}>{(user as any).name || t("auth.hello", lang)}</p>
               <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.82rem", color: "#9BA17B", margin: 0, direction: "ltr" }}>{(user as any).phone}</p>
             </div>
-            {/* Loyalty points */}
             {(user as any).loyaltyPoints > 0 && (
               <div style={{ background: "#F2F7F3", border: "1px solid #A8C8B0", padding: "10px 20px", textAlign: "center" }}>
                 <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.82rem", color: "#1F3929", margin: 0 }}>
-                  نقاط الولاء: <strong>{(user as any).loyaltyPoints}</strong> ✦ مستوى {(user as any).loyaltyTier === "bronze" ? "برونزي" : (user as any).loyaltyTier === "silver" ? "فضي" : (user as any).loyaltyTier === "gold" ? "ذهبي" : "بلاتيني"}
+                  {t("auth.loyalty.points", lang)} <strong>{(user as any).loyaltyPoints}</strong> ✦ {tierLabel}
                 </p>
               </div>
             )}
@@ -305,7 +302,7 @@ export default function AuthModal() {
             <button onClick={doLogout} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "1px solid #C8BBA4", padding: "11px 28px", cursor: "pointer", fontFamily: "'Mirza', serif", fontSize: "0.88rem", color: "#1C201B", transition: "all 0.2s" }}
               onMouseEnter={e => { const b = e.currentTarget; b.style.background="#1F3929"; b.style.color="#F2EADB"; b.style.borderColor="#1F3929"; }}
               onMouseLeave={e => { const b = e.currentTarget; b.style.background="none"; b.style.color="#1C201B"; b.style.borderColor="#C8BBA4"; }}>
-              <LogOut size={14} strokeWidth={1.5} />تسجيل الخروج
+              <LogOut size={14} strokeWidth={1.5} />{t("auth.logout", lang)}
             </button>
           </div>
         ) : (
@@ -316,10 +313,10 @@ export default function AuthModal() {
           {/* ── Tabs ── */}
           {(view === "login" || view === "register") && (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", borderBottom: "1px solid rgba(200,187,164,0.4)", flexShrink: 0 }}>
-              {(["login", "register"] as const).map(t => (
-                <button key={t} type="button" onClick={() => go(t)}
-                  style={{ padding: "0.85rem", background: "none", border: "none", borderBottom: `2px solid ${view === t ? "#16281D" : "transparent"}`, fontFamily: "'Mirza', serif", fontSize: "0.82rem", color: view === t ? "#16281D" : "#9BA17B", cursor: "pointer", transition: "all 0.2s", fontWeight: view === t ? 600 : 400 }}>
-                  {t === "login" ? "تسجيل الدخول" : "حساب جديد"}
+              {(["login", "register"] as const).map(tab => (
+                <button key={tab} type="button" onClick={() => go(tab)}
+                  style={{ padding: "0.85rem", background: "none", border: "none", borderBottom: `2px solid ${view === tab ? "#16281D" : "transparent"}`, fontFamily: "'Mirza', serif", fontSize: "0.82rem", color: view === tab ? "#16281D" : "#9BA17B", cursor: "pointer", transition: "all 0.2s", fontWeight: view === tab ? 600 : 400 }}>
+                  {tab === "login" ? t("auth.tab.login", lang) : t("auth.tab.register", lang)}
                 </button>
               ))}
             </div>
@@ -332,7 +329,7 @@ export default function AuthModal() {
                 <ArrowRight size={16} strokeWidth={1.5} />
               </button>
               <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.82rem", color: "#1C201B", fontWeight: 600 }}>
-                {view === "forgot" ? "نسيت كلمة المرور" : "إدخال رمز التحقق"}
+                {view === "forgot" ? t("auth.forgot.title", lang) : t("auth.otp.title", lang)}
               </span>
             </div>
           )}
@@ -346,15 +343,15 @@ export default function AuthModal() {
             {view === "login" && (
               <form onSubmit={doLogin} style={{ display: "flex", flexDirection: "column", gap: "1.1rem" }}>
                 <div style={F}>
-                  <label style={LBL}>رقم الجوال</label>
+                  <label style={LBL}>{t("auth.field.phone", lang)}</label>
                   <PhoneInput theme="light" value={phone} onChange={(n,c) => { setPhone(n); setCountry(c); }} countryCode={country.code} onCountryChange={setCountry} required style={{ height: 48 }} />
                 </div>
-                <PwdField label="كلمة المرور" value={pass} onChange={setPass} required />
-                <div style={{ textAlign: "left" }}>
-                  <button type="button" onClick={() => go("forgot")} style={{ ...LINK, fontSize: "0.75rem", color: "#9BA17B", textDecoration: "none", borderBottom: "1px dashed #C8BBA4" }}>نسيت كلمة المرور؟</button>
+                <PwdField label={t("auth.field.password", lang)} value={pass} onChange={setPass} required />
+                <div style={{ textAlign: lang === "ar" ? "left" : "right" }}>
+                  <button type="button" onClick={() => go("forgot")} style={{ ...LINK, fontSize: "0.75rem", color: "#9BA17B", textDecoration: "none", borderBottom: "1px dashed #C8BBA4" }}>{t("auth.forgot", lang)}</button>
                 </div>
-                <button type="submit" disabled={busy} style={BTN(busy)}>{busy ? "جار الدخول..." : "دخول ✦"}</button>
-                <p style={MUTED}>ليس لديك حساب؟{" "}<button type="button" onClick={() => go("register")} style={LINK}>أنشئ حساباً</button></p>
+                <button type="submit" disabled={busy} style={BTN(busy)}>{busy ? t("auth.login.busy", lang) : t("auth.login.btn", lang)}</button>
+                <p style={MUTED}>{t("auth.login.noaccount", lang)}{" "}<button type="button" onClick={() => go("register")} style={LINK}>{t("auth.login.create", lang)}</button></p>
               </form>
             )}
 
@@ -362,40 +359,40 @@ export default function AuthModal() {
             {view === "register" && (
               <form onSubmit={doRegister} style={{ display: "flex", flexDirection: "column", gap: "1.1rem" }}>
                 <div style={F}>
-                  <label style={LBL}>الاسم الكامل</label>
-                  <input style={INP} value={name} onChange={e => setName(e.target.value)} placeholder="محمد العمري" required autoComplete="name" />
+                  <label style={LBL}>{t("auth.field.name", lang)}</label>
+                  <input style={INP} value={name} onChange={e => setName(e.target.value)} placeholder={t("auth.field.name.placeholder", lang)} required autoComplete="name" />
                 </div>
                 <div style={F}>
-                  <label style={LBL}>رقم الجوال</label>
+                  <label style={LBL}>{t("auth.field.phone", lang)}</label>
                   <PhoneInput theme="light" value={phone} onChange={(n,c) => { setPhone(n); setCountry(c); }} countryCode={country.code} onCountryChange={setCountry} required style={{ height: 48 }} />
                 </div>
                 <div style={F}>
-                  <label style={LBL}>البريد الإلكتروني <span style={{ color: "#C8BBA4" }}>(اختياري)</span></label>
+                  <label style={LBL}>{t("auth.field.email", lang)} <span style={{ color: "#C8BBA4" }}>{t("common.optional", lang)}</span></label>
                   <input style={INP} value={email} onChange={e => setEmail(e.target.value)} placeholder="example@email.com" type="email" />
                 </div>
-                <PwdField label="كلمة المرور" value={pass} onChange={setPass} placeholder="٦ أحرف على الأقل" required />
-                <PwdField label="تأكيد كلمة المرور" value={confirm} onChange={setConfirm} placeholder="أعد كتابة كلمة المرور" required />
+                <PwdField label={t("auth.field.password", lang)} value={pass} onChange={setPass} placeholder={t("auth.field.password.min", lang)} required />
+                <PwdField label={t("auth.field.password.confirm", lang)} value={confirm} onChange={setConfirm} placeholder={t("auth.field.password.retype", lang)} required />
 
-                <button type="submit" disabled={busy} style={BTN(busy)}>{busy ? "جار الإنشاء..." : "إنشاء الحساب ✦"}</button>
-                <p style={MUTED}>لديك حساب؟{" "}<button type="button" onClick={() => go("login")} style={LINK}>سجّل دخولك</button></p>
+                <button type="submit" disabled={busy} style={BTN(busy)}>{busy ? t("auth.register.busy", lang) : t("auth.register.btn", lang)}</button>
+                <p style={MUTED}>{t("auth.register.hasaccount", lang)}{" "}<button type="button" onClick={() => go("login")} style={LINK}>{t("auth.register.signin", lang)}</button></p>
               </form>
             )}
 
             {/* ════ FORGOT ════ */}
             {view === "forgot" && (
               <form onSubmit={doForgot} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.84rem", color: "#6B7280", lineHeight: 1.8, margin: "0 0 4px", direction: "rtl" }}>
-                  أدخل رقم جوالك المسجل وسنرسل رمز التحقق إلى بريدك الإلكتروني.
+                <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.84rem", color: "#6B7280", lineHeight: 1.8, margin: "0 0 4px", direction: isRTL ? "rtl" : "ltr" }}>
+                  {t("auth.forgot.body", lang)}
                 </p>
                 <div style={F}>
-                  <label style={LBL}>رقم الجوال المسجل</label>
+                  <label style={LBL}>{t("auth.field.phone.reg", lang)}</label>
                   <PhoneInput theme="light" value={phone} onChange={(n,c) => { setPhone(n); setCountry(c); }} countryCode={country.code} onCountryChange={setCountry} required style={{ height: 48 }} />
                 </div>
-                <button type="submit" disabled={busy} style={BTN(busy)}>{busy ? "جار الإرسال..." : "إرسال رمز التحقق ✦"}</button>
-                <div style={{ display: "flex", alignItems: "flex-start", gap: 8, background: "#F0EBE1", padding: "12px 14px", direction: "rtl" }}>
+                <button type="submit" disabled={busy} style={BTN(busy)}>{busy ? t("auth.forgot.sending", lang) : t("auth.forgot.submit", lang)}</button>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 8, background: "#F0EBE1", padding: "12px 14px", direction: isRTL ? "rtl" : "ltr" }}>
                   <Mail size={15} strokeWidth={1.5} color="#9BA17B" style={{ flexShrink: 0, marginTop: 2 }} />
                   <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.78rem", color: "#9BA17B", lineHeight: 1.7 }}>
-                    تأكد من وجود بريد إلكتروني مرتبط بحسابك
+                    {t("auth.forgot.email.hint", lang)}
                   </span>
                 </div>
               </form>
@@ -404,19 +401,19 @@ export default function AuthModal() {
             {/* ════ OTP ════ */}
             {view === "otp" && (
               <form onSubmit={doReset} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.84rem", color: "#6B7280", lineHeight: 1.8, margin: 0, direction: "rtl" }}>
-                  أدخل رمز التحقق المرسل لبريدك ثم اختر كلمة مرور جديدة.
+                <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.84rem", color: "#6B7280", lineHeight: 1.8, margin: 0, direction: isRTL ? "rtl" : "ltr" }}>
+                  {t("auth.otp.body", lang)}
                 </p>
                 <div style={F}>
-                  <label style={LBL}>رمز التحقق (٦ أرقام)</label>
+                  <label style={LBL}>{t("auth.field.otp", lang)}</label>
                   <input style={{ ...INP, direction: "ltr", textAlign: "center", fontSize: "1.4rem", letterSpacing: "0.35em", fontFamily: "monospace" }}
                     value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
                     placeholder="000000" required maxLength={6} inputMode="numeric" />
                 </div>
-                <PwdField label="كلمة المرور الجديدة" value={newPass} onChange={setNewPass} placeholder="٦ أحرف على الأقل" required />
-                <PwdField label="تأكيد كلمة المرور" value={newConf} onChange={setNewConf} placeholder="أعد كتابة كلمة المرور" required />
-                <button type="submit" disabled={busy} style={BTN(busy)}>{busy ? "جار التحقق..." : "تأكيد وتغيير كلمة المرور ✦"}</button>
-                <p style={MUTED}>لم يصلك الرمز؟{" "}<button type="button" onClick={() => go("forgot")} style={LINK}>إعادة الإرسال</button></p>
+                <PwdField label={t("auth.field.newpassword", lang)} value={newPass} onChange={setNewPass} placeholder={t("auth.field.password.min", lang)} required />
+                <PwdField label={t("auth.field.password.confirm", lang)} value={newConf} onChange={setNewConf} placeholder={t("auth.field.password.retype", lang)} required />
+                <button type="submit" disabled={busy} style={BTN(busy)}>{busy ? t("auth.otp.submitting", lang) : t("auth.otp.submit", lang)}</button>
+                <p style={MUTED}>{t("auth.otp.resend", lang)}{" "}<button type="button" onClick={() => go("forgot")} style={LINK}>{t("auth.otp.resend.link", lang)}</button></p>
               </form>
             )}
           </div>
@@ -425,8 +422,8 @@ export default function AuthModal() {
           {(view === "login" || view === "register") && (
             <div style={{ padding: "0.9rem 1.75rem", borderTop: "1px solid rgba(200,187,164,0.3)", flexShrink: 0 }}>
               <p style={{ fontSize: "0.68rem", color: "#C8BBA4", margin: 0, textAlign: "center", fontFamily: "'Mirza', serif", lineHeight: 1.7 }}>
-                بتسجيل حسابك توافق على{" "}
-                <a href="/policy" style={{ color: "#9BA17B" }}>سياسة الخصوصية وشروط الاستخدام</a>
+                {t("auth.terms", lang)}{" "}
+                <a href="/policy" style={{ color: "#9BA17B" }}>{t("auth.terms.link", lang)}</a>
               </p>
             </div>
           )}

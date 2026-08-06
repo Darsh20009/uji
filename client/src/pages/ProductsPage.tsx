@@ -3,9 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import ProductCard from "../components/ProductCard";
 import { Search } from "lucide-react";
+import { useLang } from "../context/LanguageContext";
+import { t } from "../lib/translations";
 
 export default function ProductsPage() {
   const [search, setSearch] = useState("");
+  const { lang } = useLang();
   const { data: products, isLoading } = useQuery({
     queryKey: ["products", search],
     queryFn: () => api.get(`/products${search ? "?q=" + search : ""}`),
@@ -29,7 +32,7 @@ export default function ProductsPage() {
               fontFamily: "'Mirza', serif",
               fontSize: "clamp(2.5rem,5vw,4rem)",
               fontWeight: 300, color: "#1C201B", lineHeight: 1,
-            }}>المجموعة</h1>
+            }}>{t("products.title", lang)}</h1>
 
             {/* Search */}
             <div style={{
@@ -39,7 +42,7 @@ export default function ProductsPage() {
             }}>
               <Search size={14} strokeWidth={1.5} style={{ color: "#9BA17B", flexShrink: 0 }} />
               <input
-                placeholder="ابحث عن منتج..."
+                placeholder={t("products.search", lang)}
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 style={{
@@ -63,7 +66,7 @@ export default function ProductsPage() {
         )}
         {!isLoading && products?.length === 0 && (
           <div style={{ textAlign: "center", padding: "5rem", color: "#9BA17B" }}>
-            <p style={{ fontFamily: "'Mirza', serif", fontSize: "1.5rem", fontWeight: 300 }}>لا توجد منتجات</p>
+            <p style={{ fontFamily: "'Mirza', serif", fontSize: "1.5rem", fontWeight: 300 }}>{t("products.empty", lang)}</p>
           </div>
         )}
         {products?.length > 0 && (

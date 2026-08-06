@@ -4,9 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import { useCart } from "../hooks/useCart";
 import { ArrowRight, ShoppingBag, Check } from "lucide-react";
+import { useLang } from "../context/LanguageContext";
+import { t } from "../lib/translations";
 
 export default function ProductDetailPage() {
   const [, params] = useRoute("/products/:id");
+  const { lang } = useLang();
   const { data: p, isLoading } = useQuery({
     queryKey: ["product", params?.id],
     queryFn: () => api.get(`/products/${params?.id}`),
@@ -21,7 +24,7 @@ export default function ProductDetailPage() {
     const title = `${p.name}${p.nameEn ? ` | ${p.nameEn}` : ""} — UJI MATCHA`;
     document.title = title;
     const description = document.querySelector('meta[name="description"]');
-    if (description) description.setAttribute("content", p.description || `اشترِ ${p.name} من UJI MATCHA — ماتشا يابانية أصلية مع توصيل إلى الرياض وجميع مدن السعودية.`);
+    if (description) description.setAttribute("content", p.description || `اشترِ ${p.name} من UJI MATCHA — ماتشا يابانية أصيلة مع توصيل إلى الرياض وجميع مدن السعودية.`);
     const schemaId = "uji-product-schema";
     document.getElementById(schemaId)?.remove();
     const script = document.createElement("script");
@@ -53,13 +56,13 @@ export default function ProductDetailPage() {
 
   if (isLoading) return (
     <div style={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#F2EADB" }}>
-      <p style={{ fontFamily: "'Mirza', serif", color: "#9BA17B" }}>جار التحميل...</p>
+      <p style={{ fontFamily: "'Mirza', serif", color: "#9BA17B" }}>{t("product.loading", lang)}</p>
     </div>
   );
   if (!p) return (
     <div style={{ minHeight: "80vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1.5rem", background: "#F2EADB" }}>
-      <p style={{ fontFamily: "'Mirza', serif", color: "#9BA17B" }}>المنتج غير موجود</p>
-      <Link href="/products" className="btn-outline">← العودة</Link>
+      <p style={{ fontFamily: "'Mirza', serif", color: "#9BA17B" }}>{t("product.notfound", lang)}</p>
+      <Link href="/products" className="btn-outline">{t("product.back", lang)}</Link>
     </div>
   );
 
@@ -72,13 +75,19 @@ export default function ProductDetailPage() {
     setTimeout(() => setAdded(false), 2200);
   };
 
+  const features = [
+    t("product.feature.freeship", lang),
+    t("product.feature.delivery", lang),
+    t("product.feature.cod", lang),
+  ];
+
   return (
     <div style={{ background: "#F2EADB", minHeight: "100vh", paddingTop: 100, paddingBottom: 80 }}>
       <div className="container">
         {/* Breadcrumb */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "3rem" }}>
           <Link href="/products" style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#9BA17B", textTransform: "uppercase" }}>
-            المتجر
+            {t("product.store", lang)}
           </Link>
           <ArrowRight size={10} color="#C8BBA4" />
           <span style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.6rem", letterSpacing: "0.2em", color: "#C8BBA4", textTransform: "uppercase" }}>
@@ -89,7 +98,6 @@ export default function ProductDetailPage() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5rem", alignItems: "start" }}>
           {/* ── Images ── */}
           <div>
-            {/* Main image */}
             <div style={{
               aspectRatio: "1", background: "#F7F2E8",
               border: "1px solid rgba(200,187,164,0.25)",
@@ -106,7 +114,6 @@ export default function ProductDetailPage() {
                 <div style={{ width: "60%", height: "60%", background: "rgba(200,187,164,0.2)" }} />
               )}
             </div>
-            {/* Thumbnails */}
             {imgs.length > 1 && (
               <div style={{ display: "flex", gap: "0.5rem" }}>
                 {imgs.map((im: string, i: number) => (
@@ -137,7 +144,7 @@ export default function ProductDetailPage() {
               fontSize: "clamp(2rem,3.5vw,3rem)",
               fontWeight: 300, color: "#1C201B", lineHeight: 1.15,
               marginBottom: "0.75rem",
-            }}>{p.name}</h1>
+            }}>{lang === "en" && p.nameEn ? p.nameEn : p.name}</h1>
 
             {p.nameEn && (
               <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.65rem", letterSpacing: "0.15em", color: "#C8BBA4", marginBottom: "1.5rem" }}>{p.nameEn}</p>
@@ -146,12 +153,12 @@ export default function ProductDetailPage() {
             {/* Price */}
             <div style={{ display: "flex", alignItems: "baseline", gap: "1rem", marginBottom: "2rem" }}>
               <span style={{ fontFamily: "'Mirza', serif", fontSize: "2rem", color: "#1F3929", fontWeight: 400 }}>
-                {p.price?.toFixed(2)} <span style={{ fontSize: "0.9rem", fontFamily: "'Mirza', serif" }}>ر.س</span>
+                {p.price?.toFixed(2)} <span style={{ fontSize: "0.9rem", fontFamily: "'Mirza', serif" }}>{t("common.currency", lang)}</span>
               </span>
               {discount > 0 && (
                 <>
                   <span style={{ fontFamily: "'Mirza', serif", fontSize: "1.2rem", color: "#C8BBA4", textDecoration: "line-through" }}>
-                    {p.comparePrice?.toFixed(2)} ر.س
+                    {p.comparePrice?.toFixed(2)} {t("common.currency", lang)}
                   </span>
                   <span style={{ background: "#1F3929", color: "#9BA17B", fontSize: "0.65rem", padding: "2px 8px", letterSpacing: "0.1em", fontFamily: "'Cascadia Code', monospace" }}>
                     -{discount}%
@@ -166,10 +173,9 @@ export default function ProductDetailPage() {
                 fontFamily: "'Mirza', serif",
                 fontSize: "0.88rem", lineHeight: 1.9, color: "#9BA17B",
                 marginBottom: "2.5rem",
-              }}>{p.description}</p>
+              }}>{lang === "en" && p.descriptionEn ? p.descriptionEn : p.description}</p>
             )}
 
-            {/* Separator */}
             <div style={{ width: 40, height: 1, background: "rgba(200,187,164,0.4)", marginBottom: "2.5rem" }} />
 
             {/* Qty + Add */}
@@ -193,23 +199,24 @@ export default function ProductDetailPage() {
                   opacity: p.stock === 0 ? 0.5 : 1,
                   transition: "all 0.3s",
                 }}>
-                {p.stock === 0 ? "نفدت الكمية" : added ? <><Check size={16} strokeWidth={2}/> أضيف للسلة</> : <><ShoppingBag size={16} strokeWidth={1.5}/> أضف للسلة</>}
+                {p.stock === 0
+                  ? t("product.outofstock", lang)
+                  : added
+                    ? <><Check size={16} strokeWidth={2}/> {t("product.addedtocart", lang)}</>
+                    : <><ShoppingBag size={16} strokeWidth={1.5}/> {t("product.addtocart", lang)}</>
+                }
               </button>
             </div>
 
             {p.stock > 0 && p.stock <= 5 && (
               <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.78rem", color: "#c0392b", marginBottom: "1.5rem" }}>
-                باقي {p.stock} فقط في المخزون
+                {t("product.stock.low", lang)} {p.stock} {t("product.stock.low2", lang)}
               </p>
             )}
 
             {/* Features */}
             <div style={{ borderTop: "1px solid rgba(200,187,164,0.3)", paddingTop: "1.75rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-              {[
-                "شحن مجاني للطلبات فوق ٢٠٠ ر.س",
-                "توصيل خلال ٣–٥ أيام عمل",
-                "الدفع عند الاستلام متاح",
-              ].map(f => (
+              {features.map(f => (
                 <div key={f} style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
                   <div style={{ width: 4, height: 4, borderRadius: "50%", background: "#9BA17B", flexShrink: 0 }} />
                   <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.82rem", color: "#9BA17B", margin: 0 }}>{f}</p>

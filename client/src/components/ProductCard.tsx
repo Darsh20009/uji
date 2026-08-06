@@ -2,20 +2,24 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { useCart } from "../hooks/useCart";
 import { ShoppingBag } from "lucide-react";
-
-const MATCHA_TYPE_LABEL: Record<string, { ar: string; color: string; bg: string }> = {
-  ceremonial: { ar: "فاخر جداً ✦",  color: "#7a5c1e", bg: "rgba(212,175,55,0.15)"  },
-  everyday:   { ar: "استخدام يومي", color: "#3a5c3a", bg: "rgba(155,161,123,0.18)" },
-  culinary:   { ar: "تجاري",        color: "#5a4a3a", bg: "rgba(180,160,130,0.18)" },
-};
+import { useLang } from "../context/LanguageContext";
+import { t } from "../lib/translations";
 
 export default function ProductCard({ product }: { product: any }) {
   const { add } = useCart();
+  const { lang } = useLang();
   const [hovered, setHovered] = useState(false);
 
   const rawImg = product.images?.[0] || "";
   const img = rawImg || "/assets/packaging/uji-tin-front-transparent.png";
-  const typeInfo = product.matchaType ? MATCHA_TYPE_LABEL[product.matchaType] : null;
+
+  const matchaTypeLabels: Record<string, { key: "card.type.ceremonial" | "card.type.everyday" | "card.type.culinary"; color: string; bg: string }> = {
+    ceremonial: { key: "card.type.ceremonial", color: "#7a5c1e", bg: "rgba(212,175,55,0.15)"  },
+    everyday:   { key: "card.type.everyday",   color: "#3a5c3a", bg: "rgba(155,161,123,0.18)" },
+    culinary:   { key: "card.type.culinary",   color: "#5a4a3a", bg: "rgba(180,160,130,0.18)" },
+  };
+
+  const typeInfo = product.matchaType ? matchaTypeLabels[product.matchaType] : null;
 
   return (
     <div
@@ -49,7 +53,7 @@ export default function ProductCard({ product }: { product: any }) {
         </div>
       </Link>
 
-      {/* Matcha type badge — top right */}
+      {/* Matcha type badge */}
       {typeInfo && (
         <div style={{
           position: "absolute", top: "0.75rem", right: "0.75rem",
@@ -61,7 +65,7 @@ export default function ProductCard({ product }: { product: any }) {
           borderRadius: 2,
           letterSpacing: "0.02em",
         }}>
-          {typeInfo.ar}
+          {t(typeInfo.key, lang)}
         </div>
       )}
 
@@ -82,7 +86,7 @@ export default function ProductCard({ product }: { product: any }) {
             color: "#1C201B", lineHeight: 1.4,
             marginBottom: "1rem",
           }}>
-            {product.name}
+            {lang === "en" && product.nameEn ? product.nameEn : product.name}
           </h3>
         </Link>
 
@@ -96,13 +100,13 @@ export default function ProductCard({ product }: { product: any }) {
               fontSize: "1.1rem", fontWeight: 400,
               color: "#1F3929",
             }}>
-              {product.price?.toFixed(0)} <span style={{ fontSize: "0.7rem", fontFamily: "'Cascadia Code', monospace", letterSpacing: "0.05em" }}>ر.س</span>
+              {product.price?.toFixed(0)} <span style={{ fontSize: "0.7rem", fontFamily: "'Cascadia Code', monospace", letterSpacing: "0.05em" }}>{t("common.currency", lang)}</span>
             </span>
             {product.comparePrice > 0 && product.comparePrice > product.price && (
               <span style={{
                 fontFamily: "'Mirza', serif",
                 fontSize: "0.85rem", color: "#C8BBA4",
-                textDecoration: "line-through", marginRight: "0.4rem",
+                textDecoration: "line-through", marginInlineStart: "0.4rem",
               }}>
                 {product.comparePrice?.toFixed(0)}
               </span>
@@ -130,7 +134,7 @@ export default function ProductCard({ product }: { product: any }) {
             }}
           >
             <ShoppingBag size={12} strokeWidth={1.5} />
-            أضف
+            {t("common.add", lang)}
           </button>
         </div>
       </div>
@@ -144,7 +148,7 @@ export default function ProductCard({ product }: { product: any }) {
           letterSpacing: "0.15em", textTransform: "uppercase",
           padding: "0.25rem 0.6rem",
         }}>
-          نفذ
+          {t("card.outofstock", lang)}
         </div>
       )}
     </div>

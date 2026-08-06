@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLang } from "../context/LanguageContext";
 
 const articles = [
   {
@@ -62,12 +63,13 @@ const tagColors: Record<string, { bg: string; text: string }> = {
 };
 
 export default function MagazinePage() {
+  const { isRTL } = useLang();
   const featured = articles.find(a => a.featured)!;
   const rest = articles.filter(a => !a.featured);
   const [hovered, setHovered] = useState<number | null>(null);
 
   return (
-    <div className="magazine-page" style={{ background: "#F2EADB", minHeight: "100vh", direction: "rtl" }}>
+    <div className="magazine-page" style={{ background: "#F2EADB", minHeight: "100vh", direction: isRTL ? "rtl" : "ltr" }}>
 
       {/* ══ HERO — cinematic street walk ══ */}
       <div className="mag-hero" style={{ position: "relative", height: "100vh", minHeight: 600, overflow: "hidden" }}>

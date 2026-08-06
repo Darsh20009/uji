@@ -2,8 +2,10 @@ import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import { EditableText } from "../components/editor/EditableText";
+import { useLang } from "../context/LanguageContext";
 
 export default function WholesalePage() {
+  const { isRTL } = useLang();
   const { data: settings } = useQuery({
     queryKey: ["settings"],
     queryFn: () => api.get("/settings"),
@@ -55,7 +57,7 @@ export default function WholesalePage() {
   ];
 
   return (
-    <div style={{ background: "#F2EADB", minHeight: "100vh", direction: "rtl" }}>
+    <div style={{ background: "#F2EADB", minHeight: "100vh", direction: isRTL ? "rtl" : "ltr" }}>
 
       {/* ── Hero ── */}
       <div style={{

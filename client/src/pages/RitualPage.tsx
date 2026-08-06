@@ -1,6 +1,8 @@
 import { EditableText } from "../components/editor/EditableText";
+import { useLang } from "../context/LanguageContext";
 
 export default function RitualPage() {
+  const { isRTL } = useLang();
 
   const steps = [
     {
@@ -69,7 +71,7 @@ export default function RitualPage() {
   ];
 
   return (
-    <div style={{ background: "#F2EADB", minHeight: "100vh", direction: "rtl" }}>
+    <div style={{ background: "#F2EADB", minHeight: "100vh", direction: isRTL ? "rtl" : "ltr" }}>
 
       {/* ── Hero ── */}
       <div style={{
