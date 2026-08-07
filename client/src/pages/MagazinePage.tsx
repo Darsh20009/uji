@@ -1,71 +1,45 @@
 import { useState } from "react";
 import { useLang } from "../context/LanguageContext";
 
-const articles = [
-  {
-    id: 1,
-    tag: "أصول",
-    title: "من شيزوكا إلى العالم — قصة الأرض التي تُزرع فيها ماتشا UJI",
-    excerpt: "على سفوح جبل فوجي، في قلب محافظة شيزوكا، تنمو أوراق الشاي الخضراء التي تُحوَّل إلى ماتشا UJI. أرض يصنعها المناخ والحرفة معاً.",
-    read: "٥ دقائق",
-    img: "/assets/magazine/mag-storefront.png",
-    featured: true,
-  },
-  {
-    id: 2,
-    tag: "صحة",
-    title: "L-Theanine: السر وراء هدوء الماتشا",
-    excerpt: "الكافيين وحده يعطيك طاقة مع توتر، لكن الماتشا تحتوي على L-Theanine الذي يوازن التأثير ويمنحك تركيزاً صافياً.",
-    read: "٣ دقائق",
-    img: "/assets/magazine/uji-matcha-latte-still.png",
-  },
-  {
-    id: 3,
-    tag: "ريتشوال",
-    title: "الفرق بين الدرجة الاحتفالية ودرجة الطهي",
-    excerpt: "ليست كل الماتشا واحدة. الدرجة الاحتفالية مصنوعة من أصغر الأوراق وأكثرها ظلاً، والفرق يُرى ويُشرب.",
-    read: "٤ دقائق",
-    img: "/assets/magazine/mag-man-bench.png",
-  },
-  {
-    id: 4,
-    tag: "وصفة",
-    title: "Matcha Latte المثالي خطوة بخطوة",
-    excerpt: "ليس مجرد خفق الماتشا في الحليب. النسب، درجة الحرارة، ونوع الحليب، كل تفصيلة تصنع الفرق.",
-    read: "٣ دقائق",
-    img: "/assets/magazine/uji-matcha-latte-editorial.png",
-  },
-  {
-    id: 5,
-    tag: "ثقافة",
-    title: "حفل الشاي الياباني Chado طريق الشاي",
-    excerpt: "Chado ليس مجرد شرب شاي. إنه فلسفة مبنية على أربع قيم: الانسجام، الاحترام، النقاء، والهدوء.",
-    read: "٦ دقائق",
-    img: "/assets/magazine/mag-night-store.png",
-  },
-  {
-    id: 6,
-    tag: "برند",
-    title: "قصة علامة UJI كيف وُلد التصميم من الهوية",
-    excerpt: "كل منحنى في الشعار له معنى. الاتصال السلس، الـ serif الأنيق، وورقة الشاي، ثلاثة عناصر تحكي قصة العلامة.",
-    read: "٤ دقائق",
-    img: "/assets/magazine/mag-man-bag.png",
-  },
-];
+const articles = {
+  ar: [
+    { id: 1, tag: "أصول", title: "من شيزوكا إلى العالم — قصة الأرض التي تُزرع فيها ماتشا UJI", excerpt: "على سفوح جبل فوجي، في قلب محافظة شيزوكا، تنمو أوراق الشاي الخضراء التي تُحوَّل إلى ماتشا UJI. أرض يصنعها المناخ والحرفة معاً.", read: "٥ دقائق", img: "/assets/magazine/mag-storefront.png", featured: true },
+    { id: 2, tag: "صحة", title: "L-Theanine: السر وراء هدوء الماتشا", excerpt: "الكافيين وحده يعطيك طاقة مع توتر، لكن الماتشا تحتوي على L-Theanine الذي يوازن التأثير ويمنحك تركيزاً صافياً.", read: "٣ دقائق", img: "/assets/magazine/uji-matcha-latte-still.png" },
+    { id: 3, tag: "ريتشوال", title: "الفرق بين الدرجة الاحتفالية ودرجة الطهي", excerpt: "ليست كل الماتشا واحدة. الدرجة الاحتفالية مصنوعة من أصغر الأوراق وأكثرها ظلاً، والفرق يُرى ويُشرب.", read: "٤ دقائق", img: "/assets/magazine/mag-man-bench.png" },
+    { id: 4, tag: "وصفة", title: "Matcha Latte المثالي خطوة بخطوة", excerpt: "ليس مجرد خفق الماتشا في الحليب. النسب، درجة الحرارة، ونوع الحليب، كل تفصيلة تصنع الفرق.", read: "٣ دقائق", img: "/assets/magazine/uji-matcha-latte-editorial.png" },
+    { id: 5, tag: "ثقافة", title: "حفل الشاي الياباني Chado طريق الشاي", excerpt: "Chado ليس مجرد شرب شاي. إنه فلسفة مبنية على أربع قيم: الانسجام، الاحترام، النقاء، والهدوء.", read: "٦ دقائق", img: "/assets/magazine/mag-night-store.png" },
+    { id: 6, tag: "برند", title: "قصة علامة UJI كيف وُلد التصميم من الهوية", excerpt: "كل منحنى في الشعار له معنى. الاتصال السلس، الـ serif الأنيق، وورقة الشاي، ثلاثة عناصر تحكي قصة العلامة.", read: "٤ دقائق", img: "/assets/magazine/mag-man-bag.png" },
+  ],
+  en: [
+    { id: 1, tag: "Origins", title: "From Shizuoka to the World — the land behind UJI Matcha", excerpt: "On the slopes of Mount Fuji, in the heart of Shizuoka, green tea leaves grow into UJI Matcha. A place shaped by climate and craft together.", read: "5 min", img: "/assets/magazine/mag-storefront.png", featured: true },
+    { id: 2, tag: "Health", title: "L-Theanine: the secret behind matcha calm", excerpt: "Caffeine alone gives you energy with jitters, but matcha also contains L-Theanine, which balances the effect and gives you clear focus.", read: "3 min", img: "/assets/magazine/uji-matcha-latte-still.png" },
+    { id: 3, tag: "Ritual", title: "The difference between ceremonial and culinary grade", excerpt: "Not all matcha is the same. Ceremonial grade comes from the youngest, most shaded leaves, and the difference can be seen and tasted.", read: "4 min", img: "/assets/magazine/mag-man-bench.png" },
+    { id: 4, tag: "Recipe", title: "The perfect Matcha Latte, step by step", excerpt: "It is not just whisking matcha into milk. Ratios, temperature, and milk choice all shape the final cup.", read: "3 min", img: "/assets/magazine/uji-matcha-latte-editorial.png" },
+    { id: 5, tag: "Culture", title: "The Japanese tea ceremony, Chado", excerpt: "Chado is more than drinking tea. It is a philosophy built on four values: harmony, respect, purity, and calm.", read: "6 min", img: "/assets/magazine/mag-night-store.png" },
+    { id: 6, tag: "Brand", title: "The story of UJI — how design grew from identity", excerpt: "Every curve in the logo has meaning. The seamless connection, elegant serif, and tea leaf tell the brand story.", read: "4 min", img: "/assets/magazine/mag-man-bag.png" },
+  ],
+};
 
 const tagColors: Record<string, { bg: string; text: string }> = {
-  "أصول":    { bg: "#1F3929", text: "#F2EADB" },
-  "صحة":     { bg: "#4C5734", text: "#F2EADB" },
+  "أصول": { bg: "#1F3929", text: "#F2EADB" },
+  "صحة": { bg: "#4C5734", text: "#F2EADB" },
   "ريتشوال": { bg: "#9BA17B", text: "#1C201B" },
-  "وصفة":    { bg: "#C89B5A", text: "#fff" },
-  "ثقافة":   { bg: "#1F3929", text: "#F2EADB" },
-  "برند":    { bg: "#1C201B", text: "#F2EADB" },
+  "وصفة": { bg: "#C89B5A", text: "#fff" },
+  "ثقافة": { bg: "#1F3929", text: "#F2EADB" },
+  "برند": { bg: "#1C201B", text: "#F2EADB" },
+  Origins: { bg: "#1F3929", text: "#F2EADB" },
+  Health: { bg: "#4C5734", text: "#F2EADB" },
+  Ritual: { bg: "#9BA17B", text: "#1C201B" },
+  Recipe: { bg: "#C89B5A", text: "#fff" },
+  Culture: { bg: "#1F3929", text: "#F2EADB" },
+  Brand: { bg: "#1C201B", text: "#F2EADB" },
 };
 
 export default function MagazinePage() {
-  const { isRTL } = useLang();
-  const featured = articles.find(a => a.featured)!;
-  const rest = articles.filter(a => !a.featured);
+  const { isRTL, lang } = useLang();
+  const list = articles[lang];
+  const featured = list.find(a => a.featured)!;
+  const rest = list.filter(a => !a.featured);
   const [hovered, setHovered] = useState<number | null>(null);
 
   return (
@@ -88,12 +62,12 @@ export default function MagazinePage() {
           alignItems: "center", textAlign: "center",
           padding: "0 1.5rem",
         }}>
-          <p style={{
+            <p style={{
             fontFamily: "'Cascadia Code', monospace",
             fontSize: "0.58rem", letterSpacing: "0.5em",
             color: "#9BA17B", marginBottom: "1.25rem",
             textTransform: "uppercase",
-          }}>THE UJI JOURNAL — العدد الأول</p>
+            }}>{lang === "ar" ? "THE UJI JOURNAL — العدد الأول" : "THE UJI JOURNAL — ISSUE 01"}</p>
           <h1 style={{
             fontFamily: "'Mirza', serif",
             fontSize: "clamp(3.5rem,9vw,7rem)",
@@ -121,17 +95,17 @@ export default function MagazinePage() {
           alt="UJI Brand Identity"
           style={{ width: "100%", height: "clamp(320px,50vw,640px)", objectFit: "cover", objectPosition: "center", display: "block" }}
         />
-        <div style={{
+          <div style={{
           position: "absolute", inset: 0,
           background: "linear-gradient(270deg, rgba(22,40,29,0) 50%, rgba(22,40,29,0.75) 100%)",
           display: "flex", alignItems: "center",
         }}>
           <div style={{ padding: "3rem 4rem", maxWidth: 420 }}>
-            <p style={{
+              <p style={{
               fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem",
               letterSpacing: "0.45em", color: "#9BA17B", marginBottom: "1rem",
               textTransform: "uppercase",
-            }}>✦ CRAFTED IN JAPAN — SINCE 2026</p>
+              }}>{lang === "ar" ? "✦ CRAFTED IN JAPAN — SINCE 2026" : "✦ CRAFTED IN JAPAN — SINCE 2026"}</p>
             <h2 style={{
               fontFamily: "'Mirza', serif",
               fontSize: "clamp(1.8rem,3.5vw,3rem)",
@@ -157,25 +131,29 @@ export default function MagazinePage() {
             <p style={{
               fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem",
               letterSpacing: "0.4em", color: "#9BA17B", marginBottom: "1.5rem",
-            }}>✦ عن الاسم</p>
+            }}>{lang === "ar" ? "✦ عن الاسم" : "✦ ABOUT THE NAME"}</p>
             <h2 style={{
               fontFamily: "'Mirza', serif",
               fontSize: "clamp(2rem,4vw,3.5rem)",
               color: "#F2EADB", fontWeight: 700, lineHeight: 1.15, marginBottom: "1.25rem",
-            }}>ما معنى<br />UJI؟</h2>
+            }}>{lang === "ar" ? <>ما معنى<br />UJI؟</> : <>What does<br />UJI mean?</>}</h2>
             <p style={{
               fontFamily: "'Mirza', serif",
               fontSize: "0.88rem", color: "rgba(242,234,219,0.7)",
               lineHeight: 1.9, marginBottom: "2rem",
             }}>
-              UJI هو اسم علامتنا التجارية، مستوحى من عالم الماتشا اليابانية وثقافة الشاي العريقة. ماتشا UJI مصدرها مزارع شيزوكا، واحدة من أرقى مناطق زراعة الشاي في اليابان.
+              {lang === "ar"
+                ? "UJI هو اسم علامتنا التجارية، مستوحى من عالم الماتشا اليابانية وثقافة الشاي العريقة. ماتشا UJI مصدرها مزارع شيزوكا، واحدة من أرقى مناطق زراعة الشاي في اليابان."
+                : "UJI is our brand name, inspired by the world of Japanese matcha and the long tradition of tea culture. UJI matcha comes from the farms of Shizuoka, one of Japan's finest tea-growing regions."}
             </p>
             <p style={{
               fontFamily: "'Mirza', serif",
               fontSize: "0.82rem", color: "rgba(155,161,123,0.85)",
               lineHeight: 1.85,
             }}>
-              شيزوكا تقع على سفوح جبل فوجي، مناخها المعتدل وتربتها البركانية الغنية تُنتج ماتشا ذات جودة استثنائية ونكهة عميقة.
+              {lang === "ar"
+                ? "شيزوكا تقع على سفوح جبل فوجي، مناخها المعتدل وتربتها البركانية الغنية تُنتج ماتشا ذات جودة استثنائية ونكهة عميقة."
+                : "Shizuoka sits on the slopes of Mount Fuji, and its mild climate and rich volcanic soil produce matcha with exceptional quality and depth of flavor."}
             </p>
           </div>
           <div className="mag-image-panel" style={{ overflow: "hidden", minHeight: 420 }}>
@@ -211,7 +189,7 @@ export default function MagazinePage() {
               <p style={{
                 fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem",
                 letterSpacing: "0.4em", color: "#9BA17B", marginBottom: "1rem",
-              }}>✦ المقال المميز</p>
+              }}>{lang === "ar" ? "✦ المقال المميز" : "✦ FEATURED ARTICLE"}</p>
               <span style={{
                 display: "inline-block", alignSelf: "flex-start",
                 background: "#1F3929", color: "#9BA17B",
@@ -281,26 +259,30 @@ export default function MagazinePage() {
             <p style={{
               fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem",
               letterSpacing: "0.4em", color: "#9BA17B", marginBottom: "1.5rem",
-            }}>✦ الهوية البصرية</p>
+            }}>{lang === "ar" ? "✦ الهوية البصرية" : "✦ VISUAL IDENTITY"}</p>
             <h2 style={{
               fontFamily: "'Mirza', serif",
               fontSize: "clamp(1.8rem,3vw,2.8rem)",
               color: "#1C201B", fontWeight: 700,
               lineHeight: 1.25, marginBottom: "1.25rem",
-            }}>تصميم وُلد<br />من المعنى</h2>
+            }}>{lang === "ar" ? <>تصميم وُلد<br />من المعنى</> : <>A design born<br />from meaning</>}</h2>
             <p style={{
               fontFamily: "'Mirza', serif",
               fontSize: "0.88rem", color: "#9BA17B",
               lineHeight: 1.9, marginBottom: "1rem",
             }}>
-              الاتصال السلس يعكس انسياب الشاي. الـ Serif الأنيق يحاكي عمارة اليابان الكلاسيكية. وورقة الشاي تُكمل القصة.
+              {lang === "ar"
+                ? "الاتصال السلس يعكس انسياب الشاي. الـ Serif الأنيق يحاكي عمارة اليابان الكلاسيكية. وورقة الشاي تُكمل القصة."
+                : "The seamless connection reflects the flow of tea. The elegant serif echoes classic Japanese architecture, and the tea leaf completes the story."}
             </p>
             <p style={{
               fontFamily: "'Mirza', serif",
               fontSize: "0.82rem", color: "#C8BBA4",
               lineHeight: 1.85,
             }}>
-              كل تفصيلة في الشعار صُممت لتعكس فلسفة UJI، البساطة التي تحمل عمقاً.
+              {lang === "ar"
+                ? "كل تفصيلة في الشعار صُممت لتعكس فلسفة UJI، البساطة التي تحمل عمقاً."
+                : "Every detail in the logo was designed to reflect UJI's philosophy: simplicity with depth."}
             </p>
           </div>
         </div>
@@ -321,19 +303,21 @@ export default function MagazinePage() {
             padding: "3.25rem 3rem", display: "flex",
             flexDirection: "column", justifyContent: "center",
           }}>
-            <p style={{
+              <p style={{
               fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem",
               letterSpacing: "0.4em", color: "#7E8962", marginBottom: "1.25rem",
-            }}>✦ THE TIN — 01</p>
+              }}>{lang === "ar" ? "✦ العلبة — 01" : "✦ THE TIN — 01"}</p>
             <h2 style={{
               fontFamily: "'Mirza', serif",
               fontSize: "clamp(1.8rem,3.2vw,2.8rem)", color: "#1C201B",
               lineHeight: 1.25, marginBottom: "1rem",
-            }}>علبة صُممت<br />بعناية فائقة</h2>
+            }}>{lang === "ar" ? <>علبة صُممت<br />بعناية فائقة</> : <>A tin designed<br />with care</>}</h2>
             <p style={{
               fontFamily: "'Mirza', serif",
               fontSize: "0.86rem", color: "#6D7559", lineHeight: 1.95,
-            }}>من الملمس إلى آخر تفصيلة في الغطاء، صُممت علبة UJI لتحتفظ بنضارة الماتشا وتحضر طقساً جميلاً في كل مرة.</p>
+            }}>{lang === "ar"
+              ? "من الملمس إلى آخر تفصيلة في الغطاء، صُممت علبة UJI لتحتفظ بنضارة الماتشا وتحضر طقساً جميلاً في كل مرة."
+              : "From the texture to the final detail on the lid, the UJI tin is designed to keep matcha fresh and create a beautiful ritual every time."}</p>
             <span style={{
               marginTop: "1.5rem", fontFamily: "'Cascadia Code', monospace",
               fontSize: "0.5rem", letterSpacing: "0.25em", color: "#1F3929",
@@ -353,9 +337,9 @@ export default function MagazinePage() {
             display: "flex", alignItems: "center",
           }}>
             <div className="mag-fields-copy" style={{ padding: "3rem 4rem", maxWidth: 420 }}>
-              <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem", letterSpacing: "0.42em", color: "#C8D09F", marginBottom: "1rem" }}>✦ FROM THE SOURCE</p>
-              <h2 style={{ fontFamily: "'Mirza', serif", fontSize: "clamp(1.9rem,3.5vw,3rem)", color: "#F2EADB", lineHeight: 1.2, marginBottom: "1rem" }}>من قلب الحقول<br />إلى طقسك اليومي</h2>
-              <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.86rem", color: "rgba(242,234,219,0.78)", lineHeight: 1.9 }}>شيزوكا ليست مجرد موقع على الخريطة؛ إنها أرض ومناخ وحرفة تتوارثها الأجيال.</p>
+              <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem", letterSpacing: "0.42em", color: "#C8D09F", marginBottom: "1rem" }}>{lang === "ar" ? "✦ FROM THE SOURCE" : "✦ FROM THE SOURCE"}</p>
+              <h2 style={{ fontFamily: "'Mirza', serif", fontSize: "clamp(1.9rem,3.5vw,3rem)", color: "#F2EADB", lineHeight: 1.2, marginBottom: "1rem" }}>{lang === "ar" ? <>من قلب الحقول<br />إلى طقسك اليومي</> : <>From the fields<br />to your daily ritual</>}</h2>
+              <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.86rem", color: "rgba(242,234,219,0.78)", lineHeight: 1.9 }}>{lang === "ar" ? "شيزوكا ليست مجرد موقع على الخريطة؛ إنها أرض ومناخ وحرفة تتوارثها الأجيال." : "Shizuoka is more than a place on the map; it is land, climate, and craft passed down through generations."}</p>
             </div>
           </div>
         </div>
@@ -379,16 +363,16 @@ export default function MagazinePage() {
               <p style={{
                 fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem",
                 letterSpacing: "0.45em", color: "#9BA17B", marginBottom: "1rem",
-              }}>✦ المنتج</p>
+              }}>{lang === "ar" ? "✦ المنتج" : "✦ THE PRODUCT"}</p>
               <h2 style={{
                 fontFamily: "'Mirza', serif",
                 fontSize: "clamp(1.8rem,3.5vw,3rem)",
                 color: "#F2EADB", fontWeight: 700, lineHeight: 1.2, marginBottom: "1rem",
-              }}>Matcha Latte المثالي</h2>
+              }}>{lang === "ar" ? <>Matcha Latte المثالي</> : <>The perfect Matcha Latte</>}</h2>
               <p style={{
                 fontFamily: "'Mirza', serif",
                 fontSize: "0.88rem", color: "rgba(242,234,219,0.7)", lineHeight: 1.9,
-              }}>النسب، درجة الحرارة، ونوع الحليب — كل تفصيلة تصنع الفرق بين كوب عادي وتجربة لا تُنسى.</p>
+              }}>{lang === "ar" ? "النسب، درجة الحرارة، ونوع الحليب — كل تفصيلة تصنع الفرق بين كوب عادي وتجربة لا تُنسى." : "Ratios, temperature, and milk choice — every detail shapes the difference between an ordinary cup and an unforgettable experience."}</p>
             </div>
           </div>
         </div>
@@ -447,7 +431,7 @@ export default function MagazinePage() {
                     fontSize: "0.52rem", letterSpacing: "0.2em",
                     color: isHov ? "#1F3929" : "#C8BBA4",
                     transition: "color 0.3s",
-                  }}>قراءة {a.read}</span>
+                  >{lang === "ar" ? `قراءة ${a.read}` : `Read ${a.read}`}</span>
                 </div>
               );
             })}
@@ -488,28 +472,28 @@ export default function MagazinePage() {
           textAlign: "center",
           gap: "1rem",
         }}>
-          <p style={{
+            <p style={{
             fontFamily: "'Cascadia Code', monospace",
             fontSize: "0.55rem", letterSpacing: "0.4em",
             color: "#9BA17B",
-          }}>✦ النشرة البريدية</p>
+            }}>{lang === "ar" ? "✦ النشرة البريدية" : "✦ NEWSLETTER"}</p>
           <h3 style={{
             fontFamily: "'Mirza', serif",
             fontSize: "clamp(1.6rem,3.5vw,2.5rem)",
             color: "#F2EADB", fontWeight: 700, lineHeight: 1.2,
-          }}>مقالات جديدة كل أسبوع</h3>
+            }}>{lang === "ar" ? "مقالات جديدة كل أسبوع" : "New stories every week"}</h3>
           <p style={{
             fontFamily: "'Mirza', serif",
             fontSize: "0.88rem", color: "rgba(242,234,219,0.55)",
             maxWidth: 380, lineHeight: 1.85,
-          }}>اشترك في نشرة UJI وكن أول من يقرأ عالم الماتشا الياباني</p>
+            }}>{lang === "ar" ? "اشترك في نشرة UJI وكن أول من يقرأ عالم الماتشا الياباني" : "Subscribe to the UJI newsletter and be the first to read about Japanese matcha."}</p>
           <form
-            onSubmit={e => { e.preventDefault(); alert("شكراً! تم تسجيلك في النشرة البريدية."); }}
+            onSubmit={e => { e.preventDefault(); alert(lang === "ar" ? "شكراً! تم تسجيلك في النشرة البريدية." : "Thanks! You’re subscribed to the newsletter."); }}
             style={{ display: "flex", gap: "0.5rem", width: "100%", maxWidth: 420, marginTop: "0.75rem" }}
           >
             <input
               type="email"
-              placeholder="بريدك الإلكتروني"
+              placeholder={lang === "ar" ? "بريدك الإلكتروني" : "Your email address"}
               required
               style={{
                 flex: 1, height: 50, padding: "0 1.25rem",
@@ -533,7 +517,7 @@ export default function MagazinePage() {
               }}
               onMouseEnter={e => (e.currentTarget.style.background = "#b5bc96")}
               onMouseLeave={e => (e.currentTarget.style.background = "#9BA17B")}
-            >اشترك</button>
+            >{lang === "ar" ? "اشترك" : "Subscribe"}</button>
           </form>
         </div>
 
