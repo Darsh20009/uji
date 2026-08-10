@@ -144,6 +144,7 @@ const DEFAULT_BADGES = [
 ];
 
 function TrustBar({ badges }: { badges?: typeof DEFAULT_BADGES }) {
+  const { lang } = useLang();
   const list = (badges && badges.length ? badges : DEFAULT_BADGES).filter(b => b.enabled !== false);
   if (!list.length) return null;
   return (
@@ -162,10 +163,10 @@ function TrustBar({ badges }: { badges?: typeof DEFAULT_BADGES }) {
                 {TRUST_ICONS[i] ?? TRUST_ICONS[0]}
               </span>
               <p style={{ fontFamily: "'Mirza', serif", fontSize: "1rem", fontWeight: 600, color: "#F2EADB", margin: 0, lineHeight: 1.2 }}>
-                {b.value}
+                 {lang === "en" ? (i === 0 ? "1–3 days" : i === 1 ? "Secure & encrypted" : "1 day") : b.value}
               </p>
               <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.75rem", color: "rgba(155,161,123,0.85)", margin: 0 }}>
-                {b.title}
+                 {lang === "en" ? (i === 0 ? "Delivery" : i === 1 ? "Payment" : "Returns") : b.title}
               </p>
             </div>
           ))}
@@ -181,6 +182,7 @@ function TrustBar({ badges }: { badges?: typeof DEFAULT_BADGES }) {
 export default function HomePage() {
   const heroRef = useRef<HTMLElement>(null);
   const { getContent } = useSiteContent();
+  const { lang } = useLang();
 
   const { data: products } = useQuery({
     queryKey: ["products-featured"],
@@ -305,7 +307,7 @@ export default function HomePage() {
               fontFamily: "'Mirza', serif", fontSize: "0.85rem",
               color: "#1F3929", border: "1px solid rgba(31,57,41,0.45)", padding: "0.65rem 1.4rem",
             }}>
-              عرض جميع المنتجات <ArrowLeft size={14} strokeWidth={1.5} />
+               {lang === "ar" ? "عرض جميع المنتجات" : "View all products"} <ArrowLeft size={14} strokeWidth={1.5} />
             </Link>
           </div>
 
@@ -328,8 +330,8 @@ export default function HomePage() {
                     <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.55rem", letterSpacing: "0.2em", color: "#9BA17B", textTransform: "uppercase", marginBottom: "0.4rem" }}>{sub}</p>
                     <h3 style={{ fontFamily: "'Mirza', serif", fontSize: "1rem", fontWeight: 500, color: "#1C201B", marginBottom: "1rem" }}>{name}</h3>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "0.75rem", borderTop: "1px solid rgba(200,187,164,0.25)" }}>
-                      <span style={{ fontFamily: "'Mirza', serif", fontSize: "1.1rem", color: "#1F3929" }}>{price} <span style={{ fontSize: "0.7rem", fontFamily: "'Cascadia Code', monospace" }}>ر.س</span></span>
-                      <Link href="/products" className="btn-primary" style={{ height: 36, padding: "0 1.25rem", fontSize: "0.8rem" }}>تسوق</Link>
+                       <span style={{ fontFamily: "'Mirza', serif", fontSize: "1.1rem", color: "#1F3929" }}>{price} <span style={{ fontSize: "0.7rem", fontFamily: "'Cascadia Code', monospace" }}>{lang === "ar" ? "ر.س" : "SAR"}</span></span>
+                       <Link href="/products" className="btn-primary" style={{ height: 36, padding: "0 1.25rem", fontSize: "0.8rem" }}>{lang === "ar" ? "تسوق" : "Shop"}</Link>
                     </div>
                   </div>
                 </div>
@@ -339,7 +341,7 @@ export default function HomePage() {
 
           <div style={{ textAlign: "center", marginTop: "3rem", paddingTop: "2rem", borderTop: "1px solid rgba(200,187,164,0.3)" }}>
             <Link href="/products" className="btn-primary" style={{ display: "inline-flex", gap: "0.5rem", alignItems: "center", height: 52, padding: "0 2.5rem", fontSize: "0.9rem" }}>
-              تسوق جميع منتجات UJI <ArrowLeft size={15} strokeWidth={1.5} />
+               {useLang().lang === "ar" ? "تسوق جميع منتجات UJI" : "Shop all UJI products"} <ArrowLeft size={15} strokeWidth={1.5} />
             </Link>
           </div>
         </div>
@@ -386,13 +388,13 @@ export default function HomePage() {
                     { en: "30g Pure Matcha",  ar: "30 جرام ماتشا نقية" },
                   ].map(({ en, ar }) => (
                     <div key={en} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1rem 0", borderBottom: "1px solid rgba(200,187,164,0.3)" }}>
-                      <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.88rem", color: "#1C201B" }}>{ar}</span>
+                      <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.88rem", color: "#1C201B" }}>{lang === "ar" ? ar : en}</span>
                       <span style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.6rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "#9BA17B" }}>{en}</span>
                     </div>
                   ))}
                 </div>
                 <div style={{ marginTop: "2.5rem" }}>
-                  <Link href="/products" className="btn-outline">تسوق الآن</Link>
+                   <Link href="/products" className="btn-outline">{lang === "ar" ? "تسوق الآن" : "Shop now"}</Link>
                 </div>
               </div>
             </div>
@@ -467,7 +469,7 @@ export default function HomePage() {
                 multiline as="p" label="وصف الريتشوال"
                 style={{ fontFamily: "'Mirza', serif", fontSize: "0.85rem", lineHeight: 1.9, color: "#9BA17B", marginBottom: "3rem" }}
               />
-              <Link href="/ritual" className="btn-outline">دليل الريتشوال</Link>
+               <Link href="/ritual" className="btn-outline">{lang === "ar" ? "دليل الريتشوال" : "Ritual guide"}</Link>
             </div>
           </div>
         </section>

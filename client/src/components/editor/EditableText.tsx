@@ -3,6 +3,7 @@ import { useEditMode } from "../../context/EditModeContext";
 import { useSiteContent } from "../../context/SiteContentContext";
 import { useLang } from "../../context/LanguageContext";
 import { t } from "../../lib/translations";
+import { ENGLISH_CONTENT } from "../../lib/englishContent";
 
 interface Props {
   contentKey: string;
@@ -19,7 +20,7 @@ export function EditableText({ contentKey, defaultValue, as: Tag = "span", style
   const { getContent } = useSiteContent();
   const { lang } = useLang();
 
-  const value = getContent(contentKey, defaultValue);
+  const value = getContent(contentKey, lang === "en" ? (ENGLISH_CONTENT[contentKey] ?? defaultValue) : defaultValue);
 
   // In English edit mode, clicking targets the .en suffixed key so the sidebar
   // field name reflects the English content slot.

@@ -69,7 +69,7 @@ export default function CartPage() {
                 {/* Info */}
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <h3 style={{ fontFamily: font, fontWeight: 600, fontSize: "0.9rem", color: "#1C201B", marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {item.name}
+                    {lang === "en" && item.nameEn ? item.nameEn : item.name}
                   </h3>
                   <p style={{ fontFamily: font, fontSize: "0.85rem", fontWeight: 700, color: "#1F3929" }}>
                     {item.price.toFixed(2)} {t("common.currency", lang)}

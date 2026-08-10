@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useRef, useCallback, useEffect, ReactNode } from "react";
 import { useLang } from "./LanguageContext";
+import { ENGLISH_CONTENT } from "../lib/englishContent";
 
 interface SiteContentCtx {
   content: Record<string, string>;
@@ -58,10 +59,12 @@ export function SiteContentProvider({ children }: { children: ReactNode }) {
   }, [doSave]);
 
   const getContent = useCallback((key: string, def: string): string => {
-    // In English mode: try key.en first, then fall back to key (Arabic), then def
+    // In English mode: prefer saved English content, then the built-in English
+    // copy, and never silently show the Arabic default.
     if (lang === "en") {
       const enKey = key + ".en";
       if (enKey in content) return content[enKey];
+      if (key in ENGLISH_CONTENT) return ENGLISH_CONTENT[key];
     }
     return key in content ? content[key] : def;
   }, [content, lang]);

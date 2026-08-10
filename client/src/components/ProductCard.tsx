@@ -114,7 +114,7 @@ export default function ProductCard({ product }: { product: any }) {
           </div>
 
           <button
-            onClick={() => add({ _id: product._id, name: product.name, price: product.price, image: img })}
+            onClick={() => add({ _id: product._id, name: product.name, nameEn: product.nameEn, price: product.price, image: img })}
             style={{
               background: "none", border: "1px solid rgba(31,57,41,0.35)",
               padding: "0.4rem 0.875rem",

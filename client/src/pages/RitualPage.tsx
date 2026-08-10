@@ -2,12 +2,12 @@ import { EditableText } from "../components/editor/EditableText";
 import { useLang } from "../context/LanguageContext";
 
 export default function RitualPage() {
-  const { isRTL } = useLang();
+  const { isRTL, lang } = useLang();
 
   const steps = [
     {
       num: "٠١", en: "SIFT",
-      ar: "النخل",
+      ar: "النخل", enTitle: "SIFT",
       descKey: "ritualpage.step.0.desc",
       descDefault: "انخل ملعقة صغيرة من الماتشا (٣–٤ غرام) في وعاء التشاوان لتفكيك أي تكتلات وضمان ناعومة مثالية.",
       detailKey: "ritualpage.step.0.detail",
@@ -15,7 +15,7 @@ export default function RitualPage() {
     },
     {
       num: "٠٢", en: "WATER",
-      ar: "الماء",
+      ar: "الماء", enTitle: "WATER",
       descKey: "ritualpage.step.1.desc",
       descDefault: "سخّن الماء إلى ٧٠–٨٠ درجة مئوية. الماء المغلي يحرق أوراق الماتشا ويُكسب الكوب مرارة غير مرغوبة.",
       detailKey: "ritualpage.step.1.detail",
@@ -23,7 +23,7 @@ export default function RitualPage() {
     },
     {
       num: "٠٣", en: "WHISK",
-      ar: "الخفق",
+      ar: "الخفق", enTitle: "WHISK",
       descKey: "ritualpage.step.2.desc",
       descDefault: "أضف ٤٠ مل من الماء ثم اخفق بحركة W سريعة لمدة ٣٠ ثانية حتى يتشكل رغوة ناعمة على السطح.",
       detailKey: "ritualpage.step.2.detail",
@@ -31,7 +31,7 @@ export default function RitualPage() {
     },
     {
       num: "٠٤", en: "POUR",
-      ar: "الصبّ",
+      ar: "الصبّ", enTitle: "POUR",
       descKey: "ritualpage.step.3.desc",
       descDefault: "لـ Matcha Latte: أضف الحليب المبخّر ببطء فوق الماتشا المركّزة. للماتشا الكلاسيكية: تُشرب مباشرة.",
       detailKey: "ritualpage.step.3.detail",
@@ -39,7 +39,7 @@ export default function RitualPage() {
     },
     {
       num: "٠٥", en: "SAVOUR",
-      ar: "التذوق",
+      ar: "التذوق", enTitle: "SAVOUR",
       descKey: "ritualpage.step.4.desc",
       descDefault: "قبل أول رشفة، شمّ العطر، لاحظ اللون الزمردي، واشعر بالدفء في يديك. هذا هو الريتشوال.",
       detailKey: "ritualpage.step.4.detail",
@@ -154,12 +154,12 @@ export default function RitualPage() {
                   fontSize: "1.8rem", fontWeight: 700,
                   color: i === 0 || i === 4 ? "#F2EADB" : "#1F3929",
                   lineHeight: 1,
-                }}>{s.ar}</span>
+                }}>{lang === "ar" ? s.ar : s.enTitle}</span>
                 <span style={{
                   fontFamily: "'Cascadia Code', monospace", fontSize: "0.55rem",
                   letterSpacing: "0.2em",
                   color: i === 0 || i === 4 ? "rgba(242,234,219,0.4)" : "#C8BBA4",
-                }}>{s.en}</span>
+                }}>{lang === "ar" ? s.en : s.ar}</span>
               </div>
               {/* Content column */}
               <div style={{ padding: "2.5rem 2.5rem 2.5rem 2rem" }}>

@@ -2,37 +2,41 @@ import { EditableText } from "../components/editor/EditableText";
 import { useLang } from "../context/LanguageContext";
 
 export default function OurStoryPage() {
-  const { isRTL } = useLang();
+  const { isRTL, lang } = useLang();
 
   const values = [
     {
       ar: "الأصالة",
       en: "AUTHENTICITY",
-      desc: "كل كيس ماتشا UJI مصدره مزارع شيزوكا اليابانية مباشرة. لا وسطاء ولا تنازلات.",
+      descAr: "كل كيس ماتشا UJI مصدره مزارع شيزوكا اليابانية مباشرة. لا وسطاء ولا تنازلات.",
+      descEn: "Every UJI matcha tin comes directly from Japanese Shizuoka farms. No middlemen, no compromises.",
     },
     {
       ar: "الريتشوال",
       en: "RITUAL",
-      desc: "الماتشا ليست مشروباً فحسب. إنها لحظة تقطعها من يومك لنفسك. نصنع المنتجات التي تجعل هذه اللحظة أجمل.",
+      descAr: "الماتشا ليست مشروباً فحسب. إنها لحظة تقطعها من يومك لنفسك. نصنع المنتجات التي تجعل هذه اللحظة أجمل.",
+      descEn: "Matcha is more than a drink. It is a moment you set aside for yourself. We make products that make that moment better.",
     },
     {
       ar: "الجودة",
       en: "QUALITY",
-      desc: "الدرجة الاحتفالية فقط. لا نقدّم ماتشا الطهي في أكياس فاخرة. الفرق حقيقي ويُحسّ.",
+      descAr: "الدرجة الاحتفالية فقط. لا نقدّم ماتشا الطهي في أكياس فاخرة. الفرق حقيقي ويُحسّ.",
+      descEn: "Ceremonial grade only. We do not put culinary matcha in beautiful packaging. The difference is real and you can taste it.",
     },
     {
       ar: "المجتمع",
       en: "COMMUNITY",
-      desc: "نبني مجتمعاً من عشّاق الماتشا في المنطقة العربية. مجتمع يتعلم ويتشارك ويرتقي معاً.",
+      descAr: "نبني مجتمعاً من عشّاق الماتشا في المنطقة العربية. مجتمع يتعلم ويتشارك ويرتقي معاً.",
+      descEn: "We are building a community of matcha lovers across the region — learning, sharing, and growing together.",
     },
   ];
 
   const timeline = [
-    { year: "٢٠٢٣", event: "بدأت الفكرة. مؤسسو UJI يبحثون عن ماتشا يابانية أصيلة في السوق السعودي ولا يجدونها." },
-    { year: "٢٠٢٤", event: "أول شحنة مباشرة من مزارع شيزوكا اليابانية. التجربة تتجاوز كل التوقعات." },
-    { year: "٢٠٢٤", event: "إطلاق UJI MATCHA. أول متجر سعودي متخصص في الماتشا الاحتفالية اليابانية." },
-    { year: "٢٠٢٥", event: "انضمام آلاف العملاء. بدء خدمة B2B للكافيهات والمطاعم." },
-    { year: "٢٠٢٦", event: "التوسع في المنطقة العربية. استمرار الرحلة نحو تجربة ماتشا لا مثيل لها." },
+    { year: "2023", ar: "بدأت الفكرة. مؤسسو UJI يبحثون عن ماتشا يابانية أصيلة في السوق السعودي ولا يجدونها.", en: "The idea began. The UJI founders searched for authentic Japanese matcha in Saudi Arabia and could not find it." },
+    { year: "2024", ar: "أول شحنة مباشرة من مزارع شيزوكا اليابانية. التجربة تتجاوز كل التوقعات.", en: "Our first direct shipment arrived from Shizuoka farms in Japan. The experience exceeded every expectation." },
+    { year: "2024", ar: "إطلاق UJI MATCHA. أول متجر سعودي متخصص في الماتشا الاحتفالية اليابانية.", en: "UJI MATCHA launched as Saudi Arabia's first store dedicated to Japanese ceremonial matcha." },
+    { year: "2025", ar: "انضمام آلاف العملاء. بدء خدمة B2B للكافيهات والمطاعم.", en: "Thousands of customers joined us, and our B2B service for cafés and restaurants began." },
+    { year: "2026", ar: "التوسع في المنطقة العربية. استمرار الرحلة نحو تجربة ماتشا لا مثيل لها.", en: "We expanded across the region and continued the journey toward an unmatched matcha experience." },
   ];
 
   return (
@@ -93,7 +97,7 @@ export default function OurStoryPage() {
             fontFamily: "'Cascadia Code', monospace", fontSize: "0.58rem",
             letterSpacing: "0.4em", color: "#9BA17B",
             marginBottom: "1rem", textAlign: "center",
-          }}>لماذا وُجدنا</p>
+          }}>{lang === "ar" ? "لماذا وُجدنا" : "WHY WE EXIST"}</p>
           <EditableText
             contentKey="story.why.title"
             defaultValue={"لماذا لا تتوفر ماتشا\nحقيقية في السوق السعودي؟"}
@@ -125,19 +129,19 @@ export default function OurStoryPage() {
           }}>
             {[
               {
-                num: "١",
-                title: "الماتشا الموجودة ليست ماتشا",
-                body: "معظم ما يُباع في الأسواق السعودية هو مسحوق طهي مجهول المصدر أو ماتشا من درجات دنيا تُعبّأ في أكياس فاخرة. الطعم مرّ، اللون باهت، والفائدة محدودة لأنها ليست ماتشا احتفالية أصلاً.",
+                num: lang === "ar" ? "١" : "1",
+                title: lang === "ar" ? "الماتشا الموجودة ليست ماتشا" : "Much of what is sold is not true matcha",
+                body: lang === "ar" ? "معظم ما يُباع في الأسواق السعودية هو مسحوق طهي مجهول المصدر أو ماتشا من درجات دنيا تُعبّأ في أكياس فاخرة. الطعم مرّ، اللون باهت، والفائدة محدودة لأنها ليست ماتشا احتفالية أصلاً." : "Much of what is sold in Saudi markets is an untraceable culinary powder or low-grade matcha in beautiful packaging. The taste is bitter, the color is dull, and it was never ceremonial matcha to begin with.",
               },
               {
-                num: "٢",
-                title: "سلسلة التوريد طويلة ومشوِّهة",
-                body: "بين المزرعة اليابانية والمستهلك السعودي عادةً ثلاثة وسطاء أو أكثر. كل وسيط يقلل التكلفة بتخفيض الجودة. بحلول وصولها إليك، لا تشبه ما خرج من المزرعة.",
+                num: lang === "ar" ? "٢" : "2",
+                title: lang === "ar" ? "سلسلة التوريد طويلة ومشوِّهة" : "A long, compromised supply chain",
+                body: lang === "ar" ? "بين المزرعة اليابانية والمستهلك السعودي عادةً ثلاثة وسطاء أو أكثر. كل وسيط يقلل التكلفة بتخفيض الجودة. بحلول وصولها إليك، لا تشبه ما خرج من المزرعة." : "There are often three or more middlemen between a Japanese farm and a Saudi customer. Each cuts costs by cutting quality. By the time it arrives, it no longer resembles what left the farm.",
               },
               {
-                num: "٣",
-                title: "لا توعية بالفرق الحقيقي",
-                body: "لم يكن هناك من يشرح الفرق بين Ceremonial Grade وCulinary Grade، أو لماذا مزارع شيزوكا تحديداً تنتج أجود الماتشا. بدون توعية، الزبون يشتري على الشكل لا على الجوهر.",
+                num: lang === "ar" ? "٣" : "3",
+                title: lang === "ar" ? "لا توعية بالفرق الحقيقي" : "The real difference was not explained",
+                body: lang === "ar" ? "لم يكن هناك من يشرح الفرق بين Ceremonial Grade وCulinary Grade، أو لماذا مزارع شيزوكا تحديداً تنتج أجود الماتشا. بدون توعية، الزبون يشتري على الشكل لا على الجوهر." : "No one explained the difference between ceremonial and culinary grade, or why Shizuoka produces some of the finest matcha. Without context, customers buy for appearance instead of substance.",
               },
             ].map(item => (
               <div key={item.num} style={{
@@ -277,7 +281,7 @@ export default function OurStoryPage() {
             fontFamily: "'Mirza', serif",
             fontSize: "2rem", fontWeight: 700, color: "#F2EADB",
             textAlign: "center", marginBottom: "3rem",
-          }}>رحلتنا</h2>
+        }}>{lang === "ar" ? "رحلتنا" : "Our journey"}</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
             {timeline.map((t, i) => (
               <div key={i} style={{
@@ -297,7 +301,7 @@ export default function OurStoryPage() {
                   fontFamily: "'Mirza', serif",
                   fontSize: "0.88rem", color: "rgba(242,234,219,0.8)",
                   lineHeight: 1.8, margin: 0, paddingTop: "0.2rem",
-                }}>{t.event}</p>
+                }}>{lang === "ar" ? t.ar : t.en}</p>
               </div>
             ))}
           </div>
@@ -315,7 +319,7 @@ export default function OurStoryPage() {
           fontFamily: "'Mirza', serif",
           fontSize: "2rem", fontWeight: 700, color: "#1C201B",
           textAlign: "center", marginBottom: "3rem",
-        }}>ما نؤمن به</h2>
+        }}>{lang === "ar" ? "ما نؤمن به" : "What we believe"}</h2>
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))",
@@ -334,12 +338,12 @@ export default function OurStoryPage() {
                 fontFamily: "'Mirza', serif",
                 fontSize: "1.5rem", fontWeight: 700,
                 color: "#1F3929", marginBottom: "0.75rem",
-              }}>{v.ar}</h3>
+              }}>{lang === "ar" ? v.ar : v.en}</h3>
               <p style={{
                 fontFamily: "'Mirza', serif",
                 fontSize: "0.83rem", color: "#9BA17B",
                 lineHeight: 1.85, margin: 0,
-              }}>{v.desc}</p>
+              }}>{lang === "ar" ? v.descAr : v.descEn}</p>
             </div>
           ))}
         </div>

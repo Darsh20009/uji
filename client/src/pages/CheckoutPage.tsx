@@ -143,7 +143,7 @@ export default function CheckoutPage() {
           city: form.city, district: form.district, street: form.street, notes: form.addressNotes,
           ...(geoPos ? { lat: geoPos.lat, lng: geoPos.lng, mapLink: `https://maps.google.com/?q=${geoPos.lat},${geoPos.lng}` } : {}),
         },
-        items: items.map(i => ({ product: i._id, name: i.name, price: i.price, qty: i.qty })),
+        items: items.map(i => ({ product: i._id, name: lang === "en" && i.nameEn ? i.nameEn : i.name, price: i.price, qty: i.qty })),
         paymentMethod: form.paymentMethod,
         couponCode: couponData?.code,
         notes: `${t("checkout.delivery.note.key", lang)}: ${deliveryProvider.nameEn || deliveryProvider.name}${form.notes ? `\n${form.notes}` : ""}`,

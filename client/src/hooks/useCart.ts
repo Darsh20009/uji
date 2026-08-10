@@ -1,5 +1,5 @@
 import { create } from "zustand";
-interface CartItem { _id: string; name: string; price: number; image: string; qty: number; }
+interface CartItem { _id: string; name: string; nameEn?: string; price: number; image: string; qty: number; }
 interface CartStore {
   items: CartItem[]; add: (item: Omit<CartItem, "qty">) => void;
   remove: (id: string) => void; update: (id: string, qty: number) => void; clear: () => void;
