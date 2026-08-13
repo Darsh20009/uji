@@ -201,12 +201,12 @@ export default function Footer() {
           </p>
           <img
             src="/assets/brand/logo-moc-real.png"
-            alt="وزارة التجارة"
+            alt={lang === "en" ? "Ministry of Commerce" : "وزارة التجارة"}
             style={{ height: 48, objectFit: "contain", opacity: 0.75 }}
           />
           <img
             src="/assets/brand/logo-sbc-real.png"
-            alt="المركز السعودي للأعمال"
+            alt={lang === "en" ? "Saudi Business Center" : "المركز السعودي للأعمال"}
             style={{ height: 48, objectFit: "contain", opacity: 0.75 }}
           />
         </div>

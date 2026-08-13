@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useLang } from "../context/LanguageContext";
 
 /* ── دول الخليج والعرب والعالم ── */
 export const COUNTRIES = [
@@ -36,6 +37,16 @@ export const COUNTRIES = [
 
 export type Country = typeof COUNTRIES[0];
 
+const COUNTRY_NAMES_EN: Record<string, string> = {
+  SA: "Saudi Arabia", AE: "United Arab Emirates", KW: "Kuwait", QA: "Qatar",
+  BH: "Bahrain", OM: "Oman", YE: "Yemen", JO: "Jordan", LB: "Lebanon",
+  EG: "Egypt", IQ: "Iraq", SY: "Syria", PS: "Palestine", MA: "Morocco",
+  TN: "Tunisia", DZ: "Algeria", LY: "Libya", SD: "Sudan", SO: "Somalia",
+  PK: "Pakistan", IN: "India", BD: "Bangladesh", PH: "Philippines",
+  LK: "Sri Lanka", GB: "United Kingdom", US: "United States", DE: "Germany",
+  FR: "France", TR: "Türkiye", IR: "Iran",
+};
+
 interface Props {
   /** رقم الجوال بدون كود الدولة */
   value: string;
@@ -68,6 +79,10 @@ export default function PhoneInput({
   disabled,
   theme = "light",
 }: Props) {
+  const { lang, isRTL } = useLang();
+  const isEnglish = lang === "en";
+  const countryName = (country: Country) =>
+    isEnglish ? COUNTRY_NAMES_EN[country.abbr] ?? country.name : country.name;
   const [open, setOpen]       = useState(false);
   const [search, setSearch]   = useState("");
   const [selected, setSelected] = useState<Country>(
@@ -103,6 +118,7 @@ export default function PhoneInput({
   const filtered = search
     ? COUNTRIES.filter(c =>
         c.name.includes(search) ||
+        countryName(c).toLowerCase().includes(search.toLowerCase()) ||
         c.code.includes(search) ||
         c.abbr.toLowerCase().includes(search.toLowerCase())
       )
@@ -215,7 +231,7 @@ export default function PhoneInput({
             zIndex:     999,
             borderRadius: 2,
             overflow:   "hidden",
-            direction:  "rtl",
+            direction:  isRTL ? "rtl" : "ltr",
           }}
         >
           {/* بحث */}
@@ -224,13 +240,13 @@ export default function PhoneInput({
               ref={searchRef}
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="ابحث عن دولة..."
+              placeholder={isEnglish ? "Search countries..." : "ابحث عن دولة..."}
               style={{
                 width: "100%", border: `1px solid ${clr.ddBorder}`,
                 background: clr.searchBg, color: clr.text,
                 padding: "6px 10px", borderRadius: 4, outline: "none",
                 fontFamily: "'Mirza', serif", fontSize: "0.82rem",
-                boxSizing: "border-box", direction: "rtl",
+                boxSizing: "border-box", direction: isRTL ? "rtl" : "ltr",
               }}
             />
           </div>
@@ -239,7 +255,7 @@ export default function PhoneInput({
           <div style={{ maxHeight: 240, overflowY: "auto" }}>
             {filtered.length === 0 && (
               <div style={{ padding: "12px 14px", color: clr.placeholder, fontSize: "0.82rem" }}>
-                لا توجد نتائج
+                {isEnglish ? "No results" : "لا توجد نتائج"}
               </div>
             )}
             {filtered.map(c => (
@@ -256,8 +272,8 @@ export default function PhoneInput({
                   background: c.code === selected.code ? clr.hoverBg : "transparent",
                   border:     "none",
                   cursor:     "pointer",
-                  textAlign:  "right",
-                  direction:  "rtl",
+                  textAlign:  isRTL ? "right" : "left",
+                  direction:  isRTL ? "rtl" : "ltr",
                   color:      clr.text,
                   fontFamily: "'Mirza', serif",
                   fontSize:   "0.84rem",
@@ -267,7 +283,7 @@ export default function PhoneInput({
                 onMouseLeave={e => (e.currentTarget.style.background = c.code === selected.code ? clr.hoverBg : "transparent")}
               >
                 <span style={{ fontSize: "1.15rem", flexShrink: 0 }}>{c.flag}</span>
-                <span style={{ flex: 1 }}>{c.name}</span>
+                <span style={{ flex: 1 }}>{countryName(c)}</span>
                 <span style={{ fontFamily: "monospace", fontSize: "0.78rem", color: clr.placeholder, flexShrink: 0, direction: "ltr" }}>
                   {c.code}
                 </span>

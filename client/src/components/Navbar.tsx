@@ -154,7 +154,7 @@ export default function Navbar() {
             {/* ── Language toggle ── */}
             <button
               onClick={() => setLang(lang === "ar" ? "en" : "ar")}
-              title={lang === "ar" ? "Switch to English" : "التبديل للعربية"}
+              title={lang === "ar" ? "Switch to English" : "Switch to Arabic"}
               style={{
                 background: "none", border: `1px solid ${transparent ? "rgba(242,234,219,0.3)" : "rgba(28,32,27,0.2)"}`,
                 borderRadius: 3, padding: "0.2rem 0.45rem",

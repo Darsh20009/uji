@@ -6,7 +6,7 @@ export default function RitualPage() {
 
   const steps = [
     {
-      num: "٠١", en: "SIFT",
+      num: lang === "ar" ? "٠١" : "01", en: "SIFT",
       ar: "النخل", enTitle: "SIFT",
       descKey: "ritualpage.step.0.desc",
       descDefault: "انخل ملعقة صغيرة من الماتشا (٣–٤ غرام) في وعاء التشاوان لتفكيك أي تكتلات وضمان ناعومة مثالية.",
@@ -14,7 +14,7 @@ export default function RitualPage() {
       detailDefault: "النخل خطوة يتجاهلها كثيرون، لكنه الفارق بين كوب أملس وكوب به حبيبات.",
     },
     {
-      num: "٠٢", en: "WATER",
+      num: lang === "ar" ? "٠٢" : "02", en: "WATER",
       ar: "الماء", enTitle: "WATER",
       descKey: "ritualpage.step.1.desc",
       descDefault: "سخّن الماء إلى ٧٠–٨٠ درجة مئوية. الماء المغلي يحرق أوراق الماتشا ويُكسب الكوب مرارة غير مرغوبة.",
@@ -22,7 +22,7 @@ export default function RitualPage() {
       detailDefault: "اترك الماء المغلي يبرد لدقيقتين، أو استخدم ميزان حرارة للدقة.",
     },
     {
-      num: "٠٣", en: "WHISK",
+      num: lang === "ar" ? "٠٣" : "03", en: "WHISK",
       ar: "الخفق", enTitle: "WHISK",
       descKey: "ritualpage.step.2.desc",
       descDefault: "أضف ٤٠ مل من الماء ثم اخفق بحركة W سريعة لمدة ٣٠ ثانية حتى يتشكل رغوة ناعمة على السطح.",
@@ -30,7 +30,7 @@ export default function RitualPage() {
       detailDefault: "استخدم المشة البامبو (Chasen) من الوسط للخارج، لا بحركة دائرية.",
     },
     {
-      num: "٠٤", en: "POUR",
+      num: lang === "ar" ? "٠٤" : "04", en: "POUR",
       ar: "الصبّ", enTitle: "POUR",
       descKey: "ritualpage.step.3.desc",
       descDefault: "لـ Matcha Latte: أضف الحليب المبخّر ببطء فوق الماتشا المركّزة. للماتشا الكلاسيكية: تُشرب مباشرة.",
@@ -38,7 +38,7 @@ export default function RitualPage() {
       detailDefault: "الحليب النباتي (الشوفان أو اللوز) يُعطي نكهة مميزة مع الماتشا.",
     },
     {
-      num: "٠٥", en: "SAVOUR",
+      num: lang === "ar" ? "٠٥" : "05", en: "SAVOUR",
       ar: "التذوق", enTitle: "SAVOUR",
       descKey: "ritualpage.step.4.desc",
       descDefault: "قبل أول رشفة، شمّ العطر، لاحظ اللون الزمردي، واشعر بالدفء في يديك. هذا هو الريتشوال.",
@@ -159,7 +159,7 @@ export default function RitualPage() {
                   fontFamily: "'Cascadia Code', monospace", fontSize: "0.55rem",
                   letterSpacing: "0.2em",
                   color: i === 0 || i === 4 ? "rgba(242,234,219,0.4)" : "#C8BBA4",
-                }}>{lang === "ar" ? s.en : s.ar}</span>
+                }}>{lang === "ar" ? s.en : "STEP"}</span>
               </div>
               {/* Content column */}
               <div style={{ padding: "2.5rem 2.5rem 2.5rem 2rem" }}>

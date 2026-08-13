@@ -21,6 +21,7 @@ export default class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (!this.state.hasError) return this.props.children;
+    const isEnglish = typeof document !== "undefined" && document.documentElement.lang === "en";
     return (
       <div style={{
         minHeight: "100vh", display: "flex", flexDirection: "column",
@@ -30,10 +31,10 @@ export default class ErrorBoundary extends Component<Props, State> {
       }}>
         <img src="/assets/brand/uji-logo-forest-green-transparent.png" alt="UJI" style={{ height: 60, marginBottom: "2rem", objectFit: "contain" }} />
         <h2 style={{ fontFamily: "'Mirza', serif", fontSize: "2rem", fontWeight: 300, color: "#1C201B", marginBottom: "1rem" }}>
-          حدث خطأ غير متوقع
+          {isEnglish ? "Something went wrong" : "حدث خطأ غير متوقع"}
         </h2>
         <p style={{ fontSize: "0.9rem", color: "#9BA17B", marginBottom: "2rem", lineHeight: 1.8 }}>
-          نعتذر عن هذا الخطأ. يرجى المحاولة مرة أخرى.
+          {isEnglish ? "Sorry about that. Please try again." : "نعتذر عن هذا الخطأ. يرجى المحاولة مرة أخرى."}
         </p>
         <button
           onClick={() => window.location.href = "/"}
@@ -44,7 +45,7 @@ export default class ErrorBoundary extends Component<Props, State> {
             letterSpacing: "0.05em",
           }}
         >
-          العودة للرئيسية
+          {isEnglish ? "Back to home" : "العودة للرئيسية"}
         </button>
       </div>
     );

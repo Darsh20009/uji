@@ -317,11 +317,13 @@ export default function HomePage() {
             </div>
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "1.5rem" }}>
-              {[
-                { name: "ماتشا احتفالية", sub: "Ceremonial Matcha", price: "89", img: "/assets/packaging/uji-tin-front-transparent.png" },
-                { name: "مخفقة الخيزران", sub: "Bamboo Whisk",      price: "45", img: "/assets/products/uji-product-bamboo-whisk-transparent.png" },
-                { name: "طقم البداية",   sub: "Starter Set",        price: "149", img: "/assets/packaging/uji-tin-open-transparent.png" },
-              ].map(({ name, sub, price, img }) => (
+               {[
+                 { nameAr: "ماتشا احتفالية", nameEn: "Ceremonial Matcha", sub: "Ceremonial Matcha", price: "89", img: "/assets/packaging/uji-tin-front-transparent.png" },
+                 { nameAr: "مخفقة الخيزران", nameEn: "Bamboo Whisk", sub: "Bamboo Whisk", price: "45", img: "/assets/products/uji-product-bamboo-whisk-transparent.png" },
+                 { nameAr: "طقم البداية", nameEn: "Starter Set", sub: "Starter Set", price: "149", img: "/assets/packaging/uji-tin-open-transparent.png" },
+               ].map(({ nameAr, nameEn, sub, price, img }) => {
+                 const name = lang === "ar" ? nameAr : nameEn;
+                 return (
                 <div key={name} style={{ background: "#F2EADB", border: "1px solid rgba(200,187,164,0.35)" }}>
                   <div style={{ aspectRatio: "3/4", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
                     <img src={img} alt={name} style={{ width: "75%", height: "75%", objectFit: "contain" }} />
@@ -335,7 +337,8 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
-              ))}
+                 );
+               })}
             </div>
           )}
 

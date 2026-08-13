@@ -49,6 +49,11 @@ const SAUDI_CITIES_EN = [
   "Dhahran","Abha","Tabuk","Buraidah","Taif","Hail","Najran","Jizan",
   "Jubail","Yanbu","Al-Ahsa","Al-Kharj","Qatif","Arar","Sakaka",
 ];
+const PROVIDER_NAMES_EN: Record<string, string> = {
+  aramex: "Aramex",
+  smsa: "SMSA Express",
+  jt: "J&T Express",
+};
 
 export default function CheckoutPage() {
   const { items, clear } = useCart();
@@ -107,6 +112,8 @@ export default function CheckoutPage() {
   const pointsToEarn = Math.floor(total / 10);
 
   const cities = lang === "en" ? SAUDI_CITIES_EN : SAUDI_CITIES_AR;
+  const providerNameFor = (provider: any) =>
+    lang === "en" ? provider.nameEn || PROVIDER_NAMES_EN[provider.id] || provider.name : provider.name;
 
   const getLocation = () => {
     if (!navigator.geolocation) { setGeoError(t("checkout.geo.error.unsupported", lang)); return; }
@@ -146,7 +153,7 @@ export default function CheckoutPage() {
         items: items.map(i => ({ product: i._id, name: lang === "en" && i.nameEn ? i.nameEn : i.name, price: i.price, qty: i.qty })),
         paymentMethod: form.paymentMethod,
         couponCode: couponData?.code,
-        notes: `${t("checkout.delivery.note.key", lang)}: ${deliveryProvider.nameEn || deliveryProvider.name}${form.notes ? `\n${form.notes}` : ""}`,
+           notes: `${t("checkout.delivery.note.key", lang)}: ${providerNameFor(deliveryProvider)}${form.notes ? `\n${form.notes}` : ""}`,
       }) as any;
       if (result.geideaRedirectUrl) { window.location.href = result.geideaRedirectUrl; return; }
       setOrder(result.order || result); clear();
@@ -194,11 +201,11 @@ export default function CheckoutPage() {
                 {items.map(item => (
                   <div key={item._id} style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
                     <div style={{ position: "relative", flexShrink: 0 }}>
-                      <img src={item.image} alt={item.name} style={{ width: 52, height: 52, objectFit: "cover" }} />
+                       <img src={item.image} alt={lang === "en" && item.nameEn ? item.nameEn : item.name} style={{ width: 52, height: 52, objectFit: "cover" }} />
                       <span style={{ position: "absolute", top: -6, left: -6, background: "#1F3929", color: "#F2EADB", borderRadius: "50%", width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontFamily: mono }}>{item.qty}</span>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontFamily: font, fontSize: "0.83rem", color: "#1C201B", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.name}</p>
+                       <p style={{ fontFamily: font, fontSize: "0.83rem", color: "#1C201B", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{lang === "en" && item.nameEn ? item.nameEn : item.name}</p>
                     </div>
                     <span style={{ fontFamily: font, fontSize: "0.83rem", color: "#1C201B", flexShrink: 0 }}>{(item.price * item.qty).toFixed(2)} {t("common.currency", lang)}</span>
                   </div>
@@ -353,7 +360,7 @@ export default function CheckoutPage() {
               <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem" }}>
                 {activeProviders.map((p: any) => {
                   const isSelected = deliveryProvider.id === p.id;
-                  const providerName = lang === "en" && p.nameEn ? p.nameEn : p.name;
+                   const providerName = providerNameFor(p);
                   const providerDays = lang === "en" && p.daysEn ? p.daysEn : p.days;
                   return (
                     <label key={p.id} onClick={() => setDeliveryProviderId(p.id)}

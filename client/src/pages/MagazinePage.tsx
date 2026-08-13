@@ -74,12 +74,12 @@ export default function MagazinePage() {
             fontWeight: 700, color: "#F2EADB",
             lineHeight: 1.05, margin: "0 0 1.25rem",
             letterSpacing: "-0.01em",
-          }}>عالم الماتشا</h1>
+          }}>{lang === "ar" ? "عالم الماتشا" : "The World of Matcha"}</h1>
           <p style={{
             fontFamily: "'Mirza', serif",
             fontSize: "0.95rem", color: "rgba(242,234,219,0.75)",
             maxWidth: 400, lineHeight: 1.8,
-          }}>قصص، ثقافة، وعلوم من قلب اليابان</p>
+          }}>{lang === "ar" ? "قصص، ثقافة، وعلوم من قلب اليابان" : "Stories, culture, and science from the heart of Japan"}</p>
           {/* Scroll indicator */}
           <div style={{ marginTop: "2.5rem", display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem" }}>
             <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.5rem", letterSpacing: "0.4em", color: "rgba(242,234,219,0.45)" }}>SCROLL</p>
@@ -110,11 +110,11 @@ export default function MagazinePage() {
               fontFamily: "'Mirza', serif",
               fontSize: "clamp(1.8rem,3.5vw,3rem)",
               color: "#F2EADB", fontWeight: 700, lineHeight: 1.2, marginBottom: "1rem",
-            }}>ماتشا نُشِئت من الحرفية والتقليد</h2>
+            }}>{lang === "ar" ? "ماتشا نُشِئت من الحرفية والتقليد" : "Matcha shaped by craft and tradition"}</h2>
             <p style={{
               fontFamily: "'Mirza', serif",
               fontSize: "0.88rem", color: "rgba(242,234,219,0.7)", lineHeight: 1.9,
-            }}>كل علبة تحمل قروناً من فن زراعة الشاي في شيزوكا، اليابان.</p>
+            }}>{lang === "ar" ? "كل علبة تحمل قروناً من فن زراعة الشاي في شيزوكا، اليابان." : "Every tin carries centuries of tea-growing craft from Shizuoka, Japan."}</p>
           </div>
         </div>
       </div>
@@ -159,7 +159,7 @@ export default function MagazinePage() {
           <div className="mag-image-panel" style={{ overflow: "hidden", minHeight: 420 }}>
             <img
               src="/assets/magazine/mag-uji-meaning.png"
-              alt="ما معنى UJI؟"
+              alt={lang === "ar" ? "ما معنى UJI؟" : "What does UJI mean?"}
               style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
             />
           </div>
@@ -213,7 +213,7 @@ export default function MagazinePage() {
                 <span style={{
                   fontFamily: "'Cascadia Code', monospace", fontSize: "0.55rem",
                   letterSpacing: "0.2em", color: "#9BA17B",
-                }}>قراءة {featured.read}</span>
+                 }}>{lang === "ar" ? `قراءة ${featured.read}` : `Read ${featured.read}`}</span>
               </div>
             </div>
           </div>
@@ -295,7 +295,7 @@ export default function MagazinePage() {
           <div style={{ overflow: "hidden", minHeight: 390 }}>
             <img
               src="/assets/magazine/uji-tin-editorial.png"
-              alt="علبة ماتشا UJI — جودة احتفالية"
+              alt={lang === "ar" ? "علبة ماتشا UJI — جودة احتفالية" : "UJI ceremonial-grade matcha tin"}
               style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
             />
           </div>
@@ -328,7 +328,7 @@ export default function MagazinePage() {
         <div className="mag-fields-feature" style={{ position: "relative", overflow: "hidden", minHeight: 420 }}>
           <img
             src="/assets/magazine/uji-fields-editorial.png"
-            alt="حقول شاي UJI في اليابان"
+            alt={lang === "ar" ? "حقول شاي UJI في اليابان" : "UJI tea fields in Japan"}
             style={{ width: "100%", height: "clamp(360px,42vw,520px)", objectFit: "cover", objectPosition: "center", display: "block" }}
           />
           <div style={{
@@ -431,7 +431,7 @@ export default function MagazinePage() {
                     fontSize: "0.52rem", letterSpacing: "0.2em",
                     color: isHov ? "#1F3929" : "#C8BBA4",
                     transition: "color 0.3s",
-                  >{lang === "ar" ? `قراءة ${a.read}` : `Read ${a.read}`}</span>
+                  }}>{lang === "ar" ? `قراءة ${a.read}` : `Read ${a.read}`}</span>
                 </div>
               );
             })}

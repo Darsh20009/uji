@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { ArrowLeft, RotateCcw } from "lucide-react";
+import { useLang } from "../context/LanguageContext";
 
 /* ─── Quiz data ──────────────────────────────────────────────────── */
 const QUESTIONS = [
@@ -26,6 +27,33 @@ const QUESTIONS = [
       { label: "لحظات هادئة وخاصة",           scores: { ceremonial: 2, everyday: 0, culinary: 0 } },
       { label: "كوب يومي في الصباح",           scores: { ceremonial: 1, everyday: 2, culinary: 0 } },
       { label: "في المشروبات والحلويات",       scores: { ceremonial: 0, everyday: 0, culinary: 2 } },
+    ],
+  },
+];
+
+const ENGLISH_QUESTIONS = [
+  {
+    q: "How do you like to prepare your matcha?",
+    opts: [
+      { label: "Pure with hot water", scores: { ceremonial: 2, everyday: 0, culinary: 0 } },
+      { label: "With milk, as a latte or iced", scores: { ceremonial: 0, everyday: 1, culinary: 2 } },
+      { label: "A bit of both", scores: { ceremonial: 0, everyday: 2, culinary: 1 } },
+    ],
+  },
+  {
+    q: "What matters most in your matcha?",
+    opts: [
+      { label: "Deep flavor and an authentic aroma", scores: { ceremonial: 2, everyday: 1, culinary: 0 } },
+      { label: "A smooth everyday taste", scores: { ceremonial: 0, everyday: 2, culinary: 1 } },
+      { label: "Blending perfectly with other ingredients", scores: { ceremonial: 0, everyday: 0, culinary: 2 } },
+    ],
+  },
+  {
+    q: "When do you usually drink matcha?",
+    opts: [
+      { label: "Quiet, personal moments", scores: { ceremonial: 2, everyday: 0, culinary: 0 } },
+      { label: "As a daily morning cup", scores: { ceremonial: 1, everyday: 2, culinary: 0 } },
+      { label: "In drinks and desserts", scores: { ceremonial: 0, everyday: 0, culinary: 2 } },
     ],
   },
 ];
@@ -64,10 +92,20 @@ const RESULTS = {
   },
 };
 
+const ENGLISH_RESULTS = {
+  ceremonial: { label: "✦ Ceremonial", sub: "Premium · first grade", color: "#7a5c1e", bg: "rgba(212,175,55,0.12)", border: "rgba(212,175,55,0.4)", desc: "High-quality ceremonial matcha is your match. Prepare it pure with warm water and enjoy it as a quiet daily ritual. Expect a bright green color with deep, smooth flavor.", drinks: ["Pure ritual matcha 🍵", "Uzu Sado · matcha with hot water 🫖", "Matcha with Japanese honey 🍯"], link: "/products?type=ceremonial" },
+  everyday: { label: "☕ Everyday", sub: "Balanced · for daily use", color: "#3a5c3a", bg: "rgba(155,161,123,0.12)", border: "rgba(155,161,123,0.4)", desc: "The ideal choice if you want good matcha at an approachable price for everyday use. It works beautifully with both milk and water.", drinks: ["Plant-based milk matcha latte 🥛", "Iced matcha latte 🧊", "Matcha with honey and lemon 🍋"], link: "/products?type=everyday" },
+  culinary: { label: "🧃 Culinary", sub: "For drinks and recipes", color: "#5a4a3a", bg: "rgba(180,160,130,0.12)", border: "rgba(180,160,130,0.4)", desc: "Designed to blend with bold ingredients such as condensed milk, fruit, and desserts. It brings beautiful color and clear flavor to every recipe.", drinks: ["Matcha frappuccino 🥤", "Banana matcha smoothie 🍌", "Japanese matcha cake 🍰", "Matcha ice cream 🍦"], link: "/products?type=culinary" },
+};
+
 type TypeKey = keyof typeof RESULTS;
 
 /* ─── Component ──────────────────────────────────────────────────── */
 export default function MatchaFinder() {
+  const { lang, isRTL } = useLang();
+  const isEnglish = lang === "en";
+  const activeQuestions = isEnglish ? ENGLISH_QUESTIONS : QUESTIONS;
+  const activeResults = isEnglish ? { ...RESULTS, ...ENGLISH_RESULTS } : RESULTS;
   const [step, setStep]     = useState<"intro" | number | "result">("intro");
   const [answers, setAnswers] = useState<number[]>([]);
   const [result, setResult]  = useState<TypeKey | null>(null);
@@ -75,13 +113,13 @@ export default function MatchaFinder() {
   function pick(qIdx: number, optIdx: number) {
     const next = [...answers, optIdx];
     setAnswers(next);
-    if (next.length < QUESTIONS.length) {
+    if (next.length < activeQuestions.length) {
       setStep(qIdx + 1);
     } else {
       // tally
       const scores: Record<TypeKey, number> = { ceremonial: 0, everyday: 0, culinary: 0 };
       next.forEach((aIdx, qI) => {
-        const s = QUESTIONS[qI].opts[aIdx].scores;
+        const s = activeQuestions[qI].opts[aIdx].scores;
         (Object.keys(s) as TypeKey[]).forEach(k => { scores[k] += s[k]; });
       });
       const winner = (Object.keys(scores) as TypeKey[]).reduce((a, b) => scores[a] >= scores[b] ? a : b);
@@ -94,10 +132,10 @@ export default function MatchaFinder() {
     setStep("intro"); setAnswers([]); setResult(null);
   }
 
-  const res = result ? RESULTS[result] : null;
+  const res = result ? activeResults[result] : null;
   const qIdx = typeof step === "number" ? step : 0;
-  const question = typeof step === "number" ? QUESTIONS[qIdx] : null;
-  const progress = typeof step === "number" ? ((qIdx) / QUESTIONS.length) * 100 : step === "result" ? 100 : 0;
+  const question = typeof step === "number" ? activeQuestions[qIdx] : null;
+  const progress = typeof step === "number" ? ((qIdx) / activeQuestions.length) * 100 : step === "result" ? 100 : 0;
 
   return (
     <section style={{
@@ -123,14 +161,14 @@ export default function MatchaFinder() {
               fontWeight: 300, color: "#F2EADB", lineHeight: 1.25,
               marginBottom: "1.25rem",
             }}>
-              ماتشا تناسب كل الأذواق.
+              {isEnglish ? "A matcha for every taste." : "ماتشا تناسب كل الأذواق."}
             </h2>
             <p style={{
               fontFamily: "'Mirza', serif",
               fontSize: "0.88rem", color: "rgba(155,161,123,0.85)",
               lineHeight: 1.9, maxWidth: 380, margin: "0 auto 2.5rem",
             }}>
-              ثلاثة أسئلة فقط وستعرف أي صنف يناسب أسلوبك وذوقك.
+              {isEnglish ? "Answer three questions to find the matcha that fits your style and taste." : "ثلاثة أسئلة فقط وستعرف أي صنف يناسب أسلوبك وذوقك."}
             </p>
             <button
               onClick={() => setStep(0)}
@@ -147,7 +185,7 @@ export default function MatchaFinder() {
               onMouseEnter={e => (e.currentTarget.style.background = "#DDD5C3")}
               onMouseLeave={e => (e.currentTarget.style.background = "#F2EADB")}
             >
-              ابدأ الاختبار
+              {isEnglish ? "Start the quiz" : "ابدأ الاختبار"}
             </button>
           </div>
         )}
@@ -159,7 +197,7 @@ export default function MatchaFinder() {
             <div style={{ marginBottom: "2.5rem" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
                 <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.78rem", color: "#9BA17B" }}>
-                  السؤال {qIdx + 1} من {QUESTIONS.length}
+                  {isEnglish ? `Question ${qIdx + 1} of ${activeQuestions.length}` : `السؤال ${qIdx + 1} من ${activeQuestions.length}`}
                 </span>
                 <span style={{ fontFamily: "'Mirza', serif", fontSize: "0.78rem", color: "#9BA17B" }}>
                   {Math.round(progress)}%
@@ -195,10 +233,10 @@ export default function MatchaFinder() {
                     border: "1px solid rgba(155,161,123,0.25)",
                     color: "#F2EADB",
                     fontFamily: "'Mirza', serif",
-                    fontSize: "0.92rem", textAlign: "right",
+                     fontSize: "0.92rem", textAlign: isRTL ? "right" : "left",
                     cursor: "pointer",
                     transition: "background 0.18s, border-color 0.18s",
-                    direction: "rtl",
+                     direction: isRTL ? "rtl" : "ltr",
                   }}
                   onMouseEnter={e => {
                     e.currentTarget.style.background = "rgba(155,161,123,0.18)";
@@ -223,7 +261,7 @@ export default function MatchaFinder() {
                   color: "#9BA17B", fontFamily: "'Mirza', serif",
                   fontSize: "0.8rem", display: "flex", alignItems: "center", gap: "0.4rem",
                 }}>
-                ← السؤال السابق
+                 {isEnglish ? "← Previous question" : "← السؤال السابق"}
               </button>
             )}
           </div>
@@ -237,7 +275,7 @@ export default function MatchaFinder() {
               fontSize: "0.6rem", letterSpacing: "0.3em", textTransform: "uppercase",
               color: "#9BA17B", marginBottom: "1.5rem",
             }}>
-              اختيارك المثالي
+              {isEnglish ? "YOUR PERFECT MATCH" : "اختيارك المثالي"}
             </p>
 
             <div style={{
@@ -279,7 +317,7 @@ export default function MatchaFinder() {
                   fontSize: "0.72rem", color: "#9BA17B",
                   marginBottom: "0.75rem", letterSpacing: "0.04em",
                 }}>
-                  مشروبات تنجح معها
+                   {isEnglish ? "Drinks it works beautifully with" : "مشروبات تنجح معها"}
                 </p>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", justifyContent: "center" }}>
                   {res.drinks.map((d, i) => (
@@ -306,7 +344,7 @@ export default function MatchaFinder() {
                 fontSize: "0.9rem", fontWeight: 600,
                 padding: "0.85rem 2rem", textDecoration: "none",
               }}>
-                تسوق هذا الصنف <ArrowLeft size={15} />
+                 {isEnglish ? "Shop this matcha" : "تسوق هذا الصنف"} <ArrowLeft size={15} />
               </Link>
               <button
                 onClick={reset}
@@ -321,7 +359,7 @@ export default function MatchaFinder() {
                   cursor: "pointer",
                 }}>
                 <RotateCcw size={14} />
-                أعد الاختبار
+                 {isEnglish ? "Retake quiz" : "أعد الاختبار"}
               </button>
             </div>
           </div>

@@ -43,7 +43,7 @@ export default function ProductCard({ product }: { product: any }) {
         }}>
           <img
             src={img}
-            alt={product.name}
+            alt={lang === "en" && product.nameEn ? product.nameEn : product.name}
             style={{
               width: "75%", height: "75%", objectFit: "contain",
               transform: hovered ? "scale(1.06)" : "scale(1)",

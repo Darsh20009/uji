@@ -21,10 +21,14 @@ export default function ProductDetailPage() {
 
   useEffect(() => {
     if (!p) return;
-    const title = `${p.name}${p.nameEn ? ` | ${p.nameEn}` : ""} — UJI MATCHA`;
+    const displayName = lang === "en" && p.nameEn ? p.nameEn : p.name;
+    const displayDescription = lang === "en" && p.descriptionEn ? p.descriptionEn : p.description;
+    const title = `${displayName} — UJI MATCHA`;
     document.title = title;
     const description = document.querySelector('meta[name="description"]');
-    if (description) description.setAttribute("content", p.description || `اشترِ ${p.name} من UJI MATCHA — ماتشا يابانية أصيلة مع توصيل إلى الرياض وجميع مدن السعودية.`);
+    if (description) description.setAttribute("content", displayDescription || (lang === "en"
+      ? `Shop ${displayName} from UJI MATCHA — authentic Japanese matcha delivered across Saudi Arabia.`
+      : `اشترِ ${displayName} من UJI MATCHA — ماتشا يابانية أصيلة مع توصيل إلى الرياض وجميع مدن السعودية.`));
     const schemaId = "uji-product-schema";
     document.getElementById(schemaId)?.remove();
     const script = document.createElement("script");
@@ -52,7 +56,7 @@ export default function ProductDetailPage() {
     });
     document.head.appendChild(script);
     return () => { document.getElementById(schemaId)?.remove(); };
-  }, [p]);
+  }, [p, lang]);
 
   if (isLoading) return (
     <div style={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#F2EADB" }}>

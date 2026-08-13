@@ -363,7 +363,6 @@ const T = {
   "admin.invalid.credentials": { ar: "بيانات غير صحيحة", en: "Invalid credentials" },
   "admin.login.loading": { ar: "جاري الدخول...", en: "Signing in..." },
   "admin.save.loading": { ar: "جاري الحفظ...", en: "Saving..." },
-  "admin.save": { ar: "حفظ", en: "Save" },
   "admin.dashboard": { ar: "لوحة التحكم", en: "Dashboard" },
   "admin.sales.report": { ar: "تقرير المبيعات", en: "Sales Report" },
   "admin.finance.overview": { ar: "نظرة مالية", en: "Financial Overview" },
