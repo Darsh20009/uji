@@ -3,3 +3,4 @@
 - [Magazine mobile layout](magazine-mobile-layout.md) — desktop editorial layout stays intact; mobile uses stacked sections, shorter media, and vertical newsletter controls.
 - [Email delivery setup](email-delivery-setup.md) — Render must receive SMTP_PASS separately; email branding uses inline CID assets instead of public image URLs.
 - [App version reset](app-version-reset.md) — bumping APP_VERSION clears stale browser state, PWA caches, and legacy sessions across releases.
+- [Preview database requirement](preview-database-requirement.md) — the app workflow exits before opening port 5000 unless MongoDB_URI is configured.
