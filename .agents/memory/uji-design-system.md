@@ -33,7 +33,7 @@ description: Brand colors, fonts, transparent assets, email, SEO, and admin arch
 - Sends: order confirmation (to customer if email provided), admin alert, newsletter welcome
 
 ## Admin Authentication
-- Admin identified by phone === ADMIN_PHONE env var (0552469643)
+- Admin identified by the ADMIN_PHONE environment variable
 - Admin must have a Customer document with that phone + password
 - First-time setup: POST /api/auth/admin-setup with { password } creates the Customer
 - Login screen has "إعداد حساب المدير لأول مرة" button for bootstrap
