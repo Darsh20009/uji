@@ -23,7 +23,7 @@ The workflow **Start application** runs `npm run dev` and serves on port 5000.
 
 | Key | Description |
 |-----|-------------|
-| `MONGODB_URI` | MongoDB Atlas connection string |
+| `MONGODB_URI` | Required MongoDB connection URI; save it as a Replit Secret before starting the preview |
 | `SESSION_SECRET` | Express session secret (stored as a Replit Secret) |
 | `ADMIN_PHONE` | Phone number used to log in to `/admin` |
 | `PORT` | Port to listen on (default: 5000) |
@@ -39,3 +39,4 @@ Navigate to `/admin` and enter the admin phone number (`ADMIN_PHONE`).
 
 - `postcss.config.cjs` uses `.cjs` extension because `package.json` sets `"type": "module"`
 - Uploaded files are stored in the `uploads/` directory at the project root
+- The development server waits for MongoDB before opening port 5000, so the preview will not start until `MONGODB_URI` is configured
