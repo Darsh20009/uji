@@ -3,36 +3,36 @@ import { useLang } from "../context/LanguageContext";
 
 /* ── دول الخليج والعرب والعالم ── */
 export const COUNTRIES = [
-  { code: "+966", flag: "🇸🇦", name: "السعودية",     abbr: "SA", maxLen: 9  },
-  { code: "+971", flag: "🇦🇪", name: "الإمارات",     abbr: "AE", maxLen: 9  },
-  { code: "+965", flag: "🇰🇼", name: "الكويت",       abbr: "KW", maxLen: 8  },
-  { code: "+974", flag: "🇶🇦", name: "قطر",          abbr: "QA", maxLen: 8  },
-  { code: "+973", flag: "🇧🇭", name: "البحرين",      abbr: "BH", maxLen: 8  },
-  { code: "+968", flag: "🇴🇲", name: "عُمان",        abbr: "OM", maxLen: 8  },
-  { code: "+967", flag: "🇾🇪", name: "اليمن",        abbr: "YE", maxLen: 9  },
-  { code: "+962", flag: "🇯🇴", name: "الأردن",       abbr: "JO", maxLen: 9  },
-  { code: "+961", flag: "🇱🇧", name: "لبنان",        abbr: "LB", maxLen: 8  },
-  { code: "+20",  flag: "🇪🇬", name: "مصر",          abbr: "EG", maxLen: 10 },
-  { code: "+964", flag: "🇮🇶", name: "العراق",       abbr: "IQ", maxLen: 10 },
-  { code: "+963", flag: "🇸🇾", name: "سوريا",        abbr: "SY", maxLen: 9  },
-  { code: "+970", flag: "🇵🇸", name: "فلسطين",       abbr: "PS", maxLen: 9  },
-  { code: "+212", flag: "🇲🇦", name: "المغرب",       abbr: "MA", maxLen: 9  },
-  { code: "+216", flag: "🇹🇳", name: "تونس",         abbr: "TN", maxLen: 8  },
-  { code: "+213", flag: "🇩🇿", name: "الجزائر",      abbr: "DZ", maxLen: 9  },
-  { code: "+218", flag: "🇱🇾", name: "ليبيا",        abbr: "LY", maxLen: 9  },
-  { code: "+249", flag: "🇸🇩", name: "السودان",      abbr: "SD", maxLen: 9  },
-  { code: "+252", flag: "🇸🇴", name: "الصومال",      abbr: "SO", maxLen: 8  },
-  { code: "+92",  flag: "🇵🇰", name: "باكستان",      abbr: "PK", maxLen: 10 },
-  { code: "+91",  flag: "🇮🇳", name: "الهند",        abbr: "IN", maxLen: 10 },
-  { code: "+880", flag: "🇧🇩", name: "بنغلاديش",     abbr: "BD", maxLen: 10 },
-  { code: "+63",  flag: "🇵🇭", name: "الفلبين",      abbr: "PH", maxLen: 10 },
-  { code: "+94",  flag: "🇱🇰", name: "سريلانكا",     abbr: "LK", maxLen: 9  },
-  { code: "+44",  flag: "🇬🇧", name: "بريطانيا",     abbr: "GB", maxLen: 10 },
-  { code: "+1",   flag: "🇺🇸", name: "أمريكا",       abbr: "US", maxLen: 10 },
-  { code: "+49",  flag: "🇩🇪", name: "ألمانيا",      abbr: "DE", maxLen: 11 },
-  { code: "+33",  flag: "🇫🇷", name: "فرنسا",        abbr: "FR", maxLen: 9  },
-  { code: "+90",  flag: "🇹🇷", name: "تركيا",        abbr: "TR", maxLen: 10 },
-  { code: "+98",  flag: "🇮🇷", name: "إيران",        abbr: "IR", maxLen: 10 },
+  { code: "+966", name: "السعودية",     abbr: "SA", maxLen: 9  },
+  { code: "+971", name: "الإمارات",     abbr: "AE", maxLen: 9  },
+  { code: "+965", name: "الكويت",       abbr: "KW", maxLen: 8  },
+  { code: "+974", name: "قطر",          abbr: "QA", maxLen: 8  },
+  { code: "+973", name: "البحرين",      abbr: "BH", maxLen: 8  },
+  { code: "+968", name: "عُمان",        abbr: "OM", maxLen: 8  },
+  { code: "+967", name: "اليمن",        abbr: "YE", maxLen: 9  },
+  { code: "+962", name: "الأردن",       abbr: "JO", maxLen: 9  },
+  { code: "+961", name: "لبنان",        abbr: "LB", maxLen: 8  },
+  { code: "+20",  name: "مصر",          abbr: "EG", maxLen: 10 },
+  { code: "+964", name: "العراق",       abbr: "IQ", maxLen: 10 },
+  { code: "+963", name: "سوريا",        abbr: "SY", maxLen: 9  },
+  { code: "+970", name: "فلسطين",       abbr: "PS", maxLen: 9  },
+  { code: "+212", name: "المغرب",       abbr: "MA", maxLen: 9  },
+  { code: "+216", name: "تونس",         abbr: "TN", maxLen: 8  },
+  { code: "+213", name: "الجزائر",      abbr: "DZ", maxLen: 9  },
+  { code: "+218", name: "ليبيا",        abbr: "LY", maxLen: 9  },
+  { code: "+249", name: "السودان",      abbr: "SD", maxLen: 9  },
+  { code: "+252", name: "الصومال",      abbr: "SO", maxLen: 8  },
+  { code: "+92",  name: "باكستان",      abbr: "PK", maxLen: 10 },
+  { code: "+91",  name: "الهند",        abbr: "IN", maxLen: 10 },
+  { code: "+880", name: "بنغلاديش",     abbr: "BD", maxLen: 10 },
+  { code: "+63",  name: "الفلبين",      abbr: "PH", maxLen: 10 },
+  { code: "+94",  name: "سريلانكا",      abbr: "LK", maxLen: 9  },
+  { code: "+44",  name: "بريطانيا",     abbr: "GB", maxLen: 10 },
+  { code: "+1",   name: "أمريكا",       abbr: "US", maxLen: 10 },
+  { code: "+49",  name: "ألمانيا",      abbr: "DE", maxLen: 11 },
+  { code: "+33",  name: "فرنسا",        abbr: "FR", maxLen: 9  },
+  { code: "+90",  name: "تركيا",        abbr: "TR", maxLen: 10 },
+  { code: "+98",  name: "إيران",        abbr: "IR", maxLen: 10 },
 ];
 
 export type Country = typeof COUNTRIES[0];
@@ -196,7 +196,7 @@ export default function PhoneInput({
             ...triggerStyle,
           }}
         >
-          <span style={{ fontSize: "1.2rem", lineHeight: 1 }}>{selected.flag}</span>
+          <span style={{ fontSize: "0.63rem", lineHeight: 1, fontFamily: "monospace", color: clr.placeholder, fontWeight: 600 }}>{selected.abbr}</span>
           <span style={{ fontSize: "0.78rem", color: clr.codeColor, fontFamily: "monospace", letterSpacing: "0.02em" }}>
             {selected.code}
           </span>
@@ -282,7 +282,7 @@ export default function PhoneInput({
                 onMouseEnter={e => (e.currentTarget.style.background = clr.hoverBg)}
                 onMouseLeave={e => (e.currentTarget.style.background = c.code === selected.code ? clr.hoverBg : "transparent")}
               >
-                <span style={{ fontSize: "1.15rem", flexShrink: 0 }}>{c.flag}</span>
+                <span style={{ width: 28, flexShrink: 0, fontSize: "0.7rem", fontFamily: "monospace", color: clr.placeholder, textAlign: "center" }}>{c.abbr}</span>
                 <span style={{ flex: 1 }}>{countryName(c)}</span>
                 <span style={{ fontFamily: "monospace", fontSize: "0.78rem", color: clr.placeholder, flexShrink: 0, direction: "ltr" }}>
                   {c.code}

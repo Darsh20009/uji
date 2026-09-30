@@ -38,6 +38,15 @@ description: Brand colors, fonts, transparent assets, email, SEO, and admin arch
 - First-time setup: POST /api/auth/admin-setup with { password } creates the Customer
 - Login screen has "إعداد حساب المدير لأول مرة" button for bootstrap
 
+## Customer Sign-In
+- Customer sign-in defaults to QIROX WhatsApp one-time codes, with existing customer password login retained as a fallback.
+- Keep the separate admin password flow unchanged.
+- Stored customer phone values are not guaranteed to be E.164; normalize for WhatsApp delivery while matching legacy local-number formats.
+
+**Why:** Existing customer records and checkout flows use local phone strings, so replacing stored values would require a broader coordinated migration.
+
+**How to apply:** Keep legacy phone lookup compatible in auth changes, send provider messages in E.164 format, and store QIROX credentials only as Replit Secrets.
+
 ## SEO / AEO
 - Full OG tags, Twitter cards in client/index.html
 - JSON-LD: Organization, WebSite (with SearchAction), Store schemas

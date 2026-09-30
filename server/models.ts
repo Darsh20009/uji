@@ -75,6 +75,12 @@ const CustomerSchema = new Schema({
   totalSpent: { type: Number, default: 0 },
   resetOtp: String,
   resetOtpExpiry: Date,
+  loginOtpHash: String,
+  loginOtpExpiry: Date,
+  loginOtpAttempts: { type: Number, default: 0 },
+  loginOtpLastSentAt: Date,
+  loginOtpSendWindowStartedAt: Date,
+  loginOtpSendCount: { type: Number, default: 0 },
   /* business / institutional info */
   accountType:        { type: String, enum: ["individual", "business"], default: "individual" },
   businessName:       String,

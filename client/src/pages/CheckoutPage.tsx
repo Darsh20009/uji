@@ -172,10 +172,10 @@ export default function CheckoutPage() {
   if (order) return <OrderSuccess order={order} user={user} font={font} serif={serif} mono={mono} lang={lang} />;
 
   const paymentOptions = [
-    ...(codEnabled   ? [{ val: "cod",    label: t("checkout.pay.cod", lang),   sub: t("checkout.pay.cod.sub", lang),  icon: "💵" }] : []),
-    ...(geideaEnabled ? [{ val: "geidea", label: t("checkout.pay.card", lang),  sub: t("checkout.pay.card.sub", lang), icon: "💳" }] : []),
-    ...(stcEnabled   ? [{ val: "stcpay", label: t("checkout.pay.stcpay", lang), sub: stcPayNumber ? `${stcPayNumber}` : "STC Pay", icon: "📱" }] : []),
-    ...(bankEnabled  ? [{ val: "bank",   label: t("checkout.pay.bank", lang),   sub: bankIban ? `${bankName} — ${bankIban}` : t("checkout.pay.bank.details", lang), icon: "🏦" }] : []),
+    ...(codEnabled   ? [{ val: "cod",    label: t("checkout.pay.cod", lang),   sub: t("checkout.pay.cod.sub", lang),  icon: "نقداً" }] : []),
+    ...(geideaEnabled ? [{ val: "geidea", label: t("checkout.pay.card", lang),  sub: t("checkout.pay.card.sub", lang), icon: "بطاقة" }] : []),
+    ...(stcEnabled   ? [{ val: "stcpay", label: t("checkout.pay.stcpay", lang), sub: stcPayNumber ? `${stcPayNumber}` : "STC Pay", icon: "جوال" }] : []),
+    ...(bankEnabled  ? [{ val: "bank",   label: t("checkout.pay.bank", lang),   sub: bankIban ? `${bankName} — ${bankIban}` : t("checkout.pay.bank.details", lang), icon: "بنك" }] : []),
   ];
 
   return (
@@ -228,7 +228,7 @@ export default function CheckoutPage() {
                     {t("cart.shipping", lang)} ({lang === "en" && deliveryProvider.nameEn ? deliveryProvider.nameEn : deliveryProvider.name})
                   </span>
                   <span style={{ fontFamily: font, fontSize: "0.82rem", color: isFreeShipping ? "#059669" : "#1C201B" }}>
-                    {isFreeShipping ? `${t("common.free", lang)} 🎉` : `${shipping.toFixed(2)} ${t("common.currency", lang)}`}
+                    {isFreeShipping ? t("common.free", lang) : `${shipping.toFixed(2)} ${t("common.currency", lang)}`}
                   </span>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px solid rgba(200,187,164,0.4)", paddingTop: "0.75rem", marginTop: "0.25rem" }}>
@@ -370,7 +370,7 @@ export default function CheckoutPage() {
                         {p.logo?.startsWith("/") ? (
                           <img src={p.logo} alt={p.nameEn} style={{ maxHeight: 28, maxWidth: 64, objectFit: "contain" }} onError={e => { (e.target as HTMLImageElement).style.display = "none"; }} />
                         ) : (
-                          <span style={{ fontSize: "1.4rem" }}>{p.logo ?? "🚚"}</span>
+                          <span style={{ fontSize: "0.8rem" }}>{p.logo ?? "التوصيل"}</span>
                         )}
                       </div>
                       <div style={{ flex: 1 }}>
@@ -474,7 +474,7 @@ export default function CheckoutPage() {
 
             <button type="submit" disabled={loading} className="btn-primary"
               style={{ height: 58, fontSize: "0.95rem", letterSpacing: "0.06em", width: "100%" }}>
-              {loading ? t("checkout.processing", lang) : `${t("checkout.submit", lang)} — ${total.toFixed(2)} ${t("common.currency", lang)} ✦`}
+              {loading ? t("checkout.processing", lang) : `${t("checkout.submit", lang)} — ${total.toFixed(2)} ${t("common.currency", lang)}`}
             </button>
           </form>
         </div>
@@ -561,7 +561,7 @@ function OrderSuccess({ order, user, font, serif, mono, lang }: { order: any; us
             <p style={{ fontFamily: font, fontSize: "0.8rem", color: "#9BA17B", marginBottom: "1rem" }}>{t("order.success.receipt.body", lang)}</p>
             {receiptData ? (
               <div style={{ background: "rgba(5,150,105,0.07)", border: "1px solid rgba(5,150,105,0.22)", padding: "1rem", textAlign: "center" }}>
-                <p style={{ fontFamily: font, color: "#047857", fontSize: "0.9rem", marginBottom: "0.75rem" }}>✓ {statusText}</p>
+                <p style={{ fontFamily: font, color: "#047857", fontSize: "0.9rem", marginBottom: "0.75rem" }}>{statusText}</p>
                 {receiptData.whatsappUrl && <a href={receiptData.whatsappUrl} target="_blank" rel="noopener" className="btn-primary" style={{ height: 42, fontFamily: font, fontSize: "0.8rem" }}>{t("order.success.receipt.whatsapp", lang)}</a>}
               </div>
             ) : (

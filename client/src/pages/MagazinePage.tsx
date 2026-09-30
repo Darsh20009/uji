@@ -105,7 +105,7 @@ export default function MagazinePage() {
               fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem",
               letterSpacing: "0.45em", color: "#9BA17B", marginBottom: "1rem",
               textTransform: "uppercase",
-              }}>{lang === "ar" ? "✦ CRAFTED IN JAPAN — SINCE 2026" : "✦ CRAFTED IN JAPAN — SINCE 2026"}</p>
+              }}>{lang === "ar" ? "CRAFTED IN JAPAN — SINCE 2026" : "CRAFTED IN JAPAN — SINCE 2026"}</p>
             <h2 style={{
               fontFamily: "'Mirza', serif",
               fontSize: "clamp(1.8rem,3.5vw,3rem)",
@@ -131,7 +131,7 @@ export default function MagazinePage() {
             <p style={{
               fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem",
               letterSpacing: "0.4em", color: "#9BA17B", marginBottom: "1.5rem",
-            }}>{lang === "ar" ? "✦ عن الاسم" : "✦ ABOUT THE NAME"}</p>
+            }}>{lang === "ar" ? "عن الاسم" : "ABOUT THE NAME"}</p>
             <h2 style={{
               fontFamily: "'Mirza', serif",
               fontSize: "clamp(2rem,4vw,3.5rem)",
@@ -189,7 +189,7 @@ export default function MagazinePage() {
               <p style={{
                 fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem",
                 letterSpacing: "0.4em", color: "#9BA17B", marginBottom: "1rem",
-              }}>{lang === "ar" ? "✦ المقال المميز" : "✦ FEATURED ARTICLE"}</p>
+              }}>{lang === "ar" ? "المقال المميز" : "FEATURED ARTICLE"}</p>
               <span style={{
                 display: "inline-block", alignSelf: "flex-start",
                 background: "#1F3929", color: "#9BA17B",
@@ -259,7 +259,7 @@ export default function MagazinePage() {
             <p style={{
               fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem",
               letterSpacing: "0.4em", color: "#9BA17B", marginBottom: "1.5rem",
-            }}>{lang === "ar" ? "✦ الهوية البصرية" : "✦ VISUAL IDENTITY"}</p>
+            }}>{lang === "ar" ? "الهوية البصرية" : "VISUAL IDENTITY"}</p>
             <h2 style={{
               fontFamily: "'Mirza', serif",
               fontSize: "clamp(1.8rem,3vw,2.8rem)",
@@ -306,7 +306,7 @@ export default function MagazinePage() {
               <p style={{
               fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem",
               letterSpacing: "0.4em", color: "#7E8962", marginBottom: "1.25rem",
-              }}>{lang === "ar" ? "✦ العلبة — 01" : "✦ THE TIN — 01"}</p>
+              }}>{lang === "ar" ? "العلبة — 01" : "THE TIN — 01"}</p>
             <h2 style={{
               fontFamily: "'Mirza', serif",
               fontSize: "clamp(1.8rem,3.2vw,2.8rem)", color: "#1C201B",
@@ -337,7 +337,7 @@ export default function MagazinePage() {
             display: "flex", alignItems: "center",
           }}>
             <div className="mag-fields-copy" style={{ padding: "3rem 4rem", maxWidth: 420 }}>
-              <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem", letterSpacing: "0.42em", color: "#C8D09F", marginBottom: "1rem" }}>{lang === "ar" ? "✦ FROM THE SOURCE" : "✦ FROM THE SOURCE"}</p>
+              <p style={{ fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem", letterSpacing: "0.42em", color: "#C8D09F", marginBottom: "1rem" }}>{lang === "ar" ? "FROM THE SOURCE" : "FROM THE SOURCE"}</p>
               <h2 style={{ fontFamily: "'Mirza', serif", fontSize: "clamp(1.9rem,3.5vw,3rem)", color: "#F2EADB", lineHeight: 1.2, marginBottom: "1rem" }}>{lang === "ar" ? <>من قلب الحقول<br />إلى طقسك اليومي</> : <>From the fields<br />to your daily ritual</>}</h2>
               <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.86rem", color: "rgba(242,234,219,0.78)", lineHeight: 1.9 }}>{lang === "ar" ? "شيزوكا ليست مجرد موقع على الخريطة؛ إنها أرض ومناخ وحرفة تتوارثها الأجيال." : "Shizuoka is more than a place on the map; it is land, climate, and craft passed down through generations."}</p>
             </div>
@@ -363,7 +363,7 @@ export default function MagazinePage() {
               <p style={{
                 fontFamily: "'Cascadia Code', monospace", fontSize: "0.52rem",
                 letterSpacing: "0.45em", color: "#9BA17B", marginBottom: "1rem",
-              }}>{lang === "ar" ? "✦ المنتج" : "✦ THE PRODUCT"}</p>
+              }}>{lang === "ar" ? "المنتج" : "THE PRODUCT"}</p>
               <h2 style={{
                 fontFamily: "'Mirza', serif",
                 fontSize: "clamp(1.8rem,3.5vw,3rem)",
@@ -476,7 +476,7 @@ export default function MagazinePage() {
             fontFamily: "'Cascadia Code', monospace",
             fontSize: "0.55rem", letterSpacing: "0.4em",
             color: "#9BA17B",
-            }}>{lang === "ar" ? "✦ النشرة البريدية" : "✦ NEWSLETTER"}</p>
+            }}>{lang === "ar" ? "النشرة البريدية" : "NEWSLETTER"}</p>
           <h3 style={{
             fontFamily: "'Mirza', serif",
             fontSize: "clamp(1.6rem,3.5vw,2.5rem)",

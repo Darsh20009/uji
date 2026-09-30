@@ -49,22 +49,22 @@ export default function RitualPage() {
 
   const tips = [
     {
-      icon: "🌡️",
+      icon: "درجة الحرارة",
       titleKey: "ritualpage.tip.0.title", titleDefault: "درجة الحرارة",
       bodyKey: "ritualpage.tip.0.body",   bodyDefault: "٧٠–٨٠° للماتشا النقية، ٨٠–٨٥° للاتيه",
     },
     {
-      icon: "⚖️",
+      icon: "الكمية",
       titleKey: "ritualpage.tip.1.title", titleDefault: "الكمية",
       bodyKey: "ritualpage.tip.1.body",   bodyDefault: "٣–٤ غرام لكل ٤٠ مل ماء",
     },
     {
-      icon: "🎋",
+      icon: "المخفقة",
       titleKey: "ritualpage.tip.2.title", titleDefault: "المخفقة",
       bodyKey: "ritualpage.tip.2.body",   bodyDefault: "احفظها في حامل بعد الاستخدام لتدوم أكثر",
     },
     {
-      icon: "📦",
+      icon: "الحفظ",
       titleKey: "ritualpage.tip.3.title", titleDefault: "الحفظ",
       bodyKey: "ritualpage.tip.3.body",   bodyDefault: "أغلق العبوة وضعها في الثلاجة بعيداً عن الضوء",
     },

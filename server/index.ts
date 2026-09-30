@@ -77,6 +77,6 @@ app.get("/sitemap.xml", async (_req, res) => {
 
   const port = parseInt(process.env.PORT || "5000", 10);
   httpServer.listen({ port, host: "0.0.0.0" }, () => {
-    console.log(`🚀 Store running on port ${port}`);
+    console.log(`Store running on port ${port}`);
   });
 })();

@@ -172,7 +172,7 @@ export default function PolicyPage() {
           <ul style={{ listStyle: "none", padding: 0, margin: "0 0 1rem" }}>
             {privacyBullets.map((item, i) => (
               <li key={i} style={{ ...pStyle, marginBottom: "0.5rem", display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
-                <span style={{ color: "#9BA17B", marginTop: 3 }}>✦</span>
+                <span style={{ color: "#9BA17B", marginTop: 3 }} aria-hidden="true">·</span>
                 <span>{item}</span>
               </li>
             ))}

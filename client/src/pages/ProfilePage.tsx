@@ -166,10 +166,10 @@ export default function ProfilePage() {
   const progress = tierInfo.next > 0 ? Math.min(100, (points / tierInfo.next) * 100) : 100;
 
   const loyaltyRules = [
-    { d: t("profile.loyalty.rule1", lang), i: "🛒" },
-    { d: t("profile.loyalty.rule2", lang), i: "🥈" },
-    { d: t("profile.loyalty.rule3", lang), i: "🥇" },
-    { d: t("profile.loyalty.rule4", lang), i: "💎" },
+    { d: t("profile.loyalty.rule1", lang), i: "الشراء" },
+    { d: t("profile.loyalty.rule2", lang), i: "الفضي" },
+    { d: t("profile.loyalty.rule3", lang), i: "الذهبي" },
+    { d: t("profile.loyalty.rule4", lang), i: "البلاتيني" },
   ];
 
   return (

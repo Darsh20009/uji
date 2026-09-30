@@ -223,7 +223,7 @@ export async function sendAdminOrderAlert(order: any) {
     await transporter.sendMail({
       from: FROM,
       to: adminEmail(),
-      subject: `🛒 طلب جديد ${order.orderNumber} — ${(order.total || 0).toFixed(2)} ر.س`,
+      subject: `طلب جديد ${order.orderNumber} — ${(order.total || 0).toFixed(2)} ر.س`,
       html: layout(body),
       attachments: emailAttachments(),
       text: `طلب جديد: ${order.orderNumber}\nالعميل: ${order.customer?.name} ${order.customer?.phone}\nالإجمالي: ${(order.total || 0).toFixed(2)} ر.س`,
@@ -342,7 +342,6 @@ export async function sendNewsletterWelcome(email: string) {
     <tr>
       <td style="padding:32px 40px;text-align:center;">
 
-        <div style="font-size:32px;margin-bottom:16px;">🍵</div>
 
         <h1 style="margin:0 0 12px;font-size:22px;font-weight:400;color:#1C201B;">
           أهلاً بك في UJI MATCHA
@@ -357,17 +356,14 @@ export async function sendNewsletterWelcome(email: string) {
         <table width="100%" cellpadding="0" cellspacing="0" border="0">
           <tr>
             <td style="padding:0 8px;text-align:center;vertical-align:top;width:33%;">
-              <div style="font-size:20px;margin-bottom:8px;">🍃</div>
               <div style="font-size:12px;font-weight:600;color:#1C201B;margin-bottom:4px;">ريتشوال الماتشا</div>
               <div style="font-size:11px;color:#A09680;">دليلك لكوب مثالي</div>
             </td>
             <td style="padding:0 8px;text-align:center;vertical-align:top;width:33%;">
-              <div style="font-size:20px;margin-bottom:8px;">📖</div>
               <div style="font-size:12px;font-weight:600;color:#1C201B;margin-bottom:4px;">من المجلة</div>
               <div style="font-size:11px;color:#A09680;">قصص من قلب اليابان</div>
             </td>
             <td style="padding:0 8px;text-align:center;vertical-align:top;width:33%;">
-              <div style="font-size:20px;margin-bottom:8px;">✦</div>
               <div style="font-size:12px;font-weight:600;color:#1C201B;margin-bottom:4px;">عروض حصرية</div>
               <div style="font-size:11px;color:#A09680;">للمشتركين فقط</div>
             </td>
@@ -390,7 +386,7 @@ export async function sendNewsletterWelcome(email: string) {
     await transporter.sendMail({
       from: FROM,
       to: email,
-      subject: "أهلاً بك في UJI MATCHA ✦",
+      subject: "أهلاً بك في UJI MATCHA",
       html: layout(body),
       attachments: emailAttachments(),
       text: "مرحباً بك في UJI MATCHA — شكراً لاشتراكك في نشرتنا البريدية.",
@@ -500,7 +496,7 @@ export async function sendInvoiceEmail(invoice: any) {
                     padding:16px 18px;border-radius:2px;">
           <div style="font-size:11px;letter-spacing:0.15em;color:#9BA17B;margin-bottom:6px;">الحالة</div>
           <div style="font-size:14px;font-weight:600;color:#1F3929;">
-            ${invoice.status === "paid" ? "✓ مدفوعة" : "صادرة — في انتظار السداد"}
+            ${invoice.status === "paid" ? "مدفوعة" : "صادرة — في انتظار السداد"}
           </div>
         </div>
 

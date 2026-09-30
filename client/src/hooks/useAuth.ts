@@ -16,6 +16,17 @@ export function useAuth() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["me"] }),
   });
 
+  const requestWhatsappLoginCode = useMutation({
+    mutationFn: (d: { phone: string; countryCode: string }) =>
+      api.post("/auth/whatsapp/request-login-code", d),
+  });
+
+  const loginWithWhatsappCode = useMutation({
+    mutationFn: (d: { phone: string; countryCode: string; code: string }) =>
+      api.post("/auth/whatsapp/verify-login-code", d),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["me"] }),
+  });
+
   const register = useMutation({
     mutationFn: (d: { name: string; phone: string; password: string }) =>
       api.post("/auth/register", d),
@@ -27,5 +38,5 @@ export function useAuth() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["me"] }),
   });
 
-  return { user, isLoading, login, register, logout };
+  return { user, isLoading, login, requestWhatsappLoginCode, loginWithWhatsappCode, register, logout };
 }

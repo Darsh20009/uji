@@ -12,8 +12,8 @@ function isAdmin(user: any) {
 const STATUS_LABEL: Record<string, string> = {
   idle: "",
   saving: "جاري الحفظ...",
-  saved: "✓ تم الحفظ",
-  error: "⚠ خطأ في الحفظ",
+  saved: "تم الحفظ",
+  error: "خطأ في الحفظ",
 };
 const STATUS_COLOR: Record<string, string> = {
   idle: "transparent",
@@ -64,7 +64,7 @@ export function EditToolbar() {
             transition: "all 0.2s",
           }}
         >
-          {editMode ? "✓ إنهاء التعديل" : "✏ تعديل الموقع"}
+          {editMode ? "إنهاء التعديل" : "تعديل الموقع"}
         </button>
 
         {/* Force save (only in edit mode) */}
@@ -78,7 +78,7 @@ export function EditToolbar() {
               fontFamily: "'Mirza', serif", fontSize: "0.85rem",
               boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
             }}
-          >💾 حفظ</button>
+          >حفظ</button>
         )}
       </div>
 
@@ -92,7 +92,7 @@ export function EditToolbar() {
           fontFamily: "monospace", fontSize: "0.65rem", letterSpacing: "0.15em",
           textTransform: "uppercase",
         }}>
-          <span>✏ وضع التعديل مفعّل — انقر على أي نص أو صورة لتعديله</span>
+          <span>وضع التعديل مفعّل — انقر على أي نص أو صورة لتعديله</span>
         </div>
       )}
     </>

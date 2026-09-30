@@ -49,7 +49,7 @@ function ImageField({ field, value, onChange }: { field: ContentField; value: st
           width: "100%",
         }}
       >
-        {uploading ? "⟳ جاري الرفع..." : "⬆ تغيير الصورة"}
+        {uploading ? "جار الرفع..." : "تغيير الصورة"}
       </button>
       <input ref={ref} type="file" accept="image/*" style={{ display: "none" }} onChange={handleFile} />
     </div>
@@ -270,7 +270,7 @@ export function CmsSidebar() {
               onClick={() => setEditMode(false)}
               title={`${t("cms.shortcut.close", lang)} (Esc)`}
               style={{ background: "none", border: "none", color: "rgba(242,234,219,0.4)", cursor: "pointer", fontSize: "1.1rem", lineHeight: 1, padding: "0.15rem" }}
-            >✕</button>
+            >إغلاق</button>
           </div>
         </div>
 

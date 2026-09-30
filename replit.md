@@ -26,6 +26,8 @@ The workflow **Start application** runs `npm run dev` and serves on port 5000.
 | `MONGODB_URI` | Required MongoDB connection URI; save it as a Replit Secret before starting the preview |
 | `SESSION_SECRET` | Express session secret (stored as a Replit Secret) |
 | `ADMIN_PHONE` | Phone number used to log in to `/admin` |
+| `QIROX_WHATSAPP_PROJECT_ID` | QIROX project ID used for customer WhatsApp sign-in codes |
+| `QIROX_WHATSAPP_API_KEY` | QIROX Bearer token; store it only as a Replit Secret |
 | `PORT` | Port to listen on (default: 5000) |
 | `APP_VERSION` | Current client/server release version (default: `1.0.0`); bump it to reset old browser cookies and cached app state |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Optional Google OAuth |
@@ -34,6 +36,8 @@ The workflow **Start application** runs `npm run dev` and serves on port 5000.
 ## Admin panel
 
 Navigate to `/admin` and enter the admin phone number (`ADMIN_PHONE`).
+
+Customer sign-in defaults to a one-time code delivered through QIROX WhatsApp. Existing customer password login remains available as a fallback, and the separate admin password flow is unchanged. Login codes expire after five minutes, are limited to five sends per hour per customer, and are verified server-side.
 
 ## Notes
 

@@ -71,7 +71,7 @@ export function EditableImage({ contentKey, defaultSrc, alt = "", style, classNa
             fontFamily: "'Mirza', serif", fontSize: "0.85rem",
             display: "flex", alignItems: "center", gap: "0.4rem",
           }}>
-            {uploading ? "جاري الرفع..." : "🖼 تغيير الصورة"}
+            {uploading ? "جاري الرفع..." : "تغيير الصورة"}
           </div>
         </div>
       )}

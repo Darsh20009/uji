@@ -28,7 +28,7 @@ export function AdminToggle() {
         display: "flex", alignItems: "center", justifyContent: "center",
       }}
     >
-      {editMode ? "✕" : "✏"}
+      {editMode ? "إيقاف التعديل" : "تعديل الموقع"}
     </button>
   );
 }

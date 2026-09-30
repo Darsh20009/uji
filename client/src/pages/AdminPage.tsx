@@ -672,7 +672,7 @@ function ProductModal({ mode, product, onClose, onSaved }: { mode: "add" | "edit
           <div>
             <label className={lbl}>نوع الماتشا</label>
             <div className="grid grid-cols-2 gap-2">
-              {[{ v: "", label: "— بدون —" }, { v: "ceremonial", label: "✦ احتفالي" }, { v: "everyday", label: "☕ يومي" }, { v: "culinary", label: "🧃 تجاري" }].map(opt => (
+              {[{ v: "", label: "— بدون —" }, { v: "ceremonial", label: "احتفالي" }, { v: "everyday", label: "يومي" }, { v: "culinary", label: "تجاري" }].map(opt => (
                 <button key={opt.v} type="button" onClick={() => setForm({ ...form, matchaType: opt.v })}
                   className={`p-2.5 rounded-xl border text-right text-xs transition-colors ${form.matchaType === opt.v ? "border-[#1F3929] bg-[#F0EBE1] font-semibold" : "border-stone-200 hover:border-stone-300"}`}>
                   {opt.label}
@@ -1320,11 +1320,13 @@ function AdminSettings() {
   const [saved, setSaved] = useState(false);
   const [testEmail, setTestEmail] = useState("");
   const [testSending, setTestSending] = useState(false);
+  const cleanBadgeLabel = (value: unknown) =>
+    String(value ?? "").replace(/[\p{Extended_Pictographic}\p{Regional_Indicator}\uFE0F\u200D]/gu, "").trim();
 
   const DEFAULT_BADGES = [
-    { icon: "🚚", title: "يوصلك خلال", value: "١–٣ أيام",   enabled: true },
-    { icon: "🔒", title: "الدفع",       value: "آمن ومشفّر", enabled: true },
-    { icon: "↩️",  title: "الاسترجاع",  value: "يوم واحد",   enabled: true },
+    { icon: "التوصيل", title: "يوصلك خلال", value: "١–٣ أيام",   enabled: true },
+    { icon: "الدفع",    title: "الدفع",       value: "آمن ومشفّر", enabled: true },
+    { icon: "الاسترجاع", title: "الاسترجاع", value: "يوم واحد", enabled: true },
   ];
   const defaults = {
     storeName: "UJI MATCHA", storePhone: "0552469643", storeEmail: "info@qirox.online",
@@ -1353,7 +1355,7 @@ function AdminSettings() {
 
   const sendTest = async () => {
     if (!testEmail) return; setTestSending(true);
-    try { await api.post("/admin/send-test-email", { to: testEmail }); alert("✅ تم إرسال البريد التجريبي"); }
+    try { await api.post("/admin/send-test-email", { to: testEmail }); alert("تم إرسال البريد التجريبي"); }
     catch (e: any) { alert("خطأ: " + e.message); }
     setTestSending(false);
   };
@@ -1407,7 +1409,7 @@ function AdminSettings() {
           {/* Bank */}
           <div className="border border-stone-100 rounded-xl">
             <div className="flex items-center justify-between p-3">
-              <div className="flex items-center gap-3"><div className="text-lg">🏦</div><div><p className="text-sm font-medium text-stone-700">التحويل البنكي</p><p className="text-xs text-stone-400">مع رفع إيصال الدفع</p></div></div>
+              <div className="flex items-center gap-3"><div className="text-xs font-medium">بنك</div><div><p className="text-sm font-medium text-stone-700">التحويل البنكي</p><p className="text-xs text-stone-400">مع رفع إيصال الدفع</p></div></div>
               <Toggle value={current._bankEnabled} onChange={v => setForm({ ...current, _bankEnabled: v })} />
             </div>
             {current._bankEnabled && (
@@ -1420,7 +1422,7 @@ function AdminSettings() {
           {/* STC */}
           <div className="border border-stone-100 rounded-xl">
             <div className="flex items-center justify-between p-3">
-              <div className="flex items-center gap-3"><div className="text-lg">📱</div><div><p className="text-sm font-medium text-stone-700">STC Pay</p><p className="text-xs text-stone-400">مع رفع إيصال الدفع</p></div></div>
+              <div className="flex items-center gap-3"><div className="text-xs font-medium">جوال</div><div><p className="text-sm font-medium text-stone-700">STC Pay</p><p className="text-xs text-stone-400">مع رفع إيصال الدفع</p></div></div>
               <Toggle value={current._stcEnabled} onChange={v => setForm({ ...current, _stcEnabled: v })} />
             </div>
             {current._stcEnabled && (
@@ -1433,10 +1435,10 @@ function AdminSettings() {
           {/* Geidea */}
           <div className="border border-stone-100 rounded-xl p-3">
             <div className="flex items-center gap-3 mb-3">
-              <div className="text-lg">💳</div>
+          <div className="text-xs font-medium">بطاقة</div>
               <div>
                 <p className="text-sm font-medium text-stone-700">Geidea — بوابة الدفع</p>
-                <p className="text-xs text-stone-400">{(settings as any)?._geideaEnabled ? "✅ مفعّلة" : "⚠️ غير مفعّلة — أضف GEIDEA_MERCHANT_KEY في Secrets"}</p>
+                <p className="text-xs text-stone-400">{(settings as any)?._geideaEnabled ? "مفعّلة" : "غير مفعّلة — أضف GEIDEA_MERCHANT_KEY في Secrets"}</p>
               </div>
             </div>
           </div>
@@ -1489,7 +1491,7 @@ function AdminSettings() {
       {/* Trust Badges */}
       <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-stone-50 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center text-base">✦</div>
+          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center text-base" aria-hidden="true">·</div>
           <div><p className="text-sm font-semibold text-stone-700">شريط الثقة</p><p className="text-xs text-stone-400 mt-0.5">بطاقات التوصيل والدفع والاسترجاع</p></div>
         </div>
         <div className="p-5 space-y-4">
@@ -1512,7 +1514,7 @@ function AdminSettings() {
                     <Toggle value={b.enabled} onChange={v => upd("enabled", v)} />
                   </div>
                   <div className="grid grid-cols-3 gap-2">
-                    <div><label className={lbl}>الأيقونة</label><input className={inp + " text-center text-xl"} value={b.icon} onChange={e => upd("icon", e.target.value)} maxLength={4} /></div>
+                    <div><label className={lbl}>الوصف</label><input className={inp + " text-center"} value={cleanBadgeLabel(b.icon)} onChange={e => upd("icon", cleanBadgeLabel(e.target.value))} maxLength={24} /></div>
                     <div><label className={lbl}>العنوان</label><input className={inp} value={b.title} onChange={e => upd("title", e.target.value)} /></div>
                     <div><label className={lbl}>القيمة</label><input className={inp} value={b.value} onChange={e => upd("value", e.target.value)} /></div>
                   </div>
@@ -1520,7 +1522,7 @@ function AdminSettings() {
               );
             })}
           </div>
-          <button onClick={() => { const badges: any[] = current.trustBadges ?? DEFAULT_BADGES; setForm({ ...current, trustBadges: [...badges, { icon: "⭐", title: "عنوان", value: "قيمة", enabled: true }] }); }}
+          <button onClick={() => { const badges: any[] = current.trustBadges ?? DEFAULT_BADGES; setForm({ ...current, trustBadges: [...badges, { icon: "ميزة", title: "عنوان", value: "قيمة", enabled: true }] }); }}
             className="w-full h-10 rounded-xl border border-dashed border-stone-200 text-stone-400 text-sm hover:border-[#9BA17B] hover:text-[#9BA17B] transition-colors">
             + إضافة بطاقة
           </button>
@@ -1530,7 +1532,7 @@ function AdminSettings() {
       {/* Social Media Links */}
       <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-stone-50 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center text-base">📲</div>
+          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center text-xs">جوال</div>
           <div><p className="text-sm font-semibold text-stone-700">حسابات السوشيل ميديا</p><p className="text-xs text-stone-400 mt-0.5">تظهر في الفوتر — عدّلها متى تغيّرت</p></div>
         </div>
         <div className="p-5 space-y-3">
@@ -1558,7 +1560,7 @@ function AdminSettings() {
       {/* Saudi Licenses / Trust Logos */}
       <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-stone-50 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center text-base">🇸🇦</div>
+          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center text-xs">السعودية</div>
           <div><p className="text-sm font-semibold text-stone-700">التراخيص والجهات المعتمدة</p><p className="text-xs text-stone-400 mt-0.5">شعارات الجهات الحكومية السعودية المعتمدة</p></div>
         </div>
         <div className="p-5">
@@ -1618,16 +1620,16 @@ function AdminSettings() {
       {/* Seed */}
       <div className="bg-white rounded-2xl border border-stone-100 shadow-sm overflow-hidden">
         <div className="px-5 py-4 border-b border-stone-50 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center">🍵</div>
+          <div className="w-8 h-8 rounded-lg bg-stone-50 flex items-center justify-center text-xs">ماتشا</div>
           <div><p className="text-sm font-semibold text-stone-700">تهيئة المنتجات</p><p className="text-xs text-stone-400 mt-0.5">حذف جميع المنتجات وإضافة كيس الماتشا</p></div>
         </div>
         <div className="p-5">
           <button onClick={async () => {
             if (!confirm("سيتم حذف جميع المنتجات الحالية. هل تريد المتابعة؟")) return;
-            try { await api.post("/admin/seed-matcha-bag", {}); alert("✅ تم تهيئة المنتجات بنجاح"); }
+            try { await api.post("/admin/seed-matcha-bag", {}); alert("تم تهيئة المنتجات بنجاح"); }
             catch (e: any) { alert("خطأ: " + e.message); }
           }} className="h-10 px-5 rounded-xl bg-amber-600 text-white text-sm hover:bg-amber-700 transition-colors">
-            🍃 تهيئة كيس الماتشا
+            تهيئة كيس الماتشا
           </button>
         </div>
       </div>
@@ -1737,8 +1739,8 @@ function printDocument(title: string, number: string, customer: any, items: any[
     <div class="section-title">العميل</div>
     <div class="customer-box">
       <strong>${customer?.name || "—"}</strong><br/>
-      ${customer?.phone ? `📱 ${customer.phone}<br/>` : ""}
-      ${customer?.email ? `✉ ${customer.email}` : ""}
+      ${customer?.phone ? `الجوال: ${customer.phone}<br/>` : ""}
+      ${customer?.email ? `البريد: ${customer.email}` : ""}
     </div>
   </div>
 
@@ -1773,7 +1775,7 @@ function AdminInvoices() {
     mutationFn: (id: string) => api.post(`/admin/invoices/${id}/send`, {}),
     onSuccess: (_d, id) => {
       qc.invalidateQueries({ queryKey: ["admin-invoices"] });
-      alert(`✓ تم إرسال الفاتورة إلى بريد العميل`);
+      alert(`تم إرسال الفاتورة إلى بريد العميل`);
     },
     onError: (e: any) => alert(`خطأ: ${e.message}`),
   });
@@ -1879,7 +1881,7 @@ function AdminQuotes() {
 
   const sendQ = useMutation({
     mutationFn: (id: string) => api.post(`/admin/quotes/${id}/send`, {}),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-quotes"] }); alert("✓ تم إرسال عرض السعر إلى بريد العميل"); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-quotes"] }); alert("تم إرسال عرض السعر إلى بريد العميل"); },
     onError: (e: any) => alert(`خطأ: ${e.message}`),
   });
 
@@ -1941,7 +1943,7 @@ function AdminQuotes() {
                   {form.name}
                   {form.phone && <span className="opacity-60">· {form.phone}</span>}
                   {form.email && <span className="opacity-60">· {form.email}</span>}
-                  <button onClick={() => setForm(f => ({ ...f, name: "", phone: "", email: "" }))} className="text-emerald-400 hover:text-red-400 mr-1">✕</button>
+                  <button onClick={() => setForm(f => ({ ...f, name: "", phone: "", email: "" }))} className="text-emerald-400 hover:text-red-400 mr-1" aria-label="مسح العميل">مسح</button>
                 </span>
               </div>
             )}
@@ -1982,7 +1984,7 @@ function AdminQuotes() {
               <div className="mt-2 flex items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-100 text-blue-700 text-xs rounded-full px-3 py-1">
                   {form.item}
-                  <button onClick={() => setForm(f => ({ ...f, item: "", price: "" }))} className="text-blue-400 hover:text-red-400 mr-1">✕</button>
+                  <button onClick={() => setForm(f => ({ ...f, item: "", price: "" }))} className="text-blue-400 hover:text-red-400 mr-1" aria-label="مسح المنتج">مسح</button>
                 </span>
               </div>
             )}
@@ -2075,7 +2077,7 @@ function AdminMarketing() {
   });
   const send = useMutation({
     mutationFn: (id: string) => api.post(`/admin/campaigns/${id}/send`, {}),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-campaigns"] }); alert("✅ تم إرسال الحملة بنجاح"); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-campaigns"] }); alert("تم إرسال الحملة بنجاح"); },
     onError: (e: any) => alert("خطأ في الإرسال: " + e.message),
   });
   const inp = "w-full h-10 px-3 rounded-lg border border-stone-200 text-sm bg-stone-50 outline-none focus:border-[#9BA17B] transition-colors";

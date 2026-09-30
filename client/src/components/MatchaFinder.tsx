@@ -61,41 +61,41 @@ const ENGLISH_QUESTIONS = [
 /* ─── Results ────────────────────────────────────────────────────── */
 const RESULTS = {
   ceremonial: {
-    label: "✦ فاخر جداً",
+    label: "فاخر جداً",
     sub: "احتفالية · درجة أولى",
     color: "#7a5c1e",
     bg: "rgba(212,175,55,0.12)",
     border: "rgba(212,175,55,0.4)",
     desc: "تناسبك الماتشا الاحتفالية عالية الجودة، تُحضَّر صافية بالماء الدافئ وتُشرب كريتشوال يومي هادئ. لونها أخضر مشرق وطعمها عميق وناعم.",
-    drinks: ["ماتشا صافية ريتشوال 🍵", "أوزو صادوي · ماتشا بالماء الساخن 🫖", "ماتشا بالعسل الياباني 🍯"],
+    drinks: ["ماتشا صافية ريتشوال", "أوزو صادوي · ماتشا بالماء الساخن", "ماتشا بالعسل الياباني"],
     link: "/products?type=ceremonial",
   },
   everyday: {
-    label: "☕ يومي",
+    label: "يومي",
     sub: "متوازن · للاستخدام اليومي",
     color: "#3a5c3a",
     bg: "rgba(155,161,123,0.12)",
     border: "rgba(155,161,123,0.4)",
     desc: "الخيار المثالي لمن يريد ماتشا جيدة بسعر معقول للاستخدام اليومي، تنجح مع الحليب والماء على حدٍّ سواء.",
-    drinks: ["ماتشا لاتيه بالحليب النباتي 🥛", "أيس ماتشا لاتيه 🧊", "ماتشا بالعسل والليمون 🍋"],
+    drinks: ["ماتشا لاتيه بالحليب النباتي", "أيس ماتشا لاتيه", "ماتشا بالعسل والليمون"],
     link: "/products?type=everyday",
   },
   culinary: {
-    label: "🧃 تجاري",
+    label: "تجاري",
     sub: "للمشروبات والوصفات",
     color: "#5a4a3a",
     bg: "rgba(180,160,130,0.12)",
     border: "rgba(180,160,130,0.4)",
     desc: "مصممة للخلط مع مكونات قوية كالحليب المركز والفواكه والحلويات، تعطي لوناً جميلاً ونكهة واضحة حتى عند الخلط.",
-    drinks: ["ماتشا فرابتشينو 🥤", "سموذي الماتشا بالموز 🍌", "كيك الماتشا الياباني 🍰", "آيس كريم ماتشا 🍦"],
+    drinks: ["ماتشا فرابتشينو", "سموذي الماتشا بالموز", "كيك الماتشا الياباني", "آيس كريم ماتشا"],
     link: "/products?type=culinary",
   },
 };
 
 const ENGLISH_RESULTS = {
-  ceremonial: { label: "✦ Ceremonial", sub: "Premium · first grade", color: "#7a5c1e", bg: "rgba(212,175,55,0.12)", border: "rgba(212,175,55,0.4)", desc: "High-quality ceremonial matcha is your match. Prepare it pure with warm water and enjoy it as a quiet daily ritual. Expect a bright green color with deep, smooth flavor.", drinks: ["Pure ritual matcha 🍵", "Uzu Sado · matcha with hot water 🫖", "Matcha with Japanese honey 🍯"], link: "/products?type=ceremonial" },
-  everyday: { label: "☕ Everyday", sub: "Balanced · for daily use", color: "#3a5c3a", bg: "rgba(155,161,123,0.12)", border: "rgba(155,161,123,0.4)", desc: "The ideal choice if you want good matcha at an approachable price for everyday use. It works beautifully with both milk and water.", drinks: ["Plant-based milk matcha latte 🥛", "Iced matcha latte 🧊", "Matcha with honey and lemon 🍋"], link: "/products?type=everyday" },
-  culinary: { label: "🧃 Culinary", sub: "For drinks and recipes", color: "#5a4a3a", bg: "rgba(180,160,130,0.12)", border: "rgba(180,160,130,0.4)", desc: "Designed to blend with bold ingredients such as condensed milk, fruit, and desserts. It brings beautiful color and clear flavor to every recipe.", drinks: ["Matcha frappuccino 🥤", "Banana matcha smoothie 🍌", "Japanese matcha cake 🍰", "Matcha ice cream 🍦"], link: "/products?type=culinary" },
+  ceremonial: { label: "Ceremonial", sub: "Premium · first grade", color: "#7a5c1e", bg: "rgba(212,175,55,0.12)", border: "rgba(212,175,55,0.4)", desc: "High-quality ceremonial matcha is your match. Prepare it pure with warm water and enjoy it as a quiet daily ritual. Expect a bright green color with deep, smooth flavor.", drinks: ["Pure ritual matcha", "Uzu Sado · matcha with hot water", "Matcha with Japanese honey"], link: "/products?type=ceremonial" },
+  everyday: { label: "Everyday", sub: "Balanced · for daily use", color: "#3a5c3a", bg: "rgba(155,161,123,0.12)", border: "rgba(155,161,123,0.4)", desc: "The ideal choice if you want good matcha at an approachable price for everyday use. It works beautifully with both milk and water.", drinks: ["Plant-based milk matcha latte", "Iced matcha latte", "Matcha with honey and lemon"], link: "/products?type=everyday" },
+  culinary: { label: "Culinary", sub: "For drinks and recipes", color: "#5a4a3a", bg: "rgba(180,160,130,0.12)", border: "rgba(180,160,130,0.4)", desc: "Designed to blend with bold ingredients such as condensed milk, fruit, and desserts. It brings beautiful color and clear flavor to every recipe.", drinks: ["Matcha frappuccino", "Banana matcha smoothie", "Japanese matcha cake", "Matcha ice cream"], link: "/products?type=culinary" },
 };
 
 type TypeKey = keyof typeof RESULTS;

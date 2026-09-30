@@ -138,9 +138,9 @@ const TRUST_ICONS = [
 ];
 
 const DEFAULT_BADGES = [
-  { icon: "🚚", title: "يوصلك خلال", value: "١–٣ أيام", enabled: true },
-  { icon: "🔒", title: "الدفع",       value: "آمن ومشفّر", enabled: true },
-  { icon: "↩️",  title: "الاسترجاع",  value: "يوم واحد",  enabled: true },
+  { icon: "التوصيل", title: "يوصلك خلال", value: "١–٣ أيام", enabled: true },
+  { icon: "الدفع",   title: "الدفع",       value: "آمن ومشفّر", enabled: true },
+  { icon: "الاسترجاع", title: "الاسترجاع", value: "يوم واحد", enabled: true },
 ];
 
 function TrustBar({ badges }: { badges?: typeof DEFAULT_BADGES }) {
