@@ -47,6 +47,13 @@ description: Brand colors, fonts, transparent assets, email, SEO, and admin arch
 
 **How to apply:** Keep legacy phone lookup compatible in auth changes, send provider messages in E.164 format, and store QIROX credentials only as Replit Secrets.
 
+## WhatsApp Delivery Verification
+- 2026-09-30: A live customer login code was confirmed delivered after configuring the QIROX API key through Replit Secrets.
+
+**Why:** The request endpoint intentionally returns the same generic response for registered and unknown numbers, so HTTP 200 alone does not confirm delivery.
+
+**How to apply:** Test with an authorized phone linked to an active customer account and ask the recipient to confirm receipt; do not infer successful delivery from the generic API response.
+
 ## SEO / AEO
 - Full OG tags, Twitter cards in client/index.html
 - JSON-LD: Organization, WebSite (with SearchAction), Store schemas
