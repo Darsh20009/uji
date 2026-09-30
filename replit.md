@@ -27,11 +27,13 @@ The workflow **Start application** runs `npm run dev` and serves on port 5000.
 | `SESSION_SECRET` | Express session secret (stored as a Replit Secret) |
 | `ADMIN_PHONE` | Phone number used to log in to `/admin` |
 | `QIROX_WHATSAPP_PROJECT_ID` | QIROX project ID used for customer WhatsApp sign-in codes |
-| `QIROX_WHATSAPP_API_KEY` | QIROX Bearer token; store it only as a Replit Secret |
+| `QIROX_WHATSAPP_API_KEY` | QIROX Bearer token; store it only in Replit Secrets or Render's service Environment |
 | `PORT` | Port to listen on (default: 5000) |
 | `APP_VERSION` | Current client/server release version (default: `1.0.0`); bump it to reset old browser cookies and cached app state |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Optional Google OAuth |
 | `APPLE_CLIENT_ID` | Optional Apple OAuth |
+
+For Render deployments, `render.yaml` declares the QIROX project ID and prompts for the API key. Replit Secrets are not automatically copied to Render; add the key in the Render service's Environment settings.
 
 ## Admin panel
 
