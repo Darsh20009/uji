@@ -9,7 +9,7 @@ import { requireAuth } from "./auth";
 import { sendOrderConfirmation, sendAdminOrderAlert, sendNewsletterWelcome, sendTestEmail, verifyEmailTransport, emailAttachments, layout, sendInvoiceEmail, sendQuoteEmail } from "./email";
 import { createGeideaSession, verifyGeideaCallback, geideaEnabled } from "./geidea";
 import { getActiveVisitors } from "./visitors";
-import { sendWhatsAppLoginCode } from "./whatsapp";
+import { sendWhatsAppLoginCode, WhatsAppDeliveryError } from "./whatsapp";
 
 const router = Router();
 const upload = multer({ dest: "uploads/", limits: { fileSize: 20 * 1024 * 1024 } });
@@ -19,7 +19,7 @@ const LOGIN_OTP_TTL_MS = 5 * 60 * 1000;
 const LOGIN_OTP_COOLDOWN_MS = 60 * 1000;
 const LOGIN_OTP_WINDOW_MS = 60 * 60 * 1000;
 const LOGIN_OTP_MAX_PER_HOUR = 5;
-const LOGIN_OTP_GENERIC_MESSAGE = "إذا كان الحساب مسجلاً بهذا الرقم، فسيصل رمز التحقق عبر واتساب.";
+const LOGIN_OTP_GENERIC_MESSAGE = "إذا كان الحساب مسجلاً بهذا الرقم، فتحقق من واتساب بحثًا عن رمز التحقق.";
 
 function getLoginPhone(phoneValue: unknown, countryCodeValue: unknown) {
   const phone = String(phoneValue ?? "").trim();
@@ -465,15 +465,25 @@ router.post("/auth/register", async (req: any, res) => {
 
 router.post("/auth/whatsapp/request-login-code", async (req: any, res) => {
   try {
-    if (!process.env.QIROX_WHATSAPP_API_KEY || !process.env.QIROX_WHATSAPP_PROJECT_ID || !process.env.SESSION_SECRET) {
+    const whatsappApiKey = process.env.QIROX_WHATSAPP_API_KEY?.trim() || "";
+    const whatsappProjectId = process.env.QIROX_WHATSAPP_PROJECT_ID?.trim();
+    const qiroxEnvironment = process.env.QIROX_WHATSAPP_ENVIRONMENT?.trim();
+    const productionEnvironmentMismatch =
+      process.env.NODE_ENV === "production" && qiroxEnvironment !== "production";
+    if (
+      !whatsappApiKey.startsWith("qrx_project_whatsapp_") ||
+      !whatsappProjectId ||
+      !process.env.SESSION_SECRET ||
+      productionEnvironmentMismatch
+    ) {
       return res.status(503).json({ message: "تسجيل الدخول عبر واتساب غير مفعّل حالياً" });
     }
 
     const normalizedPhone = getLoginPhone(req.body?.phone, req.body?.countryCode);
     if (!normalizedPhone) return res.status(400).json({ message: "رقم الجوال غير صحيح" });
 
-    const genericResponse = (retryAfterSeconds = 60) =>
-      res.json({ ok: true, message: LOGIN_OTP_GENERIC_MESSAGE, retryAfterSeconds });
+    const genericResponse = () =>
+      res.json({ ok: true, message: LOGIN_OTP_GENERIC_MESSAGE, retryAfterSeconds: 60 });
     const customer = await Customer.findOne({
       phone: { $in: normalizedPhone.candidates },
       isActive: true,
@@ -490,13 +500,10 @@ router.post("/auth/whatsapp/request-login-code", async (req: any, res) => {
     const sendCount = windowIsCurrent ? Number(customer.loginOtpSendCount || 0) : 0;
 
     if (now - lastSentAt < LOGIN_OTP_COOLDOWN_MS) return genericResponse();
-    if (sendCount >= LOGIN_OTP_MAX_PER_HOUR) {
-      return genericResponse(Math.max(60, Math.ceil((windowStartedAt + LOGIN_OTP_WINDOW_MS - now) / 1000)));
-    }
+    if (sendCount >= LOGIN_OTP_MAX_PER_HOUR) return genericResponse();
 
     const code = randomInt(100000, 1000000).toString();
     const codeHash = loginOtpHash(customer._id.toString(), code);
-    const nextWindowStart = windowIsCurrent ? customer.loginOtpSendWindowStartedAt : new Date(now);
 
     await Customer.updateOne(
       { _id: customer._id },
@@ -505,9 +512,6 @@ router.post("/auth/whatsapp/request-login-code", async (req: any, res) => {
           loginOtpHash: codeHash,
           loginOtpExpiry: new Date(now + LOGIN_OTP_TTL_MS),
           loginOtpAttempts: 0,
-          loginOtpLastSentAt: new Date(now),
-          loginOtpSendWindowStartedAt: nextWindowStart,
-          loginOtpSendCount: sendCount + 1,
         },
       },
     );
@@ -518,10 +522,31 @@ router.post("/auth/whatsapp/request-login-code", async (req: any, res) => {
         name: customer.name || "عميل UJI",
         code,
       });
-    } catch {
+    } catch (error: unknown) {
       await clearLoginOtp(customer._id);
-      console.error("WhatsApp login code delivery failed");
+      const failureDetails = error instanceof WhatsAppDeliveryError
+        ? { category: error.category, ...(error.status ? { status: error.status } : {}) }
+        : { category: "unexpected" };
+      console.error("WhatsApp login code delivery failed", failureDetails);
       return res.status(503).json({ message: "تعذر إرسال رمز التحقق الآن. حاول لاحقاً." });
+    }
+
+    // Start the cooldown only after QIROX accepts the delivery request.
+    const acceptedAt = Date.now();
+    const acceptedWindowStart = windowIsCurrent ? customer.loginOtpSendWindowStartedAt : new Date(acceptedAt);
+    try {
+      await Customer.updateOne(
+        { _id: customer._id },
+        {
+          $set: {
+            loginOtpLastSentAt: new Date(acceptedAt),
+            loginOtpSendWindowStartedAt: acceptedWindowStart,
+            loginOtpSendCount: sendCount + 1,
+          },
+        },
+      );
+    } catch {
+      console.error("WhatsApp login send-limit state persistence failed");
     }
 
     return genericResponse();

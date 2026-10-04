@@ -45,14 +45,22 @@ description: Brand colors, fonts, transparent assets, email, SEO, and admin arch
 
 **Why:** Existing customer records and checkout flows use local phone strings, so replacing stored values would require a broader coordinated migration.
 
-**How to apply:** Keep legacy phone lookup compatible in auth changes, send provider messages in E.164 format, and store QIROX credentials only as Replit Secrets.
+**How to apply:** Keep legacy phone lookup compatible in auth changes, send provider messages in E.164 format, and store QIROX credentials only in Replit Secrets or Render's service Environment.
 
 ## WhatsApp Delivery Verification
-- 2026-09-30: A live customer login code was confirmed delivered after configuring the QIROX API key through Replit Secrets.
+- 2026-09-30: A live customer login code was confirmed delivered through the project integration from the Replit preview; this does not confirm Render delivery.
 
 **Why:** The request endpoint intentionally returns the same generic response for registered and unknown numbers, so HTTP 200 alone does not confirm delivery.
 
 **How to apply:** Test with an authorized phone linked to an active customer account and ask the recipient to confirm receipt; do not infer successful delivery from the generic API response.
+
+## QIROX Project WhatsApp Integration
+- UJI uses QIROX's project-scoped WhatsApp endpoint and `qrx_project_whatsapp_` key, not the separate Store WhatsApp API.
+- QIROX development keys are for testing; live Render sends require a production-environment key.
+
+**Why:** The user supplied the active project integration configuration; the Store API uses a different key and is not the intended channel for this app.
+
+**How to apply:** Keep development keys in Replit Secrets and production keys in Render's service Environment. Match the configured project ID and environment to the target deployment, and confirm delivery with an authorized active customer account.
 
 ## SEO / AEO
 - Full OG tags, Twitter cards in client/index.html

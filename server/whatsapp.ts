@@ -2,6 +2,16 @@ import { randomUUID } from "crypto";
 
 const QIROX_API_BASE = "https://qiroxstudio.online/api/v1/projects";
 
+export class WhatsAppDeliveryError extends Error {
+  constructor(
+    readonly category: "configuration" | "timeout" | "network" | "http",
+    readonly status?: number,
+  ) {
+    super("WhatsApp delivery request failed");
+    this.name = "WhatsAppDeliveryError";
+  }
+}
+
 export async function sendWhatsAppLoginCode({
   phone,
   name,
@@ -11,16 +21,18 @@ export async function sendWhatsAppLoginCode({
   name: string;
   code: string;
 }) {
-  const apiKey = process.env.QIROX_WHATSAPP_API_KEY;
-  const projectId = process.env.QIROX_WHATSAPP_PROJECT_ID;
+  const apiKey = process.env.QIROX_WHATSAPP_API_KEY?.trim();
+  const projectId = process.env.QIROX_WHATSAPP_PROJECT_ID?.trim();
 
-  if (!apiKey || !projectId) {
-    throw new Error("WhatsApp login is not configured");
+  if (!apiKey?.startsWith("qrx_project_whatsapp_") || !projectId) {
+    throw new WhatsAppDeliveryError("configuration");
   }
 
-  const response = await fetch(
-    `${QIROX_API_BASE}/${encodeURIComponent(projectId)}/whatsapp`,
-    {
+  let response: Response;
+  try {
+    response = await fetch(
+      `${QIROX_API_BASE}/${encodeURIComponent(projectId)}/whatsapp`,
+      {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -35,10 +47,15 @@ export async function sendWhatsAppLoginCode({
         message: `رمز الدخول إلى UJI MATCHA هو ${code}. صالح لمدة 5 دقائق.`,
       }),
       signal: AbortSignal.timeout(10000),
-    },
-  );
+      },
+    );
+  } catch (error: any) {
+    throw new WhatsAppDeliveryError(error?.name === "TimeoutError" ? "timeout" : "network");
+  }
 
   if (!response.ok) {
-    throw new Error(`WhatsApp provider returned HTTP ${response.status}`);
+    throw new WhatsAppDeliveryError("http", response.status);
   }
+
+  return { status: response.status };
 }

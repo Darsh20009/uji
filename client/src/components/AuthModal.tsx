@@ -1,11 +1,39 @@
 import { useState, useEffect, useCallback } from "react";
-import { X, Eye, EyeOff, User, LogOut, ArrowRight, Mail, MessageCircle } from "lucide-react";
+import { X, Eye, EyeOff, User, LogOut, ArrowRight, Mail } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import { useAuthModal } from "../context/AuthModalContext";
 import { api } from "../lib/api";
 import PhoneInput, { COUNTRIES, type Country } from "./PhoneInput";
 import { useLang } from "../context/LanguageContext";
 import { t } from "../lib/translations";
+
+function WhatsAppMark({ size = 20, style }: { size?: number; style?: React.CSSProperties }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 32 32"
+      role="img"
+      aria-label="WhatsApp"
+      focusable="false"
+      style={{ display: "inline-block", flexShrink: 0, verticalAlign: "middle", ...style }}
+    >
+      <circle cx="16" cy="16" r="15" fill="#25D366" />
+      <path
+        d="M6.2 25.8 7.5 21a11.1 11.1 0 1 1 4 4.1l-5.3.7Z"
+        fill="none"
+        stroke="#fff"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="1.6"
+      />
+      <path
+        d="M20.8 18.2c-.3-.2-1.8-.9-2.1-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1.1 1-1.1 2.5 0 1.5 1.1 2.9 1.2 3.1.2.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4 0-.1-.3-.2-.6-.4Z"
+        fill="#fff"
+      />
+    </svg>
+  );
+}
 
 /* ─────────────────────── shared micro-styles ─────────────────────── */
 const F: React.CSSProperties  = { display: "flex", flexDirection: "column", gap: 6 };
@@ -176,7 +204,7 @@ export default function AuthModal() {
       setOtp("");
       setView("whatsappOtp");
       setResendAfter(Number(result?.retryAfterSeconds) || 60);
-      setSuccess(result?.message || t("auth.whatsapp.sent", lang));
+      setSuccess(t("auth.whatsapp.sent", lang));
     } catch (err: any) {
       setError(err.message || t("auth.whatsapp.error", lang));
     } finally {
@@ -392,7 +420,7 @@ export default function AuthModal() {
           {/* ─── form body ─── */}
           <div style={{ padding: "1.75rem 1.75rem 1.25rem", flex: 1 }}>
             {error   && <div style={{ ...ERR, marginBottom: 18 }}>{error}</div>}
-            {success && <div style={{ ...OK,  marginBottom: 18 }}>{success}</div>}
+            {success && view !== "whatsappOtp" && <div style={{ ...OK, marginBottom: 18 }}>{success}</div>}
 
             {/* ════ LOGIN ════ */}
             {view === "login" && (
@@ -415,7 +443,7 @@ export default function AuthModal() {
                   </>
                 )}
                 <button type="submit" disabled={busy} style={BTN(busy)}>
-                  {!passwordLogin && <MessageCircle size={16} style={{ verticalAlign: "middle", marginInlineEnd: 8 }} />}
+                  {!passwordLogin && <WhatsAppMark size={19} style={{ marginInlineEnd: 8 }} />}
                   {busy
                     ? passwordLogin ? t("auth.login.busy", lang) : t("auth.whatsapp.sending", lang)
                     : passwordLogin ? t("auth.login.btn", lang) : t("auth.whatsapp.send", lang)}
@@ -494,12 +522,36 @@ export default function AuthModal() {
             {/* ════ WHATSAPP LOGIN OTP ════ */}
             {view === "whatsappOtp" && (
               <form onSubmit={doWhatsappLogin} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+                <div
+                  role="status"
+                  aria-live="polite"
+                  style={{
+                    display: "flex", alignItems: "flex-start", gap: 12, padding: 14,
+                    background: "#F2F7F3", border: "1px solid rgba(37,211,102,0.35)",
+                    direction: isRTL ? "rtl" : "ltr", textAlign: isRTL ? "right" : "left",
+                  }}
+                >
+                  <div style={{ width: 42, height: 42, display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%", background: "#E5F8EC", flexShrink: 0 }}>
+                    <WhatsAppMark size={30} />
+                  </div>
+                  <div style={{ minWidth: 0 }}>
+                    <strong style={{ display: "block", color: "#1F3929", fontFamily: "'Mirza', serif", fontSize: "0.92rem", fontWeight: 600 }}>
+                      {t("auth.whatsapp.sentTitle", lang)}
+                    </strong>
+                    <p style={{ color: "#526157", fontFamily: "'Mirza', serif", fontSize: "0.8rem", lineHeight: 1.65, margin: "3px 0 0" }}>
+                      {success || t("auth.whatsapp.sent", lang)}
+                    </p>
+                    <p style={{ color: "#778176", fontFamily: "'Mirza', serif", fontSize: "0.75rem", lineHeight: 1.6, margin: "4px 0 0" }}>
+                      {t("auth.whatsapp.deliveryHint", lang)}
+                    </p>
+                  </div>
+                </div>
                 <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.84rem", color: "#6B7280", lineHeight: 1.8, margin: 0, direction: isRTL ? "rtl" : "ltr" }}>
                   {t("auth.whatsapp.otp.body", lang)}
                 </p>
                 <div style={F}>
                   <label style={LBL}>{t("auth.field.otp", lang)}</label>
-                  <input style={{ ...INP, direction: "ltr", textAlign: "center", fontSize: "1.4rem", letterSpacing: "0.35em", fontFamily: "monospace" }}
+                  <input lang="en" style={{ ...INP, direction: "ltr", textAlign: "center", fontSize: "1.4rem", letterSpacing: "0.35em", fontFamily: "monospace" }}
                     value={otp} onChange={e => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
                     placeholder="000000" required maxLength={6} inputMode="numeric" autoComplete="one-time-code" />
                 </div>

@@ -19,9 +19,11 @@ services:
       - key: SESSION_SECRET
         generateValue: true
       - key: QIROX_WHATSAPP_PROJECT_ID
-        value: 6a07b370c04e979aa308f218
+        value: "6a558cb515f52205956f53e4"
       - key: QIROX_WHATSAPP_API_KEY
-        sync: false   # تُدخله يدوياً في Render dashboard
+        sync: false   # مفتاح مشروع QIROX من بيئة production، يُدخل يدوياً في Render
+      - key: QIROX_WHATSAPP_ENVIRONMENT
+        value: production
       - key: ADMIN_PHONE
         value: "0552469643"
       - key: CPANEL_SMTP_HOST

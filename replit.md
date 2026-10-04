@@ -26,14 +26,15 @@ The workflow **Start application** runs `npm run dev` and serves on port 5000.
 | `MONGODB_URI` | Required MongoDB connection URI; save it as a Replit Secret before starting the preview |
 | `SESSION_SECRET` | Express session secret (stored as a Replit Secret) |
 | `ADMIN_PHONE` | Phone number used to log in to `/admin` |
-| `QIROX_WHATSAPP_PROJECT_ID` | QIROX project ID used for customer WhatsApp sign-in codes |
-| `QIROX_WHATSAPP_API_KEY` | QIROX Bearer token; store it only in Replit Secrets or Render's service Environment |
+| `QIROX_WHATSAPP_PROJECT_ID` | QIROX project ID used by the project WhatsApp integration |
+| `QIROX_WHATSAPP_API_KEY` | QIROX project WhatsApp Bearer key (`qrx_project_whatsapp_...`); store it only in Replit Secrets or Render's service Environment |
+| `QIROX_WHATSAPP_ENVIRONMENT` | QIROX key environment: `development` for preview, `production` for Render |
 | `PORT` | Port to listen on (default: 5000) |
 | `APP_VERSION` | Current client/server release version (default: `1.0.0`); bump it to reset old browser cookies and cached app state |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Optional Google OAuth |
 | `APPLE_CLIENT_ID` | Optional Apple OAuth |
 
-For Render deployments, `render.yaml` declares the QIROX project ID and prompts for the API key. Replit Secrets are not automatically copied to Render; add the key in the Render service's Environment settings.
+Customer OTP uses QIROX's project integration endpoint, `/api/v1/projects/{projectId}/whatsapp`, documented at `https://qiroxstudio.online/api/v1/projects/integrations/docs`. This integration sends through the project's connected WhatsApp CRM and does not require a Meta template. QIROX development keys are for testing only; Render must use a production key. Replit Secrets are not automatically copied to Render, so add the production key in the Render service's Environment settings.
 
 ## Admin panel
 
