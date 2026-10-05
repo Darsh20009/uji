@@ -111,7 +111,7 @@ function PwdField({ label, value, onChange, placeholder, required }: {
   );
 }
 
-type View = "login" | "register" | "forgot" | "otp" | "whatsappOtp";
+type View = "login" | "register" | "forgot" | "otp" | "whatsappOtp" | "whatsappProfile";
 
 const TIER_KEYS = {
   bronze:   "auth.loyalty.tier.bronze",
@@ -122,7 +122,7 @@ const TIER_KEYS = {
 
 export default function AuthModal() {
   const { isOpen, initialTab, closeAuth } = useAuthModal();
-  const { user, login, requestWhatsappLoginCode, loginWithWhatsappCode, register, logout } = useAuth();
+  const { user, login, requestWhatsappLoginCode, loginWithWhatsappCode, completeWhatsappRegistration, register, logout } = useAuth();
   const { lang, isRTL } = useLang();
 
   const [view,       setView]       = useState<View>("login");
@@ -202,6 +202,8 @@ export default function AuthModal() {
         countryCode: country.code,
       }) as any;
       setOtp("");
+      setName("");
+      setEmail("");
       setView("whatsappOtp");
       setResendAfter(Number(result?.retryAfterSeconds) || 60);
       setSuccess(t("auth.whatsapp.sent", lang));
@@ -222,12 +224,35 @@ export default function AuthModal() {
     if (!otp.trim() || otp.length !== 6) { setError(t("auth.err.otp.invalid", lang)); return; }
     setBusy(true);
     try {
-      await loginWithWhatsappCode.mutateAsync({
+      const result = await loginWithWhatsappCode.mutateAsync({
         phone: phone.trim(),
         countryCode: country.code,
         code: otp.trim(),
-      });
+      }) as any;
+      if (result?.requiresProfile) {
+        setSuccess(t("auth.whatsapp.profileVerified", lang));
+        setView("whatsappProfile");
+        return;
+      }
       setSuccess(t("auth.login.success", lang));
+      setTimeout(() => { closeAuth(); clear(); }, 900);
+    } catch (err: any) {
+      setError(err.message || t("auth.whatsapp.error", lang));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const doCompleteWhatsappRegistration = async (e: React.FormEvent) => {
+    e.preventDefault(); setError(""); setSuccess("");
+    if (!name.trim()) { setError(t("auth.err.name.required", lang)); return; }
+    setBusy(true);
+    try {
+      await completeWhatsappRegistration.mutateAsync({
+        name: name.trim(),
+        email: email.trim() || undefined,
+      });
+      setSuccess(t("auth.whatsapp.profileCreated", lang));
       setTimeout(() => { closeAuth(); clear(); }, 900);
     } catch (err: any) {
       setError(err.message || t("auth.whatsapp.error", lang));
@@ -394,7 +419,7 @@ export default function AuthModal() {
         <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
 
           {/* ── Tabs ── */}
-          {(view === "login" || view === "register") && (
+          {(view === "login" || view === "register" || view === "whatsappProfile") && (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", borderBottom: "1px solid rgba(200,187,164,0.4)", flexShrink: 0 }}>
               {(["login", "register"] as const).map(tab => (
                 <button key={tab} type="button" onClick={() => { if (tab === "login") setPasswordLogin(false); go(tab); }}
@@ -519,6 +544,31 @@ export default function AuthModal() {
               </form>
             )}
 
+            {/* ════ VERIFIED PHONE PROFILE ════ */}
+            {view === "whatsappProfile" && (
+              <form onSubmit={doCompleteWhatsappRegistration} style={{ display: "flex", flexDirection: "column", gap: "1.1rem" }}>
+                <div style={{ direction: isRTL ? "rtl" : "ltr" }}>
+                  <strong style={{ display: "block", fontFamily: "'Mirza', serif", fontSize: "1rem", color: "#1C201B", fontWeight: 600 }}>
+                    {t("auth.whatsapp.profileTitle", lang)}
+                  </strong>
+                  <p style={{ fontFamily: "'Mirza', serif", fontSize: "0.84rem", color: "#6B7280", lineHeight: 1.8, margin: "4px 0 0" }}>
+                    {t("auth.whatsapp.profileBody", lang)}
+                  </p>
+                </div>
+                <div style={F}>
+                  <label style={LBL}>{t("auth.field.name", lang)}</label>
+                  <input style={INP} value={name} onChange={e => setName(e.target.value)} placeholder={t("auth.field.name.placeholder", lang)} required maxLength={100} autoComplete="name" />
+                </div>
+                <div style={F}>
+                  <label style={LBL}>{t("auth.field.email", lang)} <span style={{ color: "#C8BBA4" }}>{t("common.optional", lang)}</span></label>
+                  <input style={INP} value={email} onChange={e => setEmail(e.target.value)} placeholder="example@email.com" type="email" maxLength={254} autoComplete="email" />
+                </div>
+                <button type="submit" disabled={busy} style={BTN(busy)}>
+                  {busy ? t("auth.register.busy", lang) : t("auth.whatsapp.createAccount", lang)}
+                </button>
+              </form>
+            )}
+
             {/* ════ WHATSAPP LOGIN OTP ════ */}
             {view === "whatsappOtp" && (
               <form onSubmit={doWhatsappLogin} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
@@ -569,10 +619,6 @@ export default function AuthModal() {
                   <button type="button" onClick={() => { setPasswordLogin(false); setOtp(""); setResendAfter(0); go("login"); }} style={LINK}>
                     {t("auth.whatsapp.changePhone", lang)}
                   </button>
-                </p>
-                <p style={MUTED}>
-                  {t("auth.login.noaccount", lang)}{" "}
-                  <button type="button" onClick={() => go("register")} style={LINK}>{t("auth.login.create", lang)}</button>
                 </p>
               </form>
             )}

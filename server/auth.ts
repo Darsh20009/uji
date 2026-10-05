@@ -18,7 +18,7 @@ export function setupAuth(app: Express) {
   passport.use(new LocalStrategy({ usernameField: "phone" }, async (phone, password, done) => {
     try {
       const c = await Customer.findOne({ phone, isActive: true });
-      if (!c || !checkPass(password, c.password!)) return done(null, false, { message: "بيانات غير صحيحة" });
+      if (!c || !c.password || !checkPass(password, c.password)) return done(null, false, { message: "بيانات غير صحيحة" });
       return done(null, c);
     } catch (e) { return done(e); }
   }));

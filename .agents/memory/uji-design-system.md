@@ -40,12 +40,13 @@ description: Brand colors, fonts, transparent assets, email, SEO, and admin arch
 
 ## Customer Sign-In
 - Customer sign-in defaults to QIROX WhatsApp one-time codes, with existing customer password login retained as a fallback.
+- New visitors can verify their phone by WhatsApp, then create a passwordless customer account with a required name and optional email; do not create the account before verification.
 - Keep the separate admin password flow unchanged.
 - Stored customer phone values are not guaranteed to be E.164; normalize for WhatsApp delivery while matching legacy local-number formats.
 
-**Why:** Existing customer records and checkout flows use local phone strings, so replacing stored values would require a broader coordinated migration.
+**Why:** New customers must prove control of their phone before an account is created, while existing records and checkout flows use local phone strings that cannot be replaced without a broader coordinated migration.
 
-**How to apply:** Keep legacy phone lookup compatible in auth changes, send provider messages in E.164 format, and store QIROX credentials only in Replit Secrets or Render's service Environment.
+**How to apply:** Keep legacy phone lookup compatible, send provider messages in E.164 format, create new customer records only after OTP verification and profile completion, and leave password fallback/admin auth intact.
 
 ## WhatsApp Delivery Verification
 - 2026-09-30: A live customer login code was confirmed delivered through the project integration from the Replit preview; this does not confirm Render delivery.

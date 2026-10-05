@@ -91,6 +91,18 @@ const CustomerSchema = new Schema({
 }, { timestamps: true });
 export const Customer = mongoose.model("Customer", CustomerSchema);
 
+const WhatsAppOtpChallengeSchema = new Schema({
+  phone: { type: String, required: true, unique: true },
+  codeHash: String,
+  codeExpiry: Date,
+  attempts: { type: Number, default: 0 },
+  lastSentAt: Date,
+  sendWindowStartedAt: Date,
+  sendCount: { type: Number, default: 0 },
+  purgeAt: { type: Date, expires: 0 },
+}, { timestamps: true });
+export const WhatsAppOtpChallenge = mongoose.model("WhatsAppOtpChallenge", WhatsAppOtpChallengeSchema);
+
 /* ─── Review ─────────────────────────────────────────────────────── */
 const ReviewSchema = new Schema({
   productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },

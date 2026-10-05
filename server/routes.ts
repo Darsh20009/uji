@@ -4,7 +4,7 @@ import { createHmac, randomInt, timingSafeEqual } from "crypto";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
-import { Product, Order, Customer, Settings, SiteContent, Review, Coupon, Invoice, Quote, Expense, Campaign, hashPass } from "./models";
+import { Product, Order, Customer, WhatsAppOtpChallenge, Settings, SiteContent, Review, Coupon, Invoice, Quote, Expense, Campaign, hashPass } from "./models";
 import { requireAuth } from "./auth";
 import { sendOrderConfirmation, sendAdminOrderAlert, sendNewsletterWelcome, sendTestEmail, verifyEmailTransport, emailAttachments, layout, sendInvoiceEmail, sendQuoteEmail } from "./email";
 import { createGeideaSession, verifyGeideaCallback, geideaEnabled } from "./geidea";
@@ -19,7 +19,9 @@ const LOGIN_OTP_TTL_MS = 5 * 60 * 1000;
 const LOGIN_OTP_COOLDOWN_MS = 60 * 1000;
 const LOGIN_OTP_WINDOW_MS = 60 * 60 * 1000;
 const LOGIN_OTP_MAX_PER_HOUR = 5;
-const LOGIN_OTP_GENERIC_MESSAGE = "إذا كان الحساب مسجلاً بهذا الرقم، فتحقق من واتساب بحثًا عن رمز التحقق.";
+const WHATSAPP_SIGNUP_SESSION_TTL_MS = 10 * 60 * 1000;
+const WHATSAPP_OTP_CHALLENGE_RETENTION_MS = 24 * 60 * 60 * 1000;
+const LOGIN_OTP_GENERIC_MESSAGE = "إذا كان الرقم مؤهلاً، فتحقق من واتساب للحصول على رمز التحقق.";
 
 function getLoginPhone(phoneValue: unknown, countryCodeValue: unknown) {
   const phone = String(phoneValue ?? "").trim();
@@ -61,6 +63,43 @@ function clearLoginOtp(customerId: unknown) {
     { _id: customerId },
     { $unset: { loginOtpHash: 1, loginOtpExpiry: 1, loginOtpAttempts: 1 } },
   );
+}
+
+function loginCustomer(req: any, res: any, customer: any) {
+  req.login(customer, (err: any) => {
+    if (err) return res.status(500).json({ message: "تعذر تسجيل الدخول" });
+    return res.json({
+      id: customer._id,
+      name: customer.name,
+      phone: customer.phone,
+      role: customer.role,
+      loyaltyPoints: customer.loyaltyPoints,
+      loyaltyTier: customer.loyaltyTier,
+    });
+  });
+}
+
+function persistSession(req: any) {
+  return new Promise<void>((resolve, reject) => {
+    if (!req.session?.save) return reject(new Error("Session unavailable"));
+    req.session.save((error: any) => error ? reject(error) : resolve());
+  });
+}
+
+async function moveSignupOtpLimitsToCustomer(phone: string, customerId: unknown) {
+  const challenge = await WhatsAppOtpChallenge.findOne({ phone });
+  if (!challenge) return;
+  await Customer.updateOne(
+    { _id: customerId },
+    {
+      $set: {
+        loginOtpLastSentAt: challenge.lastSentAt,
+        loginOtpSendWindowStartedAt: challenge.sendWindowStartedAt,
+        loginOtpSendCount: challenge.sendCount,
+      },
+    },
+  );
+  await WhatsAppOtpChallenge.deleteOne({ phone });
 }
 
 const requireAdmin = (req: any, res: any, next: any) => {
@@ -490,8 +529,82 @@ router.post("/auth/whatsapp/request-login-code", async (req: any, res) => {
       role: "customer",
     });
 
-    // Respond the same way for unknown accounts to avoid disclosing which phone numbers are registered.
-    if (!customer) return genericResponse();
+    // New phone numbers use a separate challenge record; no customer is created before verification.
+    if (!customer) {
+      const existingAccount = await Customer.exists({ phone: { $in: normalizedPhone.candidates } });
+      if (existingAccount) return genericResponse();
+
+      const phone = normalizedPhone.internationalPhone;
+      const challenge = await WhatsAppOtpChallenge.findOne({ phone });
+      const now = Date.now();
+      const lastSentAt = challenge?.lastSentAt?.getTime() || 0;
+      const windowStartedAt = challenge?.sendWindowStartedAt?.getTime() || 0;
+      const windowIsCurrent = windowStartedAt > 0 && now - windowStartedAt < LOGIN_OTP_WINDOW_MS;
+      const sendCount = windowIsCurrent ? Number(challenge?.sendCount || 0) : 0;
+
+      if (now - lastSentAt < LOGIN_OTP_COOLDOWN_MS) return genericResponse();
+      if (sendCount >= LOGIN_OTP_MAX_PER_HOUR) return genericResponse();
+
+      const code = randomInt(100000, 1000000).toString();
+      try {
+        await WhatsAppOtpChallenge.findOneAndUpdate(
+          { phone },
+          {
+            $set: {
+              codeHash: loginOtpHash(`signup:${phone}`, code),
+              codeExpiry: new Date(now + LOGIN_OTP_TTL_MS),
+              attempts: 0,
+              purgeAt: new Date(now + WHATSAPP_OTP_CHALLENGE_RETENTION_MS),
+            },
+            $setOnInsert: { phone },
+          },
+          { upsert: true, new: true, setDefaultsOnInsert: true },
+        );
+      } catch (error: any) {
+        if (error?.code === 11000) return genericResponse();
+        throw error;
+      }
+
+      try {
+        await sendWhatsAppLoginCode({
+          phone,
+          name: "عميل UJI",
+          code,
+        });
+      } catch (error: unknown) {
+        await WhatsAppOtpChallenge.updateOne(
+          { phone },
+          { $unset: { codeHash: 1, codeExpiry: 1 }, $set: { attempts: 0 } },
+        );
+        const failureDetails = error instanceof WhatsAppDeliveryError
+          ? { category: error.category, ...(error.status ? { status: error.status } : {}) }
+          : { category: "unexpected" };
+        console.error("WhatsApp verification code delivery failed", failureDetails);
+        return res.status(503).json({ message: "تعذر إرسال رمز التحقق الآن. حاول لاحقاً." });
+      }
+
+      const acceptedAt = Date.now();
+      const acceptedWindowStart = windowIsCurrent && challenge?.sendWindowStartedAt
+        ? challenge.sendWindowStartedAt
+        : new Date(acceptedAt);
+      try {
+        await WhatsAppOtpChallenge.updateOne(
+          { phone },
+          {
+            $set: {
+              lastSentAt: new Date(acceptedAt),
+              sendWindowStartedAt: acceptedWindowStart,
+              sendCount: sendCount + 1,
+              purgeAt: new Date(acceptedAt + WHATSAPP_OTP_CHALLENGE_RETENTION_MS),
+            },
+          },
+        );
+      } catch {
+        console.error("WhatsApp verification send-limit state persistence failed");
+      }
+
+      return genericResponse();
+    }
 
     const now = Date.now();
     const lastSentAt = customer.loginOtpLastSentAt?.getTime() || 0;
@@ -572,44 +685,150 @@ router.post("/auth/whatsapp/verify-login-code", async (req: any, res) => {
     const invalidResponse = () =>
       res.status(400).json({ message: "رمز التحقق غير صحيح أو منتهي الصلاحية" });
 
-    if (!customer || !customer.loginOtpHash || !customer.loginOtpExpiry) {
-      return invalidResponse();
+    if (customer?.loginOtpHash && customer.loginOtpExpiry) {
+      if (
+        customer.loginOtpExpiry.getTime() <= Date.now() ||
+        Number(customer.loginOtpAttempts || 0) >= 5
+      ) {
+        await clearLoginOtp(customer._id);
+        return invalidResponse();
+      }
+
+      const expectedHash = Buffer.from(loginOtpHash(customer._id.toString(), code), "hex");
+      const storedHash = Buffer.from(customer.loginOtpHash, "hex");
+      const isValid = expectedHash.length === storedHash.length && timingSafeEqual(expectedHash, storedHash);
+
+      if (!isValid) {
+        const attempts = Number(customer.loginOtpAttempts || 0) + 1;
+        if (attempts >= 5) await clearLoginOtp(customer._id);
+        else await Customer.updateOne({ _id: customer._id }, { $set: { loginOtpAttempts: attempts } });
+        return invalidResponse();
+      }
+
+      await clearLoginOtp(customer._id);
+      return loginCustomer(req, res, customer);
     }
+
+    const phone = normalizedPhone.internationalPhone;
+    const challenge = await WhatsAppOtpChallenge.findOne({ phone });
+    if (!challenge?.codeHash || !challenge.codeExpiry) return invalidResponse();
 
     if (
-      customer.loginOtpExpiry.getTime() <= Date.now() ||
-      Number(customer.loginOtpAttempts || 0) >= 5
+      challenge.codeExpiry.getTime() <= Date.now() ||
+      Number(challenge.attempts || 0) >= 5
     ) {
-      await clearLoginOtp(customer._id);
+      await WhatsAppOtpChallenge.updateOne(
+        { phone },
+        { $unset: { codeHash: 1, codeExpiry: 1 }, $set: { attempts: 0 } },
+      );
       return invalidResponse();
     }
 
-    const expectedHash = Buffer.from(loginOtpHash(customer._id.toString(), code), "hex");
-    const storedHash = Buffer.from(customer.loginOtpHash, "hex");
+    const expectedHash = Buffer.from(loginOtpHash(`signup:${phone}`, code), "hex");
+    const storedHash = Buffer.from(challenge.codeHash, "hex");
     const isValid = expectedHash.length === storedHash.length && timingSafeEqual(expectedHash, storedHash);
 
     if (!isValid) {
-      const attempts = Number(customer.loginOtpAttempts || 0) + 1;
-      if (attempts >= 5) await clearLoginOtp(customer._id);
-      else await Customer.updateOne({ _id: customer._id }, { $set: { loginOtpAttempts: attempts } });
+      const attempts = Number(challenge.attempts || 0) + 1;
+      if (attempts >= 5) {
+        await WhatsAppOtpChallenge.updateOne(
+          { phone },
+          { $unset: { codeHash: 1, codeExpiry: 1 }, $set: { attempts } },
+        );
+      } else {
+        await WhatsAppOtpChallenge.updateOne({ phone }, { $set: { attempts } });
+      }
       return invalidResponse();
     }
 
-    await clearLoginOtp(customer._id);
-    req.login(customer, (err: any) => {
-      if (err) return res.status(500).json({ message: "تعذر تسجيل الدخول" });
-      return res.json({
-        id: customer._id,
-        name: customer.name,
-        phone: customer.phone,
-        role: customer.role,
-        loyaltyPoints: customer.loyaltyPoints,
-        loyaltyTier: customer.loyaltyTier,
-      });
-    });
+    await WhatsAppOtpChallenge.updateOne(
+      { phone },
+      { $unset: { codeHash: 1, codeExpiry: 1 }, $set: { attempts: 0 } },
+    );
+
+    if (customer) {
+      await moveSignupOtpLimitsToCustomer(phone, customer._id);
+      return loginCustomer(req, res, customer);
+    }
+
+    req.session.pendingWhatsAppSignup = {
+      phone,
+      candidates: normalizedPhone.candidates,
+      verifiedAt: Date.now(),
+    };
+    await persistSession(req);
+    return res.json({ requiresProfile: true });
   } catch {
     console.error("WhatsApp login code verification failed");
     return res.status(500).json({ message: "تعذر التحقق من رمز الدخول الآن" });
+  }
+});
+
+router.post("/auth/whatsapp/complete-registration", async (req: any, res) => {
+  try {
+    const pending = req.session?.pendingWhatsAppSignup;
+    const verifiedAt = Number(pending?.verifiedAt);
+    if (
+      !pending ||
+      !Number.isFinite(verifiedAt) ||
+      Date.now() - verifiedAt > WHATSAPP_SIGNUP_SESSION_TTL_MS
+    ) {
+      if (req.session) delete req.session.pendingWhatsAppSignup;
+      return res.status(401).json({ message: "انتهت صلاحية التحقق. اطلب رمزاً جديداً." });
+    }
+
+    const name = String(req.body?.name ?? "").trim();
+    const emailInput = String(req.body?.email ?? "").trim();
+    const email = emailInput ? emailInput.toLowerCase() : undefined;
+    if (!name || name.length > 100) {
+      return res.status(400).json({ message: "يرجى إدخال الاسم الكامل" });
+    }
+    if (email && (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
+      return res.status(400).json({ message: "البريد الإلكتروني غير صحيح" });
+    }
+
+    const phone = String(pending.phone ?? "").trim();
+    const candidates = Array.isArray(pending.candidates)
+      ? pending.candidates.filter((candidate: unknown) => typeof candidate === "string" && candidate)
+      : [];
+    if (!phone || candidates.length === 0 || !candidates.includes(phone)) {
+      delete req.session.pendingWhatsAppSignup;
+      return res.status(401).json({ message: "انتهت صلاحية التحقق. اطلب رمزاً جديداً." });
+    }
+
+    const existing = await Customer.findOne({ phone: { $in: candidates } });
+    if (existing) {
+      delete req.session.pendingWhatsAppSignup;
+      if (existing.role === "customer" && existing.isActive) {
+        await moveSignupOtpLimitsToCustomer(phone, existing._id);
+        return loginCustomer(req, res, existing);
+      }
+      return res.status(409).json({ message: "لا يمكن إنشاء حساب جديد بهذا الرقم" });
+    }
+
+    const challenge = await WhatsAppOtpChallenge.findOne({ phone });
+    const now = Date.now();
+    const windowStartedAt = challenge?.sendWindowStartedAt?.getTime() || 0;
+    const windowIsCurrent = windowStartedAt > 0 && now - windowStartedAt < LOGIN_OTP_WINDOW_MS;
+    const customer = await Customer.create({
+      name,
+      phone,
+      email,
+      role: "customer",
+      loginOtpLastSentAt: challenge?.lastSentAt,
+      loginOtpSendWindowStartedAt: windowIsCurrent ? challenge?.sendWindowStartedAt : undefined,
+      loginOtpSendCount: windowIsCurrent ? Number(challenge?.sendCount || 0) : 0,
+    });
+
+    await WhatsAppOtpChallenge.deleteOne({ phone });
+    delete req.session.pendingWhatsAppSignup;
+    return loginCustomer(req, res, customer);
+  } catch (error: any) {
+    if (error?.code === 11000) {
+      return res.status(409).json({ message: "هذا الرقم مسجل مسبقاً" });
+    }
+    console.error("WhatsApp registration completion failed");
+    return res.status(500).json({ message: "تعذر إنشاء الحساب الآن" });
   }
 });
 

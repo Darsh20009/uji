@@ -42,6 +42,8 @@ Navigate to `/admin` and enter the admin phone number (`ADMIN_PHONE`).
 
 Customer sign-in defaults to a one-time code delivered through QIROX WhatsApp. Existing customer password login remains available as a fallback, and the separate admin password flow is unchanged. Login codes expire after five minutes, are limited to five sends per hour per customer, and are verified server-side.
 
+Visitors without an account can also request a WhatsApp code. Create their customer account only after the code is verified and they provide a required name; email remains optional. Keep the five-minute expiry, five sends per hour per phone, 60-second resend delay, and five-attempt limit.
+
 ## Notes
 
 - `postcss.config.cjs` uses `.cjs` extension because `package.json` sets `"type": "module"`
