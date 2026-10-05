@@ -70,11 +70,14 @@ description: Brand colors, fonts, transparent assets, email, SEO, and admin arch
 - Target domain: https://ujimatcha.store
 
 ## Render Deployment
-- render.yaml in project root
-- Region: frankfurt (closest to Saudi)
-- Build: `npm install && npm run build`
-- Start: `node dist/index.js`
-- MONGODB_URI and SMTP_PASS must be added manually in Render dashboard
+- The live Render service can have settings that differ from `render.yaml`; verify the active service before assuming a YAML edit affects it.
+- Active service build: `pnpm install --frozen-lockfile --prod=false && pnpm run build`; start: `pnpm run start`.
+- Keep `pnpm-lock.yaml` synchronized with `package.json`; `--prod=false` is required so build tools remain installed under `NODE_ENV=production`.
+- MONGODB_URI and SMTP_PASS must be added manually in Render dashboard.
+
+**Why:** The active service configuration diverged from `render.yaml`; `npm ci` failed with an internal npm error under Render's Node 24 environment, while a synchronized frozen pnpm install built and deployed successfully.
+
+**How to apply:** Inspect and patch the actual Render service settings, keep the lockfile current, and deploy only after the active build command matches the committed package manager.
 
 ## Key Architectural Decisions
 - Routes mounted at /api — sitemap/robots served separately at root
